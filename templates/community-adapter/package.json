@@ -1,0 +1,20 @@
+{
+  "name": "@example/causentra-adapter",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Copyable Causentra community adapter template",
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": ["dist/src", "README.md", "LICENSE", "NOTICE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test dist/test/*.test.js"
+  },
+  "dependencies": {
+    "@causentra/sdk": "0.0.1"
+  },
+  "engines": { "node": ">=22.0.0" },
+  "sideEffects": false,
+  "license": "Apache-2.0"
+}

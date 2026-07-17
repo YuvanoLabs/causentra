@@ -1,0 +1,224 @@
+openapi: 3.1.0
+info:
+  title: Causentra Python Collector API
+  version: 1.0.0
+  description: Authenticated, project-isolated, single-node RuntimeEvent data plane.
+servers:
+  - url: https://collector.example
+security:
+  - bearerAuth: []
+paths:
+  /health:
+    get:
+      security: []
+      operationId: health
+      responses:
+        "200":
+          description: Process is alive.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Status" }
+  /ready:
+    get:
+      security: []
+      operationId: readiness
+      responses:
+        "200":
+          description: Store integrity check passed.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Status" }
+        "503": { $ref: "#/components/responses/Error" }
+  /v1/events:
+    post:
+      operationId: ingestEvents
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          required: false
+          schema: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" }
+          description: Must match body batchId when both are supplied.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TransportBatch" }
+      responses:
+        "202":
+          description: Batch durably committed or idempotently replayed.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/IngestResult" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "409": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+        "507": { $ref: "#/components/responses/Error" }
+  /v1/traces:
+    get:
+      operationId: listTraces
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        "200":
+          description: Recent traces for the authenticated project only.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [traces]
+                properties:
+                  traces:
+                    type: array
+                    items: { $ref: "#/components/schemas/TraceSummary" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "429": { $ref: "#/components/responses/Error" }
+  /v1/traces/{traceId}:
+    parameters:
+      - $ref: "#/components/parameters/TraceId"
+    get:
+      operationId: getTrace
+      responses:
+        "200":
+          description: Ordered events from the authenticated project only.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [traceId, events]
+                properties:
+                  traceId: { $ref: "#/components/schemas/TraceId" }
+                  events:
+                    type: array
+                    items: { $ref: "#/components/schemas/RuntimeEvent" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteTrace
+      responses:
+        "200":
+          description: Project trace deleted.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [traceId, deletedEvents]
+                properties:
+                  traceId: { $ref: "#/components/schemas/TraceId" }
+                  deletedEvents: { type: integer, minimum: 1 }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /metrics:
+    get:
+      operationId: metrics
+      description: Requires an operator-role bearer key.
+      responses:
+        "200":
+          description: Prometheus text exposition.
+          content:
+            text/plain:
+              schema: { type: string }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque high-entropy API key
+  parameters:
+    TraceId:
+      name: traceId
+      in: path
+      required: true
+      schema: { $ref: "#/components/schemas/TraceId" }
+  responses:
+    Error:
+      description: Request rejected.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+  schemas:
+    Status:
+      type: object
+      additionalProperties: false
+      required: [status]
+      properties:
+        status: { type: string }
+    TraceId:
+      type: string
+      pattern: "^[0-9a-f]{32}$"
+    TransportBatch:
+      type: object
+      additionalProperties: false
+      required: [events]
+      properties:
+        transportVersion: { const: "1.0", default: "1.0" }
+        batchId: { type: string, pattern: "^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$" }
+        events:
+          type: array
+          minItems: 1
+          maxItems: 1000
+          items: { $ref: "#/components/schemas/RuntimeEvent" }
+    IngestResult:
+      type: object
+      additionalProperties: false
+      required: [batchId, accepted, duplicates, replayedBatch]
+      properties:
+        batchId: { type: string }
+        accepted: { type: integer, minimum: 0 }
+        duplicates: { type: integer, minimum: 0 }
+        replayedBatch: { type: boolean }
+    RuntimeEvent:
+      type: object
+      additionalProperties: false
+      required: [schemaVersion, eventId, traceId, spanId, sequence, timestamp, type, name, status, serviceName, attributes]
+      properties:
+        schemaVersion: { const: "1.0" }
+        eventId: { type: string, pattern: "^[0-9a-f]{32}$" }
+        traceId: { $ref: "#/components/schemas/TraceId" }
+        spanId: { type: string, pattern: "^(?:[0-9a-f]{16}|[0-9a-f]{32})$" }
+        parentSpanId: { type: string, pattern: "^(?:[0-9a-f]{16}|[0-9a-f]{32})$" }
+        sessionId: { type: string, pattern: "^[0-9a-f]{32}$" }
+        sequence: { type: integer, minimum: 0 }
+        timestamp: { type: string, format: date-time }
+        type: { type: string, minLength: 1, maxLength: 128 }
+        name: { type: string, minLength: 1, maxLength: 256 }
+        status: { enum: [unset, ok, error] }
+        durationMs: { type: number, minimum: 0 }
+        serviceName: { type: string, minLength: 1, maxLength: 256 }
+        attributes: { type: object }
+    TraceSummary:
+      type: object
+      additionalProperties: false
+      required: [traceId, name, serviceName, status, startedAt, lastEventAt, eventCount, errorCount]
+      properties:
+        traceId: { $ref: "#/components/schemas/TraceId" }
+        name: { type: string }
+        serviceName: { type: string }
+        status: { enum: [running, ok, error] }
+        startedAt: { type: string, format: date-time }
+        lastEventAt: { type: string, format: date-time }
+        eventCount: { type: integer, minimum: 1 }
+        errorCount: { type: integer, minimum: 0 }
+    Error:
+      type: object
+      additionalProperties: false
+      required: [error]
+      properties:
+        error:
+          type: object
+          additionalProperties: false
+          required: [code, message]
+          properties:
+            code: { type: string }
+            message: { type: string }
+            requestId: { type: string }

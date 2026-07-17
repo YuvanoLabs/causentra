@@ -1,0 +1,41 @@
+{
+  "name": "@causentra/langgraph",
+  "version": "0.0.1",
+  "description": "Privacy-first LangGraph and LangChain observability adapter for Causentra",
+  "keywords": ["langgraph", "langchain", "ai-agents", "agent-observability", "tracing", "opentelemetry"],
+  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/adapter-langgraph#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "directory": "packages/adapter-langgraph"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": ["dist/src", "README.md", "LICENSE", "NOTICE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/test/*.test.js"
+  },
+  "dependencies": {
+    "@causentra/sdk": "0.0.1"
+  },
+  "peerDependencies": {
+    "@langchain/core": ">=1.2.0 <1.3.0",
+    "@langchain/langgraph": ">=1.4.0 <1.5.0"
+  },
+  "engines": { "node": ">=22.0.0" },
+  "publishConfig": { "access": "public", "provenance": true },
+  "sideEffects": false,
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0",
+  "eventId": "00000000000000000000000000000004",
+  "traceId": "00000000000000000000000000000002",
+  "spanId": "00000000000000000000000000000005",
+  "parentSpanId": "00000000000000000000000000000003",
+  "sessionId": "00000000000000000000000000000006",
+  "sequence": 3,
+  "timestamp": "2026-07-16T00:00:00.050Z",
+  "type": "tool.end",
+  "name": "account_lookup",
+  "status": "ok",
+  "durationMs": 12.5,
+  "serviceName": "fixture-agent",
+  "attributes": {
+    "gen_ai.tool.type": "function",
+    "cached": false,
+    "attempt": 1
+  }
+}

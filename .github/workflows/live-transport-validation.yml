@@ -1,0 +1,42 @@
+name: Live transport validation
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  all-transports:
+    runs-on: ubuntu-latest
+    environment: target-infrastructure-validation
+    timeout-minutes: 20
+    env:
+      CAUSENTRA_REQUIRE_LIVE_TRANSPORTS: "1"
+      CAUSENTRA_LIVE_HTTP_ENDPOINT: ${{ secrets.CAUSENTRA_LIVE_HTTP_ENDPOINT }}
+      CAUSENTRA_LIVE_HTTP_KEY: ${{ secrets.CAUSENTRA_LIVE_HTTP_KEY }}
+      CAUSENTRA_LIVE_WEBSOCKET_URI: ${{ secrets.CAUSENTRA_LIVE_WEBSOCKET_URI }}
+      CAUSENTRA_LIVE_WEBSOCKET_HEADERS: ${{ secrets.CAUSENTRA_LIVE_WEBSOCKET_HEADERS }}
+      CAUSENTRA_LIVE_KAFKA_TOPIC: ${{ secrets.CAUSENTRA_LIVE_KAFKA_TOPIC }}
+      CAUSENTRA_LIVE_KAFKA_CONFIG: ${{ secrets.CAUSENTRA_LIVE_KAFKA_CONFIG }}
+      CAUSENTRA_LIVE_NATS_SERVERS: ${{ secrets.CAUSENTRA_LIVE_NATS_SERVERS }}
+      CAUSENTRA_LIVE_NATS_SUBJECT: ${{ secrets.CAUSENTRA_LIVE_NATS_SUBJECT }}
+      CAUSENTRA_LIVE_NATS_OPTIONS: ${{ secrets.CAUSENTRA_LIVE_NATS_OPTIONS }}
+      CAUSENTRA_LIVE_REDIS_URL: ${{ secrets.CAUSENTRA_LIVE_REDIS_URL }}
+      CAUSENTRA_LIVE_REDIS_USERNAME: ${{ secrets.CAUSENTRA_LIVE_REDIS_USERNAME }}
+      CAUSENTRA_LIVE_REDIS_PASSWORD: ${{ secrets.CAUSENTRA_LIVE_REDIS_PASSWORD }}
+      CAUSENTRA_LIVE_REDIS_STREAM: ${{ secrets.CAUSENTRA_LIVE_REDIS_STREAM }}
+      CAUSENTRA_LIVE_MQTT_HOST: ${{ secrets.CAUSENTRA_LIVE_MQTT_HOST }}
+      CAUSENTRA_LIVE_MQTT_PORT: ${{ secrets.CAUSENTRA_LIVE_MQTT_PORT }}
+      CAUSENTRA_LIVE_MQTT_TOPIC: ${{ secrets.CAUSENTRA_LIVE_MQTT_TOPIC }}
+      CAUSENTRA_LIVE_MQTT_USERNAME: ${{ secrets.CAUSENTRA_LIVE_MQTT_USERNAME }}
+      CAUSENTRA_LIVE_MQTT_PASSWORD: ${{ secrets.CAUSENTRA_LIVE_MQTT_PASSWORD }}
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.13"
+      - run: python -m pip install -e "python[dev,transports]"
+      - run: python -m pytest python/tests/test_live_transports.py -q

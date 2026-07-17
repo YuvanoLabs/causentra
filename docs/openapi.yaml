@@ -1,0 +1,318 @@
+openapi: 3.1.0
+info:
+  title: Causentra Local API
+  version: 0.0.1
+  description: Local loopback inspection, ingestion, query, portability and retention API. This unauthenticated service is not the remote Python collector.
+servers:
+  - url: http://127.0.0.1:4318
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      responses:
+        "200":
+          description: Runtime health and local counts
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, traces, events, recoveryWarnings]
+                properties:
+                  status: { const: ok }
+                  traces: { type: integer, minimum: 0 }
+                  events: { type: integer, minimum: 0 }
+                  recoveryWarnings:
+                    type: integer
+                    minimum: 0
+                    description: Corrupt or incomplete records skipped during startup recovery.
+  /v1/events:
+    post:
+      operationId: ingestEvents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [events]
+              properties:
+                events:
+                  type: array
+                  minItems: 1
+                  maxItems: 1000
+                  items: { $ref: "#/components/schemas/RuntimeEvent" }
+      responses:
+        "202":
+          description: Batch durably appended or identified as duplicate
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accepted, duplicates]
+                properties:
+                  accepted: { type: integer, minimum: 0 }
+                  duplicates: { type: integer, minimum: 0 }
+        "400": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "415": { $ref: "#/components/responses/Error" }
+  /v1/traces:
+    post:
+      operationId: ingestOtlpTraces
+      summary: Ingest OTLP/HTTP trace data
+      description: Accepts OTLP JSON or protobuf, optionally with Content-Encoding gzip. Known content-bearing attributes are omitted during conversion.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/OtlpExportTraceServiceRequest" }
+          application/x-protobuf:
+            schema: { type: string, format: binary }
+      responses:
+        "200":
+          description: OTLP success or partial success; response media type matches the request.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/OtlpExportTraceServiceResponse" }
+            application/x-protobuf:
+              schema: { type: string, format: binary }
+        "400": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "415": { $ref: "#/components/responses/Error" }
+  /api/traces:
+    get:
+      operationId: listTraces
+      parameters:
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+        - in: query
+          name: q
+          description: Case-insensitive search across safe trace, service, framework, provider, model, tool and agent names. Payload bodies and arbitrary attributes are not indexed.
+          schema: { type: string, minLength: 1, maxLength: 256 }
+        - in: query
+          name: framework
+          description: Case-insensitive substring matched against normalized framework facets.
+          schema: { type: string, minLength: 1, maxLength: 256 }
+        - in: query
+          name: provider
+          description: Case-insensitive substring matched against canonical provider facets.
+          schema: { type: string, minLength: 1, maxLength: 256 }
+        - in: query
+          name: model
+          description: Case-insensitive substring matched against request and response model facets.
+          schema: { type: string, minLength: 1, maxLength: 256 }
+        - in: query
+          name: status
+          schema: { enum: [running, ok, error] }
+        - in: query
+          name: session
+          description: Exact canonical or privacy-hashed session identifier.
+          schema: { type: string, pattern: "^[0-9a-f]{32}$" }
+        - in: query
+          name: tool
+          description: Case-insensitive substring matched against tool operation names.
+          schema: { type: string, minLength: 1, maxLength: 256 }
+      responses:
+        "200":
+          description: Recent trace summaries
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [traces]
+                properties:
+                  traces:
+                    type: array
+                    items: { $ref: "#/components/schemas/TraceSummary" }
+        "400": { $ref: "#/components/responses/Error" }
+  /api/traces/{traceId}:
+    get:
+      operationId: getTrace
+      parameters:
+        - in: path
+          name: traceId
+          required: true
+          schema: { type: string, pattern: "^[0-9a-f]{32}$" }
+      responses:
+        "200":
+          description: Trace summary and ordered events
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [summary, events]
+                properties:
+                  summary: { $ref: "#/components/schemas/TraceSummary" }
+                  events:
+                    type: array
+                    items: { $ref: "#/components/schemas/RuntimeEvent" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+    delete:
+      operationId: deleteTrace
+      parameters:
+        - in: path
+          name: traceId
+          required: true
+          schema: { type: string, pattern: "^[0-9a-f]{32}$" }
+      responses:
+        "200":
+          description: Complete local trace deleted
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /api/traces/{traceId}/export:
+    get:
+      operationId: exportTrace
+      parameters:
+        - in: path
+          name: traceId
+          required: true
+          schema: { type: string, pattern: "^[0-9a-f]{32}$" }
+      responses:
+        "200":
+          description: Portable versioned trace bundle
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/TraceBundle" }
+        "400": { $ref: "#/components/responses/Error" }
+        "404": { $ref: "#/components/responses/Error" }
+  /api/traces/import:
+    post:
+      operationId: importTrace
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/TraceBundle" }
+      responses:
+        "202":
+          description: Valid unique events imported; duplicates ignored
+        "400": { $ref: "#/components/responses/Error" }
+        "413": { $ref: "#/components/responses/Error" }
+        "415": { $ref: "#/components/responses/Error" }
+  /api/retention/prune:
+    post:
+      operationId: pruneTraces
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [keepLatest]
+              properties:
+                keepLatest: { type: integer, minimum: 0 }
+      responses:
+        "200":
+          description: Old traces removed through an explicit local request
+        "400": { $ref: "#/components/responses/Error" }
+components:
+  responses:
+    Error:
+      description: Machine-readable error
+      content:
+        application/json:
+          schema:
+            type: object
+            required: [error]
+            properties:
+              error:
+                type: object
+                required: [code, message]
+                properties:
+                  code: { type: string }
+                  message: { type: string }
+  schemas:
+    OtlpExportTraceServiceRequest:
+      type: object
+      required: [resourceSpans]
+      description: OTLP JSON ExportTraceServiceRequest. Detailed field semantics are defined by the OpenTelemetry Protocol.
+      properties:
+        resourceSpans: { type: array, maxItems: 10000, items: { type: object } }
+      additionalProperties: true
+    OtlpExportTraceServiceResponse:
+      type: object
+      properties:
+        partialSuccess:
+          type: object
+          properties:
+            rejectedSpans: { type: [integer, string] }
+            errorMessage: { type: string }
+      additionalProperties: false
+    RuntimeEvent:
+      type: object
+      additionalProperties: false
+      required: [schemaVersion, eventId, traceId, spanId, sequence, timestamp, type, name, status, serviceName, attributes]
+      properties:
+        schemaVersion: { const: "1.0" }
+        eventId: { type: string, pattern: "^[0-9a-f]{32}$" }
+        traceId: { type: string, pattern: "^[0-9a-f]{32}$" }
+        spanId: { type: string, pattern: "^(?:[0-9a-f]{16}|[0-9a-f]{32})$" }
+        parentSpanId: { type: string, pattern: "^(?:[0-9a-f]{16}|[0-9a-f]{32})$" }
+        sessionId: { type: string, pattern: "^[0-9a-f]{32}$" }
+        sequence: { type: integer, minimum: 0 }
+        timestamp: { type: string, format: date-time }
+        type: { type: string, minLength: 1, maxLength: 128 }
+        name: { type: string, minLength: 1, maxLength: 256 }
+        status: { enum: [unset, ok, error] }
+        durationMs: { type: number, minimum: 0 }
+        serviceName: { type: string, minLength: 1, maxLength: 256 }
+        attributes: { type: object }
+    TraceSummary:
+      type: object
+      required: [traceId, name, serviceName, status, startedAt, eventCount, errorCount, frameworks, providers, models, tools, agents, sessionIds, relationshipCount]
+      properties:
+        traceId: { type: string }
+        name: { type: string }
+        serviceName: { type: string }
+        status: { enum: [running, ok, error] }
+        startedAt: { type: string, format: date-time }
+        endedAt: { type: string, format: date-time }
+        durationMs: { type: number, minimum: 0 }
+        eventCount: { type: integer, minimum: 1 }
+        errorCount: { type: integer, minimum: 0 }
+        frameworks:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        providers:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        models:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        tools:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        agents:
+          type: array
+          uniqueItems: true
+          items: { type: string }
+        sessionIds:
+          type: array
+          uniqueItems: true
+          items: { type: string, pattern: "^[0-9a-f]{32}$" }
+        relationshipCount: { type: integer, minimum: 0 }
+    TraceBundle:
+      type: object
+      additionalProperties: false
+      required: [format, version, exportedAt, trace]
+      properties:
+        format: { const: causentra.trace-bundle }
+        version: { const: 1 }
+        exportedAt: { type: string, format: date-time }
+        trace:
+          type: object
+          additionalProperties: false
+          required: [summary, events]
+          properties:
+            summary: { $ref: "#/components/schemas/TraceSummary" }
+            events:
+              type: array
+              minItems: 1
+              maxItems: 10000
+              items: { $ref: "#/components/schemas/RuntimeEvent" }

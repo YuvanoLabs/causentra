@@ -1,0 +1,47 @@
+name: Adapter request
+description: Request or propose a maintained framework integration
+title: "[Adapter]: "
+labels: ["adapter", "triage"]
+body:
+  - type: input
+    id: framework
+    attributes:
+      label: Framework and language
+      placeholder: "Framework, package, language, exact version"
+    validations:
+      required: true
+  - type: input
+    id: extension
+    attributes:
+      label: Public instrumentation extension point
+      description: Link to the official callback, processor, middleware, or OpenTelemetry contract.
+    validations:
+      required: true
+  - type: textarea
+    id: usecase
+    attributes:
+      label: Multi-agent use case and demand evidence
+      description: Explain the workflow, user population, and why direct SDK instrumentation is insufficient.
+    validations:
+      required: true
+  - type: textarea
+    id: mapping
+    attributes:
+      label: Available lifecycle mapping
+      description: Identify workflow, agent, model, tool, retrieval, handoff, timing, usage, error, and context fields exposed by the framework.
+    validations:
+      required: true
+  - type: textarea
+    id: privacy
+    attributes:
+      label: Sensitive data exposed by the extension point
+      description: List payloads that must remain excluded by default.
+    validations:
+      required: true
+  - type: dropdown
+    id: ownership
+    attributes:
+      label: Can you help maintain compatibility tests?
+      options: ["Yes", "Possibly", "No"]
+    validations:
+      required: true

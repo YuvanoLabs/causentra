@@ -1,0 +1,40 @@
+{
+  "name": "@causentra/openai-agents",
+  "version": "0.0.1",
+  "description": "Privacy-first OpenAI Agents SDK observability and tracing adapter for Causentra",
+  "keywords": ["openai-agents", "ai-agents", "agent-observability", "tracing", "opentelemetry", "privacy"],
+  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/adapter-openai-agents#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "directory": "packages/adapter-openai-agents"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "files": ["dist/src", "README.md", "LICENSE", "NOTICE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/test/*.test.js"
+  },
+  "dependencies": {
+    "@causentra/sdk": "0.0.1"
+  },
+  "peerDependencies": {
+    "@openai/agents": ">=0.13.4 <0.14.0"
+  },
+  "engines": { "node": ">=22.0.0" },
+  "publishConfig": { "access": "public", "provenance": true },
+  "sideEffects": false,
+  "license": "Apache-2.0"
+}

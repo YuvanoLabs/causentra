@@ -1,0 +1,40 @@
+{
+  "name": "@causentra/sdk",
+  "version": "0.0.1",
+  "description": "Framework-neutral multi-agent observability and tracing SDK for Causentra",
+  "keywords": ["ai-agents", "agent-observability", "multi-agent", "tracing", "opentelemetry", "local-first"],
+  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/sdk#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "directory": "packages/sdk"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    },
+    "./schema/v1": {
+      "default": "./schema/runtime-event-v1.schema.json"
+    }
+  },
+  "files": ["dist/src", "schema", "README.md", "LICENSE", "NOTICE"],
+  "engines": { "node": ">=22.0.0" },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/test/*.test.js"
+  },
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,30 @@
+{
+  "schemaVersion": "1.0",
+  "canonicalProviders": [
+    "openai",
+    "anthropic",
+    "aws.bedrock",
+    "azure.ai.inference",
+    "azure.ai.openai",
+    "cohere",
+    "deepseek",
+    "gcp.gemini",
+    "gcp.gen_ai",
+    "gcp.vertex_ai",
+    "groq",
+    "ibm.watsonx.ai",
+    "mistral_ai",
+    "perplexity",
+    "x_ai"
+  ],
+  "deepPythonProviders": [
+    "openai",
+    "anthropic",
+    "gcp.gemini",
+    "aws.bedrock",
+    "azure.ai.openai",
+    "cohere",
+    "mistral_ai",
+    "groq"
+  ]
+}

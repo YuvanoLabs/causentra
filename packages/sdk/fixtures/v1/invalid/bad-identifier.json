@@ -1,0 +1,16 @@
+{
+  "expectedField": "eventId",
+  "event": {
+    "schemaVersion": "1.0",
+    "eventId": "not-an-id",
+    "traceId": "00000000000000000000000000000002",
+    "spanId": "00000000000000000000000000000003",
+    "sequence": 0,
+    "timestamp": "2026-07-16T00:00:00.000Z",
+    "type": "trace.start",
+    "name": "invalid",
+    "status": "unset",
+    "serviceName": "fixture-agent",
+    "attributes": {}
+  }
+}

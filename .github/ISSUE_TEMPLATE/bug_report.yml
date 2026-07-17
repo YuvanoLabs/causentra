@@ -1,0 +1,67 @@
+name: Bug report
+description: Report a reproducible Causentra defect
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thank you for reporting a defect. Remove secrets, prompts, outputs, tool arguments, customer data, and private traces. Security vulnerabilities must follow SECURITY.md instead.
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Pre-submission checks
+      options:
+        - label: I searched existing issues and documentation.
+          required: true
+        - label: This is not a security vulnerability or support request.
+          required: true
+        - label: The reproduction uses synthetic, non-sensitive data.
+          required: true
+  - type: input
+    id: package
+    attributes:
+      label: Affected package
+      placeholder: "@causentra/sdk, @causentra/langgraph, server, CLI..."
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Causentra and framework versions
+      placeholder: "Causentra 0.0.x; framework name and exact version"
+    validations:
+      required: true
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: "Node version, npm version, operating system"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Minimal reproduction
+      description: Include the smallest code and exact commands that demonstrate the issue.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior and redacted diagnostics
+    validations:
+      required: true
+  - type: dropdown
+    id: regression
+    attributes:
+      label: Regression
+      options: ["Unknown", "No", "Yes"]
+    validations:
+      required: true

@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="dark" />
+    <title>Causentra</title>
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="/app.js" type="module"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Causentra home">
+        <span class="brand-mark">AR</span>
+        <span>Causentra <small>LOCAL</small></span>
+      </a>
+      <div class="health"><span id="health-dot"></span><span id="health-text">Connecting</span></div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div>
+          <p class="eyebrow">EXECUTION OBSERVABILITY</p>
+          <h1>Every agent action,<br /><em>made visible.</em></h1>
+          <p class="lede">Inspect models, tools, latency, and failures without sending execution data anywhere.</p>
+        </div>
+        <div class="stats" aria-label="Runtime statistics">
+          <div><strong id="trace-count">—</strong><span>traces</span></div>
+          <div><strong id="event-count">—</strong><span>events</span></div>
+          <div><strong>local</strong><span>data plane</span></div>
+        </div>
+      </section>
+
+      <section class="workspace">
+        <aside class="trace-panel">
+          <div class="section-heading">
+            <div><p class="eyebrow">RECENT</p><h2>Traces</h2></div>
+            <button id="refresh" type="button" aria-label="Refresh traces">↻</button>
+          </div>
+          <form id="trace-filters" class="trace-filters" aria-label="Filter traces">
+            <label class="wide">Search safe metadata<input name="q" type="search" maxlength="256" placeholder="trace, service, agent, model, tool" /></label>
+            <label>Status
+              <select name="status">
+                <option value="">Any</option>
+                <option value="error">Error</option>
+                <option value="ok">OK</option>
+                <option value="running">Running</option>
+              </select>
+            </label>
+            <label>Framework<input name="framework" type="search" maxlength="256" placeholder="openai, langgraph" /></label>
+            <label>Provider<input name="provider" type="search" maxlength="256" placeholder="anthropic, bedrock" /></label>
+            <label>Model<input name="model" type="search" maxlength="256" placeholder="model or deployment" /></label>
+            <label>Tool<input name="tool" type="search" maxlength="256" placeholder="lookup" /></label>
+            <label class="wide">Session ID<input name="session" type="search" maxlength="32" pattern="[0-9a-f]{32}" placeholder="32-character hex ID" /></label>
+            <div class="filter-actions">
+              <button type="submit">Apply</button>
+              <button id="clear-filters" type="button">Clear</button>
+            </div>
+          </form>
+          <div id="trace-list" class="trace-list" aria-live="polite"></div>
+        </aside>
+
+        <section id="detail" class="detail-panel">
+          <div class="empty-state">
+            <div class="empty-orbit"><span></span></div>
+            <h2>No trace selected</h2>
+            <p>Run <code>npm run demo</code>, then select an execution.</p>
+          </div>
+        </section>
+      </section>
+    </main>
+
+    <template id="trace-item-template">
+      <button class="trace-item" type="button">
+        <span class="status-dot"></span>
+        <span class="trace-copy"><strong></strong><small></small></span>
+        <span class="duration"></span>
+      </button>
+    </template>
+  </body>
+</html>

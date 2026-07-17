@@ -1,0 +1,19 @@
+cff-version: 1.2.0
+message: "If Causentra supports your research or engineering work, cite the software using this metadata."
+title: "Causentra"
+abstract: "Open-source, privacy-first observability and tracing runtime for multi-agent AI systems."
+type: software
+version: 0.1.0-alpha.1
+license: Apache-2.0
+repository-code: "https://github.com/smartbytecoder/causentra"
+url: "https://github.com/smartbytecoder/causentra"
+authors:
+  - name: "Causentra contributors"
+keywords:
+  - ai agents
+  - agent observability
+  - multi-agent systems
+  - distributed tracing
+  - OpenTelemetry
+  - OTLP
+  - local-first software

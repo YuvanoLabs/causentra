@@ -1,0 +1,49 @@
+{
+  "name": "@causentra/server",
+  "version": "0.0.1",
+  "description": "Local-first AI agent trace collector, OTLP receiver, and Causentra dashboard",
+  "keywords": ["ai-agents", "agent-observability", "otlp", "trace-collector", "dashboard", "local-first"],
+  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/apps/runtime-server#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "directory": "apps/runtime-server"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/src/index.d.ts",
+      "import": "./dist/src/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/test/*.test.js",
+    "start": "node dist/src/index.js"
+  },
+  "dependencies": {
+    "@causentra/sdk": "0.0.1",
+    "protobufjs": "8.6.5"
+  },
+  "files": [
+    "dist/src",
+    "public",
+    "README.md",
+    "LICENSE",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "license": "Apache-2.0"
+}

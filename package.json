@@ -1,0 +1,68 @@
+{
+  "name": "causentra-workspace",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Local-first production infrastructure for observable AI agents",
+  "homepage": "https://github.com/smartbytecoder/causentra#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "scripts": {
+    "clean": "node scripts/clean.mjs",
+    "build": "npm run build -w @causentra/sdk && npm run build -w @causentra/openai-agents && npm run build -w @causentra/langgraph && npm run build -w @causentra/opentelemetry && npm run build -w @causentra/server && npm run build -w @causentra/cli",
+    "typecheck": "npm run build && npm run typecheck -w @causentra/sdk && npm run typecheck -w @causentra/openai-agents && npm run typecheck -w @causentra/langgraph && npm run typecheck -w @causentra/opentelemetry && npm run typecheck -w @causentra/server && npm run typecheck -w @causentra/cli",
+    "test": "npm run build && npm run test -w @causentra/sdk && npm run test -w @causentra/openai-agents && npm run test -w @causentra/langgraph && npm run test -w @causentra/opentelemetry && npm run test -w @causentra/server && npm run test -w @causentra/cli && npm run python:test && npm run test:integration && npm run test:adapter-template",
+    "python:build": "python -m build --no-isolation --outdir python/dist python",
+    "python:test": "python -m pytest python/tests",
+    "python:lint": "python -m ruff check python/src python/tests python/scripts python/benchmarks",
+    "python:typecheck": "python -m mypy --config-file python/pyproject.toml python/src/causentra",
+    "python:installcheck": "python python/scripts/verify_clean_install.py",
+    "python:verify": "npm run python:lint && npm run python:typecheck && npm run python:test && npm run python:build && npm run python:installcheck",
+    "test:integration": "node --test integration/*.test.mjs",
+    "test:adapter-template": "tsc -p templates/community-adapter/tsconfig.json && node --test templates/community-adapter/dist/test/*.test.js",
+    "verify:oss": "node scripts/verify-oss-boundary.mjs",
+    "verify:brand": "node scripts/verify-brand.mjs",
+    "verify:community": "node scripts/verify-community-readiness.mjs",
+    "verify:discovery": "node scripts/verify-discoverability.mjs",
+    "verify:packages": "node scripts/verify-package-contents.mjs",
+    "verify:install": "node scripts/verify-clean-install.mjs",
+    "verify:install:adapters": "node scripts/verify-clean-install.mjs --with-frameworks",
+    "verify": "npm run verify:brand && npm run verify:oss && npm run verify:community && npm run verify:discovery && npm run typecheck && npm run python:verify && npm test && npm run verify:packages && npm run verify:install",
+    "benchmark": "npm run build -w @causentra/sdk && node packages/sdk/benchmark/sdk-overhead.mjs",
+    "python:benchmark": "python python/benchmarks/runtime_overhead.py",
+    "python:benchmark:collector": "python python/benchmarks/collector_throughput.py",
+    "dev": "npm run start -w @causentra/server",
+    "demo": "npm run start -w @causentra/cli -- demo",
+    "doctor": "npm run start -w @causentra/cli -- doctor",
+    "example:openai": "node examples/openai-agents/index.mjs",
+    "example:langgraph": "node examples/langgraph/index.mjs",
+    "example:mixed": "node examples/mixed-framework/index.mjs",
+    "example:python": "python examples/python/basic.py",
+    "example:python:authenticated": "python examples/python/authenticated_quickstart.py"
+  },
+  "devDependencies": {
+    "@langchain/core": "^1.2.3",
+    "@langchain/langgraph": "^1.4.8",
+    "@openai/agents": "^0.13.4",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/exporter-trace-otlp-proto": "^0.220.0",
+    "@opentelemetry/resources": "^2.9.0",
+    "@opentelemetry/sdk-trace-base": "^2.9.0",
+    "@opentelemetry/sdk-trace-node": "^2.9.0",
+    "@opentelemetry/semantic-conventions": "^1.43.0",
+    "@types/node": "^24.0.0",
+    "ajv": "^8.20.0",
+    "typescript": "^5.9.0"
+  }
+}

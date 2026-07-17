@@ -1,0 +1,30 @@
+{
+  "database": ".causentra/collector.db",
+  "listen": {
+    "host": "127.0.0.1",
+    "port": 4318,
+    "allowInsecureRemote": false
+  },
+  "apiKeys": [
+    {
+      "id": "local-project",
+      "projectId": "local_project",
+      "sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "role": "project"
+    }
+  ],
+  "limits": {
+    "maxBodyBytes": 2097152,
+    "maxBatchEvents": 1000,
+    "requestsPerMinute": 600,
+    "authAttemptsPerMinute": 600,
+    "eventsPerMinute": 100000,
+    "maxStoreEvents": 10000000,
+    "maxStoreBytes": 21474836480,
+    "maxProjectEvents": 2000000,
+    "maxProjectBytes": 4294967296,
+    "maxConcurrentRequests": 128,
+    "requestTimeoutSeconds": 15
+  },
+  "tls": {}
+}

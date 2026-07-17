@@ -1,0 +1,69 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.causentra.dev/runtime-event/v1.0.json",
+  "title": "Causentra Event v1.0",
+  "description": "Portable, framework-neutral lifecycle event. Payload content is opt-in through attributes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "eventId",
+    "traceId",
+    "spanId",
+    "sequence",
+    "timestamp",
+    "type",
+    "name",
+    "status",
+    "serviceName",
+    "attributes"
+  ],
+  "properties": {
+    "schemaVersion": { "const": "1.0" },
+    "eventId": { "$ref": "#/$defs/id" },
+    "traceId": { "$ref": "#/$defs/id" },
+    "spanId": { "$ref": "#/$defs/spanId" },
+    "parentSpanId": { "$ref": "#/$defs/spanId" },
+    "sessionId": { "$ref": "#/$defs/id" },
+    "sequence": { "type": "integer", "minimum": 0 },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "maxLength": 40
+    },
+    "type": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "anyOf": [
+        {
+          "enum": [
+            "trace.start", "trace.end", "span.start", "span.end",
+            "agent.start", "agent.end", "model.start", "model.end",
+            "tool.start", "tool.end", "error", "custom"
+          ]
+        },
+        { "pattern": "^[a-z][a-z0-9_-]{0,63}\\.[a-z][a-z0-9_.-]{0,63}$" }
+      ]
+    },
+    "name": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "status": { "enum": ["unset", "ok", "error"] },
+    "durationMs": { "type": "number", "minimum": 0 },
+    "serviceName": { "type": "string", "minLength": 1, "maxLength": 256 },
+    "attributes": {
+      "type": "object",
+      "description": "JSON-compatible metadata, limited to 64 KiB by the SDK and collector."
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{32}$"
+    },
+    "spanId": {
+      "type": "string",
+      "description": "W3C-width span ID; legacy pre-alpha 32-character IDs remain readable.",
+      "pattern": "^(?:[0-9a-f]{16}|[0-9a-f]{32})$"
+    }
+  }
+}

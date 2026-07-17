@@ -1,0 +1,38 @@
+{
+  "name": "@causentra/cli",
+  "version": "0.0.1",
+  "description": "CLI for local AI agent traces, diagnostics, export, and lifecycle operations",
+  "keywords": ["ai-agents", "agent-observability", "tracing", "cli", "local-first", "opentelemetry"],
+  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "directory": "packages/cli"
+  },
+  "bugs": {
+    "url": "https://github.com/smartbytecoder/causentra/issues"
+  },
+  "type": "module",
+  "bin": {
+    "causentra": "./dist/src/index.js"
+  },
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "files": ["dist/src", "README.md", "LICENSE", "NOTICE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "node --test dist/test/*.test.js",
+    "start": "node dist/src/index.js"
+  },
+  "dependencies": {
+    "@causentra/sdk": "0.0.1",
+    "@causentra/server": "0.0.1"
+  },
+  "engines": { "node": ">=22.0.0" },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
+  "license": "Apache-2.0"
+}

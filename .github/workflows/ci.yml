@@ -1,0 +1,101 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            node-version: 22.x
+            python-version: "3.10"
+          - os: ubuntu-latest
+            node-version: 24.x
+            python-version: "3.11"
+          - os: windows-latest
+            node-version: 22.x
+            python-version: "3.12"
+          - os: macos-latest
+            node-version: 22.x
+            python-version: "3.13"
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6.5.0
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: npm
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+      - run: npm ci
+      - run: python -m pip install -e "python[dev,openai-agents,langgraph]"
+      - run: npm run verify
+      - run: npm audit --audit-level=high
+
+  framework-compatibility:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: >-
+          python -m pip install -e
+          "python[dev,openai-agents,langgraph,crewai,google-adk,semantic-kernel,autogen]"
+      - run: >-
+          python -m pytest
+          python/tests/test_framework_adapters.py
+          python/tests/test_extended_framework_adapters.py
+          python/tests/test_real_frameworks.py
+          -q
+
+  transport-clients:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -e "python[dev,transports]"
+      - run: python -m pytest python/tests/test_durable_transports.py -q
+      - run: >-
+          python -c "import confluent_kafka, nats, redis, paho.mqtt.client,
+          websockets; print('optional transport clients: PASS')"
+
+  python-dependency-audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: "3.11"
+          cache: pip
+      - run: python -m pip install -e "python[security]"
+      - run: python -m bandit -r python/src -q -ll
+      - run: python -m pip_audit python --timeout 30 --progress-spinner off
