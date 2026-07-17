@@ -61,8 +61,8 @@
     "@opentelemetry/sdk-trace-base": "^2.9.0",
     "@opentelemetry/sdk-trace-node": "^2.9.0",
     "@opentelemetry/semantic-conventions": "^1.43.0",
-    "@types/node": "^24.0.0",
+    "@types/node": "^26.1.1",
     "ajv": "^8.20.0",
-    "typescript": "^5.9.0"
+    "typescript": "^7.0.2"
   }
 }
