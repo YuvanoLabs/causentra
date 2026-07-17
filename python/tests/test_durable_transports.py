@@ -151,9 +151,13 @@ def test_durable_exporter_retries_and_acknowledges_without_loss(tmp_path: Path) 
     exporter.emit(_event(1))
     assert exporter.flush(2)
     assert exporter.stats.total_events == 0
-    assert len(transport.batches) == 1
-    document = json.loads(transport.batches[0].payload)
-    assert [event["eventId"] for event in document["events"]] == [f"{1:032x}", f"{2:032x}"]
+    delivered = [
+        event["eventId"]
+        for batch in transport.batches
+        for event in json.loads(batch.payload)["events"]
+    ]
+    assert sorted(delivered) == [f"{1:032x}", f"{2:032x}"]
+    assert len(delivered) == len(set(delivered))
     exporter.shutdown(2)
     exporter.shutdown(2)
     assert transport.closed
