@@ -75,7 +75,7 @@ A Python-first agent team can capture, retain, inspect, and query a failed or sl
 | FR-15 | Verify maintained adapters against a public conformance contract | Must |
 | FR-16 | Search safe local metadata and filter by framework, provider, model, status, session, and tool | Must |
 | FR-17 | Render source-to-target handoff and delegation relationships | Must |
-| FR-18 | Provide an executable, privacy-safe community adapter scaffold | Must |
+| FR-18 | Provide an executable, privacy-safe adapter scaffold | Must |
 | FR-19 | Replay a workflow in a guarded sandbox | Later |
 | FR-20 | Provide privacy-safe deep response telemetry for eight priority providers and tested canonical profiles for all 15 OTel provider identifiers | Must |
 | FR-21 | Provide durable at-least-once HTTP, WebSocket, Kafka, NATS, Redis, and MQTT delivery | Must |

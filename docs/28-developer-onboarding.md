@@ -145,7 +145,7 @@ Use `causentra --key-file .causentra/collector.key trace <trace-id>` to inspect 
 - [Authenticated collector OpenAPI](openapi-collector.yaml)
 - [Schema compatibility](18-schema-compatibility.md)
 - [Production Python runtime](24-production-python-runtime.md)
-- [Community adapter template](../templates/community-adapter/README.md)
+- [Adapter template](../templates/community-adapter/README.md)
 - [Verification evidence](26-verification-evidence.md)
 
 The TypeScript SDK implements the same event contract and remains a maintained protocol peer. Python is the primary onboarding and runtime path.

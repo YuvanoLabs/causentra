@@ -1,6 +1,6 @@
 # Support
 
-Causentra is release-candidate community software. There is no production SLA, guaranteed response time, or private implementation support.
+Causentra is a release-candidate public software project. There is no production SLA, guaranteed response time, or private implementation support.
 
 ## Where to ask
 
@@ -19,4 +19,4 @@ Search documentation and existing issues before posting. Include versions, opera
 
 Maintainers can help with Causentra behavior and documented integration contracts. They cannot debug proprietary application logic, model quality, provider outages, unreviewed internet deployments, or forks. The Node.js UI collector is loopback-only; the Python collector's supported remote design requires operator-managed TLS, secrets, durable storage, monitoring, backups, and target-infrastructure validation.
 
-Community answers are best-effort. Future contracted support may add defined coverage, but bug triage and security fixes will not be withheld to force an upgrade.
+General support answers are best-effort. Future contracted support may add defined coverage, but bug triage and security fixes will not be withheld to force an upgrade.

@@ -61,7 +61,7 @@ Framework-native tracing remains useful for framework-specific depth. OpenTeleme
 | Safe metadata search plus framework/provider/model/status/session/tool filters | Maintained in local API and dashboard |
 | First-class handoff/delegation view | Maintained source-to-target relationship cards plus causal nesting |
 | Portable trace export/import, deletion and explicit pruning | Maintained |
-| Schema fixtures, adapter-authoring bridge and community template | Maintained and executable |
+| Schema fixtures, adapter-authoring bridge and adapter template | Maintained and executable |
 | Adapter conformance contract | Maintained; validates schema, lifecycle, privacy, identity and parent continuity |
 | OTLP/HTTP trace ingestion | Maintained for JSON and protobuf, including gzip and partial success |
 | OpenTelemetry semantic projection and OTLP/HTTP protobuf exporter | Maintained public bridge; GenAI conventions remain evolving |
@@ -125,7 +125,7 @@ Published-package installation instructions will be added only after package own
 - [Direct SDK, six native framework adapters, collector and transport recipes](docs/17-integration-guide.md)
 - [Production Python runtime](docs/24-production-python-runtime.md)
 - [Transport and plugin operations](docs/25-transport-plugin-operations.md)
-- [Community adapter template](templates/community-adapter/README.md)
+- [Adapter template](templates/community-adapter/README.md)
 - [Event schema compatibility policy](docs/18-schema-compatibility.md)
 - [Data, API, and security model](docs/07-data-api-security.md)
 - [Current limitations and release evidence](docs/19-local-release-readiness.md)
@@ -136,7 +136,7 @@ The common contract standardizes trace correlation, W3C context handoff, and the
 
 Causentra has one codebase, one event contract, and one package namespace. It includes local instrumentation, maintained adapters, collection, inspection, privacy controls, portability, and security fixes without trace-count limits, forced telemetry, account requirements, or cloud dependency. Future managed capabilities—such as shared retention, collaboration, alerts, analytics, identity, audit, governance, and support—will extend this same product rather than form a separate product version.
 
-## Community
+## Participation
 
 - Read [CONTRIBUTING.md](CONTRIBUTING.md) before proposing code or schema changes.
 - Use the issue forms for reproducible bugs, adapter requests, and feature proposals.
@@ -146,7 +146,7 @@ Causentra has one codebase, one event contract, and one package namespace. It in
 
 ## Fund the work (Support this project)
 
-Causentra is a community-powered Apache-2.0 project with one maintained product line.
+Causentra is an Apache-2.0 project with one maintained product line.
 
 If this project helps your team, there are three ways to contribute meaningfully:
 
@@ -164,13 +164,13 @@ This project is at a critical stage where runtime reliability, security evidence
 
 Read [FUNDING.md](FUNDING.md) for current support details.
 
-### Open source contribution guide
+### Contributor guide
 
 New contributors are welcome. Start with:
 - [CONTRIBUTING.md](CONTRIBUTING.md) for workflow, review expectations, and coding checks
 - [SUPPORT.md](SUPPORT.md) for response and escalation policy
 - [GOVERNANCE.md](GOVERNANCE.md) for decision rights
-- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community standards
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for project standards
 
 You can also help by reviewing the repo for:
 - docs vs implementation consistency

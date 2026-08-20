@@ -302,7 +302,7 @@ Both SDKs recognize the current OTel well-known identifiers: Anthropic, AWS Bedr
 
 ## Adapter conformance
 
-Community adapters should run `assertAdapterConformance` over a completed fixture. It verifies valid envelopes, unique IDs, exact lifecycle pairs, framework identity, declared private-content exclusion, and optional shared-parent continuity. Maintained adapters run this contract in CI.
+Adapters should run `assertAdapterConformance` over a completed fixture. It verifies valid envelopes, unique IDs, exact lifecycle pairs, framework identity, declared private-content exclusion, and optional shared-parent continuity. Maintained adapters run this contract in CI.
 
 ## Trace ownership and retention
 
@@ -329,7 +329,7 @@ Handoffs and delegations appear in a dedicated relationship view and remain nest
 
 ## Build another framework adapter
 
-Copy the [executable community adapter template](../templates/community-adapter/README.md). It uses official public SDK boundaries, allowlists operational facts, contains telemetry mapping failures, supports a shared parent, and runs `assertAdapterConformance`. A maintained proposal must additionally include a deterministic test against the real target framework.
+Copy the [executable adapter template](../templates/community-adapter/README.md). It uses official public SDK boundaries, allowlists operational facts, contains telemetry mapping failures, supports a shared parent, and runs `assertAdapterConformance`. A maintained proposal must additionally include a deterministic test against the real target framework.
 
 ## Data controls
 

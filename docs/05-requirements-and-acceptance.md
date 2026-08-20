@@ -72,7 +72,7 @@ Given traces from different frameworks, providers, models, sessions, agents, and
 
 Given representative SDK response and streaming-terminal shapes for OpenAI, Anthropic, Gemini, Bedrock, Azure OpenAI, Cohere, Mistral and Groq, when the Python provider observer processes them, then canonical model/usage/cache/finish and available request/timing facts are emitted without content fields. Given the remaining seven canonical provider profiles, their compatible response families preserve provider identity and available usage facts.
 
-### A13: community adapter scaffold
+### A13: adapter scaffold
 
 Given an unchanged copy of the public template, when the root test suite runs, then the adapter compiles, maps paired lifecycles, joins a canonical parent, ignores undeclared private payloads, contains malformed telemetry, and passes the public conformance verifier.
 

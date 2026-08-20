@@ -65,7 +65,7 @@ A pull request is ready to merge only when required checks pass, review concerns
 
 ## Adapter contributions
 
-Start from the executable [community adapter template](templates/community-adapter/README.md). It is compiled and run by the root test suite and demonstrates the required privacy, lifecycle, relationship, parent-context, and conformance behavior.
+Start from the executable [adapter template](templates/community-adapter/README.md). It is compiled and run by the root test suite and demonstrates the required privacy, lifecycle, relationship, parent-context, and conformance behavior.
 
 An adapter must:
 

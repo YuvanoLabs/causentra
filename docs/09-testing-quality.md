@@ -30,7 +30,7 @@ Correct correlation, loss visibility, privacy safety, compatibility, and debugga
 - OTLP conversion never persists known prompt, message, output, tool-argument or exception content.
 - Producer-local sequence never overrides cross-producer timestamp ordering.
 - Safe metadata search and combined trace filters return only matching facets, exclude private content, and reject malformed identifiers.
-- The community template is compiled and its privacy/conformance fixtures run in every root test.
+- The adapter template is compiled and its privacy/conformance fixtures run in every root test.
 - Reusing an event or batch identifier for different bytes fails closed.
 - Collector uniqueness and every read/delete operation include project scope.
 - Successful producer acceptance precedes network delivery and survives restart.

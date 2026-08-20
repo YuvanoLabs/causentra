@@ -2,7 +2,7 @@
   "name": "@example/causentra-adapter",
   "version": "0.0.0",
   "private": true,
-  "description": "Copyable Causentra community adapter template",
+  "description": "Copyable Causentra adapter template",
   "type": "module",
   "main": "./dist/src/index.js",
   "types": "./dist/src/index.d.ts",

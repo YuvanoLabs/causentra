@@ -1,4 +1,4 @@
-# Community adapter template
+# Adapter template
 
 This copyable scaffold demonstrates the minimum acceptable Causentra adapter: public framework hooks, allowlisted operational metadata, fail-open mapping, shared parent context, portable relationships, and executable conformance tests.
 
