@@ -12,6 +12,7 @@
 - Integrity-checked process plugin protocol with default-deny trust, permissions, environment, and executable policy
 - Node.js local dashboard/collector, TypeScript protocol peer, OTLP ingress, CLI, trace portability, and causal relationship inspection
 - Versioned schema fixtures, conformance tests, clean package installs, benchmarks, and repository boundary checks
+- Published Python package: [`causentra 0.1.0a1` on PyPI](https://pypi.org/project/causentra/)
 - Immutable GitHub Actions references, bounded CI jobs, citation metadata, repository discovery metadata, product FAQ, and machine-checked `llms.txt` links
 
 ## Automated local gates
@@ -30,7 +31,7 @@ Exact optional framework validation uses the supported bands in `python/pyprojec
 - Choose final names and verify package/organization ownership.
 - Add the final canonical repository/documentation URLs to package and citation metadata; configure repository description, topics, social preview, sitemap, webmaster tools, and IndexNow only after those URLs exist.
 - Verify `smartbytecoder@gmail.com` is monitored; configure private vulnerability reporting, governance, branch protection, signing, provenance, and release permissions.
-- Configure the PyPI Trusted Publisher for the `smartbytecoder/causentra` repository, `.github/workflows/release.yml` workflow, and protected `pypi` GitHub environment. No long-lived PyPI API token is required or stored.
+- Configure PyPI Trusted Publishing, provenance, and a protected release environment before automating subsequent PyPI releases. The initial `0.1.0a1` release was published manually.
 - Run dependency/SBOM review and an independent security assessment.
 - Validate compatible upstream fixes for the CrewAI and Semantic Kernel optional graphs, then rerun exact adapter and advisory gates; do not promote those extras or the aggregate `frameworks` extra while the current findings remain.
 - Run target broker, TLS, proxy, backup/restore, failure-injection, and 24-hour soak tests.
@@ -38,4 +39,4 @@ Exact optional framework validation uses the supported bands in `python/pyprojec
 - Complete five observed onboarding sessions and publish measured results.
 - Create public/private repositories and hosting only when the owner is ready.
 
-No code in this workspace performs publication, repository creation, hosting, or deployment.
+The owner-only [`scripts/publish-python.bat`](../scripts/publish-python.bat) helper builds, validates, and can upload the Python distribution from Windows. It never stores a PyPI token; repository creation, hosting, and deployment remain owner actions.

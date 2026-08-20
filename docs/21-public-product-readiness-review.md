@@ -14,7 +14,7 @@ The public Python product now implements that runtime boundary. It does not clai
 |---|---|---|
 | Public source repository | **Go after owner setup** | Real contacts, repository controls, independent security review |
 | Python runtime code | **Release-candidate complete** | Optional-framework advisory resolution plus target live-broker, soak, restore, and security evidence |
-| Public packages | **Conditional go** | Namespace ownership, signing, provenance, clean publication rehearsal |
+| Public Python package | **Published alpha** | `causentra 0.1.0a1` is live on PyPI; automated provenance and subsequent-release controls remain |
 | Repository discovery | **Locally ready** | Final URL, real social preview, indexing and external authority after publication |
 | Managed deployment | **Evidence-gated** | Recurring activation and retention |
 

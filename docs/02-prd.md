@@ -86,4 +86,4 @@ A Python-first agent team can capture, retain, inspect, and query a failed or sl
 
 ## Release policy
 
-The public Python source is a release candidate. Core runtime requirements are implemented with deterministic local evidence. Public packages still require owner identity, namespace/provenance/signing checks, target-infrastructure recovery/soak results, and an independent security review.
+The Python runtime is published as the `0.1.0a1` alpha on [PyPI](https://pypi.org/project/causentra/). Core runtime requirements are implemented with deterministic local evidence. Subsequent release automation, provenance, target-infrastructure recovery/soak results, and an independent security review remain release hardening work.

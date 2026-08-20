@@ -6,7 +6,7 @@ Pronounced `kaw-SEN-truh`. Causentra is a privacy-first AI agent observability a
 
 It standardizes agent, model, tool, workflow, handoff, and delegation telemetry across OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, AutoGen, custom agents, and OpenTelemetry producers. Causentra runs locally, requires no account, and does not capture prompts, outputs, tool arguments, arbitrary framework state, or error messages by default.
 
-> **Status: public source release candidate.** The Python runtime is implemented and locally verified. Package publication, independent security review, target-infrastructure soak tests, and the first external onboarding study remain owner release gates.
+> **Status: published PyPI alpha.** Causentra `0.1.0a1` is available on [PyPI](https://pypi.org/project/causentra/). Independent security review, target-infrastructure soak tests, and the first external onboarding study remain production-release gates.
 
 ## Workspace shape
 
@@ -16,6 +16,12 @@ From root:
 
 - `npm install` to bootstrap the workspace.
 - `npm run verify` to run the full repository verification flow.
+
+Install the Python runtime in an application with:
+
+```bash
+python -m pip install --pre causentra
+```
 
 | Start | Understand | Verify |
 |---|---|---|
@@ -74,7 +80,7 @@ Support is deliberately tiered: six Python framework families have maintained na
 
 Adapter compatibility is not a security waiver. The current CrewAI and Semantic Kernel dependency graphs contain unresolved upstream advisories and are not approved for production promotion; use named extras and review the [dated verification evidence](docs/26-verification-evidence.md).
 
-## Try it from source
+## Try Causentra locally
 
 For the authenticated Python-first path, start with the [five-minute developer onboarding](docs/28-developer-onboarding.md). The shorter flow below starts the local Node.js dashboard for repository development.
 
@@ -86,10 +92,10 @@ npm run build
 npm run dev
 ```
 
-Install the Python SDK with maintained adapters and emit a trace:
+Install the published Python SDK with the maintained adapters you use, then emit a trace:
 
 ```bash
-python -m pip install -e "python[openai-agents,langgraph,transports]"
+python -m pip install --pre "causentra[openai-agents,langgraph,transports]"
 npm run example:python
 ```
 
@@ -117,13 +123,13 @@ npm run python:benchmark
 npm run python:benchmark:collector
 ```
 
-The Python distribution is released to PyPI from protected version tags once package ownership and trusted publishing are configured. After the first public release, users install it with:
+The Python runtime is published as [`causentra 0.1.0a1`](https://pypi.org/project/causentra/). Because this is an alpha release, include `--pre` to opt into prerelease updates:
 
 ```bash
-python -m pip install causentra
+python -m pip install --pre causentra
 ```
 
-See the [PyPI release runbook](docs/32-pypi-release.md) for the owner setup and release process.
+See the [PyPI release runbook](docs/32-pypi-release.md) for installation variants and future release operations.
 
 ## Integrate an application
 

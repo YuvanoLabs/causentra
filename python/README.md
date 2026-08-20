@@ -2,6 +2,26 @@
 
 Python-first instrumentation, durable event delivery, processing, and authenticated collection for multi-agent applications. Every component uses the portable `RuntimeEvent` 1.0 contract.
 
+## Install
+
+Causentra is published on [PyPI](https://pypi.org/project/causentra/) for Python 3.10 and later. The current `0.1.0a1` alpha is installed explicitly with `--pre`:
+
+```bash
+python -m pip install --pre causentra
+```
+
+Add only the framework extras your application uses:
+
+```bash
+python -m pip install --pre "causentra[openai-agents,langgraph]"
+```
+
+For contributor development from this repository, use the editable source installation instead:
+
+```bash
+python -m pip install -e ".[dev,openai-agents,langgraph]"
+```
+
 ```python
 from causentra import CausentraRuntime, HttpBatchExporter
 
@@ -21,11 +41,7 @@ with runtime.trace("resolve-ticket"):
 runtime.shutdown()
 ```
 
-Maintained native adapters cover OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, and AutoGen. Install only the framework extras used by the application:
-
-```bash
-python -m pip install -e ".[openai-agents,langgraph]"
-```
+Maintained native adapters cover OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, and AutoGen. Install only the framework extras used by the application.
 
 The aggregate `frameworks` extra exists for compatibility labs. It installs a large upstream dependency graph and is not the recommended production installation. Production environments should select named extras, lock the resolved graph, generate an SBOM, and review the current advisory evidence.
 
@@ -84,4 +100,4 @@ See [production runtime](../docs/24-production-python-runtime.md) and [transport
 
 Prompts, outputs, tool arguments, arbitrary framework state, and error messages are not captured by default. Instrumentation failure never replaces application behavior.
 
-The source is a release candidate. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain release gates.
+Causentra `0.1.0a1` is a published PyPI alpha. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain production-release gates.

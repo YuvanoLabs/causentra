@@ -12,6 +12,7 @@ __pycache__/
 .coverage
 htmlcov/
 .venv/
+.venv-publish/
 venv/
 .agent-runtime/
 .causentra/

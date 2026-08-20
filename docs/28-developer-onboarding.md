@@ -5,16 +5,18 @@ This path produces an authenticated, queryable multi-agent trace without an exte
 ## Prerequisites
 
 - Python 3.10–3.13
-- A local checkout with the current directory set to repository root
+- A working Python environment for the application being instrumented
 - No broker or Node.js process is required for this path
 
 ## Five-minute Python path
 
-Install the public package from source:
+Install the published package from [PyPI](https://pypi.org/project/causentra/):
 
 ```bash
-python -m pip install -e "./python"
+python -m pip install --pre causentra
 ```
+
+The following walkthrough works in any project directory. A repository checkout is only needed to run the supplied `examples/python/authenticated_quickstart.py` example.
 
 Create a loopback collector configuration and a separate high-entropy key file. Existing files are never overwritten.
 
@@ -32,6 +34,7 @@ In terminal two, verify readiness and run the executable example:
 
 ```bash
 causentra --key-file .causentra/collector.key doctor
+# Requires a repository checkout; otherwise, instrument your own application below.
 python examples/python/authenticated_quickstart.py
 causentra --key-file .causentra/collector.key traces
 ```
@@ -95,12 +98,12 @@ The durable exporter commits events to SQLite before transmission. A process or 
 Install only the framework integration in use:
 
 ```bash
-python -m pip install -e "./python[openai-agents]"
-python -m pip install -e "./python[langgraph]"
-python -m pip install -e "./python[crewai]"
-python -m pip install -e "./python[google-adk]"
-python -m pip install -e "./python[semantic-kernel]"
-python -m pip install -e "./python[autogen]"
+python -m pip install --pre "causentra[openai-agents]"
+python -m pip install --pre "causentra[langgraph]"
+python -m pip install --pre "causentra[crewai]"
+python -m pip install --pre "causentra[google-adk]"
+python -m pip install --pre "causentra[semantic-kernel]"
+python -m pip install --pre "causentra[autogen]"
 ```
 
 | Framework | Registration surface | Complete example |

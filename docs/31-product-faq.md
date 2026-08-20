@@ -52,7 +52,17 @@ Replay means explicit redelivery of stored telemetry events to an idempotent han
 
 ## Is Causentra production ready?
 
-The source is a locally verified release candidate. Core code, strict typing, deterministic tests, packaging, clean installs, durability paths, and security gates are implemented. Public production claims still require resolution of the CrewAI and Semantic Kernel optional dependency findings, independent security review, target broker/TLS/proxy testing, backup/restore evidence, a 24-hour soak, remote CI evidence, and owner-controlled release setup.
+Causentra `0.1.0a1` is a published PyPI alpha. Core code, strict typing, deterministic tests, packaging, clean installs, durability paths, and security gates are implemented. Production claims still require resolution of the CrewAI and Semantic Kernel optional dependency findings, independent security review, target broker/TLS/proxy testing, backup/restore evidence, a 24-hour soak, and remote CI evidence.
+
+## How do I install Causentra?
+
+Install the published alpha with Python 3.10 or later:
+
+```bash
+python -m pip install --pre causentra
+```
+
+Framework integrations are optional extras, for example `python -m pip install --pre "causentra[openai-agents]"`. The [Python package page](https://pypi.org/project/causentra/) lists the current release and metadata.
 
 ## Is Causentra open source?
 

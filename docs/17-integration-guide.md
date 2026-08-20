@@ -15,10 +15,12 @@ This Node.js inspection server is intentionally unauthenticated. It refuses a no
 ## Python SDK
 
 ```bash
-python -m pip install -e "python[openai-agents,langgraph]"
+python -m pip install --pre "causentra[openai-agents,langgraph]"
 ```
 
 Choose only the named framework extras used by the application: `openai-agents`, `langgraph`, `crewai`, `google-adk`, `semantic-kernel`, or `autogen`. The aggregate `frameworks` extra is for compatibility validation; production deployments should use a reviewed lock/constraints file and current advisory report.
+
+For editable development from this repository, use `python -m pip install -e "python[dev,openai-agents,langgraph]"` instead.
 
 ```python
 from causentra import CausentraRuntime, HttpBatchExporter

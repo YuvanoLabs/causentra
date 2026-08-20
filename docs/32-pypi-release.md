@@ -1,29 +1,39 @@
-# Publishing Causentra on PyPI
+# Causentra on PyPI
 
-The public Python package is `causentra`. Users install a published release with:
+The Python runtime is publicly published as [`causentra 0.1.0a1`](https://pypi.org/project/causentra/) for Python 3.10 and later. The package contains a source distribution and a universal wheel.
+
+## Install and use
+
+`0.1.0a1` is an alpha, so opt into prereleases explicitly:
 
 ```bash
-python -m pip install causentra
+python -m pip install --pre causentra
 ```
 
-The package is built from `python/` and publishes both a source distribution and a universal wheel. Its release workflow is deliberately separate from CI so the only job that receives a PyPI identity merely downloads the already-built distributions and uploads them.
+Install named extras only when the application needs their matching framework:
 
-## One-time owner setup
+```bash
+python -m pip install --pre "causentra[openai-agents,langgraph]"
+```
 
-1. Create and secure the PyPI owner account that will own `causentra`. Confirm the name is available immediately before the first release.
-2. In PyPI, create a **pending Trusted Publisher** with these exact values:
-   - PyPI project name: `causentra`
-   - Owner: `smartbytecoder`
-   - Repository: `causentra`
-   - Workflow file: `release.yml`
-   - Environment: `pypi`
-3. In GitHub, create the `pypi` environment, set its URL to `https://pypi.org/project/causentra/`, and require approval by a release maintainer. Protect tags matching `v*` so only release maintainers can create them.
+```python
+from causentra import CausentraRuntime, MemoryExporter
 
-Trusted Publishing exchanges a GitHub Actions OIDC identity for a short-lived PyPI credential. There is no `PYPI_TOKEN` secret to create, copy, rotate, or expose.
+exporter = MemoryExporter()
+runtime = CausentraRuntime("support-service", exporter)
+with runtime.trace("resolve-ticket"):
+    with runtime.agent("triage"):
+        pass
+runtime.shutdown()
+```
 
-## Releasing a version
+See the [integration guide](17-integration-guide.md) for framework adapters, transports, and the authenticated collector.
 
-1. Choose the version in `python/pyproject.toml`, update the version string in `python/src/causentra/otel.py`, and ensure the release evidence is complete.
+## Releasing a subsequent version
+
+The first version (`0.1.0a1`) has been published. Every later release must use a new version: PyPI will not let anyone replace a published file.
+
+1. Choose the next version in `python/pyproject.toml`, update the version string in `python/src/causentra/otel.py`, and ensure the release evidence is complete.
 2. From a clean checkout, run:
 
    ```bash
@@ -32,15 +42,19 @@ Trusted Publishing exchanges a GitHub Actions OIDC identity for a short-lived Py
    npm run python:verify
    ```
 
-3. Commit the version changes, then create and push the matching immutable tag. For the present `0.1.0a1` version:
+   On Windows, the reusable publishing helper creates its own isolated virtual environment, builds the sdist/wheel, and validates their metadata without modifying the global Python installation:
 
-   ```bash
-   git tag -a v0.1.0a1 -m "Causentra 0.1.0a1"
-   git push origin v0.1.0a1
+   ```bat
+   scripts\publish-python.bat build
    ```
 
-4. Approve the `pypi` environment deployment after the build and clean-wheel jobs pass. The workflow verifies the tag exactly matches `python/pyproject.toml`, publishes `python/dist/`, and uploads PyPI attestations automatically.
-5. Verify the public artifact from a new virtual environment:
+3. Use the local helper to build and validate the distribution. TestPyPI is optional but recommended before a production upload:
+
+   ```bat
+   scripts\publish-python.bat test-upload
+   scripts\publish-python.bat upload
+   ```
+4. Verify the public artifact from a new virtual environment:
 
    ```bash
    python -m venv .venv-causentra-check
@@ -51,12 +65,8 @@ Trusted Publishing exchanges a GitHub Actions OIDC identity for a short-lived Py
 
 The first release is an alpha (`0.1.0a1`). Pip considers pre-releases only when no final release satisfies the request; use `python -m pip install --pre causentra` if a later final release is already installed or selected.
 
-## Security properties
+## Future automation
 
-- Only a protected `v*` tag can start publication.
-- The tag must equal `v` plus the package version.
-- The build runs before the publish job and installs the wheel in a fresh virtual environment.
-- The publish job has only `id-token: write`; it has no checkout, repository write permission, or long-lived package credential.
-- PyPI's official publishing action attaches package attestations by default.
+Local publishing is the current release path. Before moving future releases to GitHub Actions, configure PyPI Trusted Publishing, a protected release environment, protected version tags, and package provenance. Trusted Publishing exchanges a GitHub Actions OIDC identity for a short-lived PyPI credential, so it does not require a long-lived `PYPI_TOKEN` secret.
 
 Do not delete or re-upload a published version: PyPI package files are immutable. Correct a release with a new version and yank a harmful version if necessary.
