@@ -84,4 +84,4 @@ See [production runtime](../docs/24-production-python-runtime.md) and [transport
 
 Prompts, outputs, tool arguments, arbitrary framework state, and error messages are not captured by default. Instrumentation failure never replaces application behavior.
 
-The source is a public release candidate. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and edition-boundary gates are implemented. Independent security review and target-infrastructure load/soak evidence remain release gates.
+The source is a release candidate. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain release gates.

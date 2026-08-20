@@ -18,4 +18,4 @@ Include the affected version or commit, impact, prerequisites, minimal synthetic
 
 Once a monitored private channel is active, maintainers target acknowledgement within three business days, severity assessment, coordinated remediation, and disclosure after a fix is available. Reporters are credited unless anonymity is requested. No bug bounty or payment is implied.
 
-Security fixes remain public under the open-core commitment. A private enterprise feature does not justify withholding a fix needed by the public SDK, adapters, collector, CLI, schema, or local dashboard.
+Security fixes apply to the complete Causentra product. Optional future capabilities never justify withholding a fix needed by the SDK, adapters, collector, CLI, schema, or local dashboard.

@@ -1,4 +1,4 @@
-# Causentra — open-source multi-agent observability runtime
+# Causentra — multi-agent observability runtime
 
 > **One runtime. Every agent.**
 
@@ -7,6 +7,15 @@ Pronounced `kaw-SEN-truh`. Causentra is a privacy-first AI agent observability a
 It standardizes agent, model, tool, workflow, handoff, and delegation telemetry across OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, AutoGen, custom agents, and OpenTelemetry producers. Causentra runs locally, requires no account, and does not capture prompts, outputs, tool arguments, arbitrary framework state, or error messages by default.
 
 > **Status: public source release candidate.** The Python runtime is implemented and locally verified. Package publication, independent security review, target-infrastructure soak tests, and the first external onboarding study remain owner release gates.
+
+## Workspace shape
+
+This repository is the unified Causentra product workspace. All maintained packages, applications, documentation, examples, templates, and verification live at the repository root.
+
+From root:
+
+- `npm install` to bootstrap the workspace.
+- `npm run verify` to run the full repository verification flow.
 
 | Start | Understand | Verify |
 |---|---|---|
@@ -123,11 +132,9 @@ Published-package installation instructions will be added only after package own
 
 The common contract standardizes trace correlation, W3C context handoff, and the `workflow`, `agent`, `model`, `tool`, error, timing, status, provider/model/usage, and cost-provenance vocabulary. It does not ship provider price tables, infer costs silently, capture hidden reasoning, or re-execute tools. Event replay means redelivery to an idempotent handler, never agent side-effect replay. See the [product readiness review](docs/21-public-product-readiness-review.md).
 
-## Open source and future enterprise service
+## One product, evolving capabilities
 
-The Apache-2.0 edition is intended to remain a complete local product: instrumentation, maintained core adapters, local collection, inspection, privacy controls, portability, and security fixes stay public. There are no local trace-count limits, forced telemetry, account requirements, or cloud dependency.
-
-Causentra Enterprise is planned only if the public project demonstrates recurring use. It may add team retention, collaboration, alerts, analytics, identity, audit, governance, and support; it will extend published public contracts rather than replace or fork the public product. The durable boundary is documented in [editions and publication](docs/16-editions-and-publication.md).
+Causentra has one codebase, one event contract, and one package namespace. It includes local instrumentation, maintained adapters, collection, inspection, privacy controls, portability, and security fixes without trace-count limits, forced telemetry, account requirements, or cloud dependency. Future managed capabilities—such as shared retention, collaboration, alerts, analytics, identity, audit, governance, and support—will extend this same product rather than form a separate product version.
 
 ## Community
 
@@ -137,13 +144,43 @@ Causentra Enterprise is planned only if the public project demonstrates recurrin
 - Project roles and decision rights are defined in [GOVERNANCE.md](GOVERNANCE.md).
 - The evidence-driven public roadmap is in [ROADMAP.md](ROADMAP.md).
 
-## Fund the work
+## Fund the work (Support this project)
 
-Independent maintenance, compatibility testing, documentation, and security response require sustained effort. If Causentra saves your team time, read [FUNDING.md](FUNDING.md) to learn how verified sponsorship will work. Funding never buys control of the public schema, private vulnerability details, or preferential security fixes.
+Causentra is a community-powered Apache-2.0 project with one maintained product line.
+
+If this project helps your team, there are three ways to contribute meaningfully:
+
+- Sponsor the roadmap: help us move validation gates, reduce debt, and accelerate production readiness.
+- Contribute code or docs: implement adapters, improve tests, tighten edge-case coverage, or reduce ambiguity in docs.
+- Improve ecosystem quality: report reproducible issues, benchmark missing cases, and review architecture claims.
+
+### Why sponsorship matters
+
+This project is at a critical stage where runtime reliability, security evidence, and production-grade documentation need sustained review. Sponsorship supports:
+- Continuous maintenance and triage
+- Security and compatibility test expansion
+- Better compatibility and release hardening
+- Real-world integration evidence and benchmarks
+
+Read [FUNDING.md](FUNDING.md) for current support details.
+
+### Open source contribution guide
+
+New contributors are welcome. Start with:
+- [CONTRIBUTING.md](CONTRIBUTING.md) for workflow, review expectations, and coding checks
+- [SUPPORT.md](SUPPORT.md) for response and escalation policy
+- [GOVERNANCE.md](GOVERNANCE.md) for decision rights
+- [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md) for community standards
+
+You can also help by reviewing the repo for:
+- docs vs implementation consistency
+- broken links and stale references
+- boundary regressions
+- missing edge-case tests in adapters, transports, and runtime flows
 
 ## Documentation
 
-Start with the [developer onboarding](docs/28-developer-onboarding.md), [product FAQ](docs/31-product-faq.md), [execution brief](docs/00-execution-brief.md), [PRD](docs/02-prd.md), and [solution architecture](docs/06-solution-architecture.md). The [documentation index](docs/README.md) covers the complete lifecycle, the [brand architecture](docs/29-brand-architecture.md) defines product naming, and the [discoverability plan](docs/30-discoverability-and-search.md) defines truthful repository and search metadata.
+Start with the [developer onboarding](docs/28-developer-onboarding.md), [product FAQ](docs/31-product-faq.md), [PRD](docs/02-prd.md), and [solution architecture](docs/06-solution-architecture.md). The [documentation index](docs/README.md) covers the complete lifecycle, the [brand architecture](docs/29-brand-architecture.md) defines product naming, and the [discoverability plan](docs/30-discoverability-and-search.md) defines truthful repository and search metadata.
 
 ## License
 

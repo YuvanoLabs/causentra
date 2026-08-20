@@ -35,4 +35,4 @@ body:
     id: boundaries
     attributes:
       label: Privacy, compatibility, or operational considerations
-      description: Identify data capture, schema, performance, migration, or edition-boundary effects.
+      description: Identify data capture, schema, performance, migration, or package-boundary effects.

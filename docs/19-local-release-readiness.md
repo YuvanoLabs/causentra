@@ -2,7 +2,7 @@
 
 ## Completed in the workspace
 
-- Apache-2.0 public workspace and separately enforced enterprise Python/TypeScript namespaces
+- Unified Apache-2.0 workspace with one Python package and one TypeScript namespace
 - Dependency-free Python core with strict types, privacy-safe lifecycle API, W3C context, provider extraction, and OTel bridge
 - Six native Python framework adapters tested against exact supported versions; CrewAI and Semantic Kernel remain production-gated by optional upstream advisories
 - Eight deep provider mappings and tested compatibility profiles for all 15 canonical provider IDs
@@ -11,7 +11,7 @@
 - Authenticated Python collector with hashed keys, project isolation, atomic idempotent ingestion, quotas, readiness, metrics, and trace deletion
 - Integrity-checked process plugin protocol with default-deny trust, permissions, environment, and executable policy
 - Node.js local dashboard/collector, TypeScript protocol peer, OTLP ingress, CLI, trace portability, and causal relationship inspection
-- Versioned schema fixtures, conformance tests, clean package installs, benchmarks, and public/enterprise boundary checks
+- Versioned schema fixtures, conformance tests, clean package installs, benchmarks, and repository boundary checks
 - Immutable GitHub Actions references, bounded CI jobs, citation metadata, repository discovery metadata, product FAQ, and machine-checked `llms.txt` links
 
 ## Automated local gates

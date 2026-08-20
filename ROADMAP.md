@@ -1,8 +1,8 @@
-# Public roadmap
+# Product roadmap
 
-This roadmap covers the Apache-2.0 product. Exit criteria depend on evidence, not dates.
+This roadmap covers Causentra. Exit criteria depend on evidence, not dates.
 
-## Current: Python public release candidate
+## Current: Python release candidate
 
 - [x] One privacy-safe lifecycle schema across Python and TypeScript
 - [x] Six maintained Python framework adapters and two maintained TypeScript adapter families
@@ -12,9 +12,8 @@ This roadmap covers the Apache-2.0 product. Exit criteria depend on evidence, no
 - [x] Authenticated, project-isolated Python collector with quotas, readiness, metrics, and durable SQLite WAL storage
 - [x] Permissioned, integrity-checked child-process plugin protocol
 - [x] Causal tree, handoff/delegation view, safe filters, CLI, dashboard, and portable trace lifecycle
-- [x] Separate enterprise Python and TypeScript namespaces consuming exact public contracts
 
-## Gate A: trustworthy public source launch
+## Gate A: trustworthy source launch
 
 - Assign monitored maintainer, security, conduct, and funding contacts
 - Pin reviewed CI actions; enable branch protection and private vulnerability reporting
@@ -42,9 +41,9 @@ Exit: signed packages install cleanly; 4/5 onboarding target; no cross-project o
 
 Exit: retained usage and external ownership demonstrate value beyond repository interest.
 
-## Later enterprise service
+## Later managed capabilities
 
-Enterprise remains in `enterprise/` and consumes exact public versions. Launch requires recurring OSS retention. Candidate value is shared retention, collaboration, identity, governance, analytics, alerts, private deployment, and contracted support; it cannot remove public local capabilities.
+Shared retention, collaboration, identity, governance, analytics, alerts, managed deployment, and contracted support remain future Causentra capabilities. Their delivery requires recurring adoption, and they will use the same packages and event contract as the local runtime.
 
 ## Explicit non-promises
 

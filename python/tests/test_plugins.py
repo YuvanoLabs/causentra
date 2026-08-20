@@ -84,7 +84,7 @@ def test_plugin_engine_routes_out_of_process_and_strips_attributes_by_default(
 def test_plugin_attributes_require_manifest_and_operator_grants(tmp_path: Path) -> None:
     with pytest.raises(PluginPolicyError, match="not explicitly trusted"):
         PluginRuntime(_manifest(tmp_path), policy=PluginPolicy())
-    with pytest.raises(PluginPolicyError, match="event.attributes"):
+    with pytest.raises(PluginPolicyError, match=r"event\.attributes"):
         PluginRuntime(_manifest(tmp_path, attributes=True), policy=_policy(tmp_path))
 
     plugin = PluginRuntime(

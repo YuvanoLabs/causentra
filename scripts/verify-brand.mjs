@@ -2,8 +2,7 @@ import { readFile, readdir } from "node:fs/promises";
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-const publicRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const workspaceRoot = resolve(publicRoot, "..");
+const workspaceRoot = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const verifierPath = fileURLToPath(import.meta.url);
 const excludedDirectories = new Set([
   ".agent-runtime",
@@ -20,7 +19,7 @@ const excludedDirectories = new Set([
 ]);
 const legacyPatterns = [
   /@agentruntime/iu,
-  /\bagentruntime(?:_(?:premium|enterprise))?\b/iu,
+  /\bagentruntime(?:_(?:premium))?\b/iu,
   /\bAGENT_RUNTIME_/u,
   /\bAgent Runtime\b/u,
   /(?<!\.)\bagent-runtime\b/iu,
@@ -58,4 +57,4 @@ if (violations.length > 0) {
   throw new Error(`Legacy brand contract violations:\n${violations.join("\n")}`);
 }
 
-console.log("Causentra brand contract verified across public and enterprise source.");
+console.log("Causentra brand contract verified across the repository source.");

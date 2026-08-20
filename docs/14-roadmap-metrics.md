@@ -24,10 +24,10 @@ GitHub stars and raw events are supporting reach/scale signals, not the north st
 |---|---|---|
 | 0: vertical slice | End-to-end local trace inspection | Repository acceptance tests pass |
 | 1: design-partner alpha | Setup and semantics solve real debugging | 5 active teams; time-to-trace target met |
-| 2: OSS beta | Repeatable community adoption | 50 weekly projects; 30% 4-week retention |
+| 2: product beta | Repeatable adoption | 50 weekly projects; 30% 4-week retention |
 | 3: cloud beta | Shared history/alerts create paid intent | 5 pilots; 3 conversions committed |
 | 4: cloud GA | Reliable self-serve team product | 20 paid teams; SLOs and support proven |
-| 5: enterprise | Governed deployment closes larger buyers | 3 production customers; repeatable controls |
+| 5: governed deployment | Repeatable controls for larger organizations | 3 production customers; repeatable controls |
 | 6: ecosystem | Third parties extend distribution | 20 maintained extensions; >25% usage external |
 
 ## Instrumentation policy

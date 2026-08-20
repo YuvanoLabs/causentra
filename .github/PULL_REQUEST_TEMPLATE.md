@@ -8,7 +8,7 @@ Summarize the implementation and any alternatives rejected.
 
 ## Trust and compatibility
 
-- [ ] Public code has no enterprise dependency or source coupling.
+- [ ] Changes introduce no undeclared package or source coupling.
 - [ ] Sensitive content remains excluded by default.
 - [ ] Public API, schema, configuration and failure behavior are documented.
 - [ ] Compatibility/migration impact is stated; fixtures or ADR are included when required.

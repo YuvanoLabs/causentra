@@ -10,7 +10,7 @@ Earn developer trust and prove recurring operational use before optimizing paid 
 |---|---|---|
 | Individual agent developer | Diagnose failures in minutes | Open local runtime |
 | AI engineering team | One view across tools/frameworks | Cloud design-partner pilot |
-| Platform team | Portable contract and controlled data path | Collector/enterprise workshop |
+| Platform team | Portable contract and controlled data path | Collector and deployment workshop |
 | Security leader | Local defaults and governed capture | Threat-model and deployment review |
 
 ## Launch phases
@@ -21,7 +21,7 @@ Open the Apache-2.0 repository with explicit release-candidate evidence and limi
 
 Exit: 4/5 users get a first trace in five minutes; five projects return weekly; two adapter needs repeat across accounts.
 
-### Public OSS beta
+### Product beta
 
 Ship signed npm packages, quick-start video, framework recipes, architecture explainer, public roadmap, contribution guide, and benchmark methodology. Launch through developer communities only after opt-in activation measurement and support coverage exist.
 
@@ -29,7 +29,7 @@ Exit: 50 weekly active projects, 30% four-week project retention, median issue f
 
 ### Cloud beta and GA
 
-Invite retained OSS teams to hosted retention, sharing, and alerts. Use a time-boxed pilot with success criteria and pricing disclosed upfront. Convert only when the managed service saves operational work.
+Invite retained teams to hosted retention, sharing, and alerts. Use a time-boxed pilot with success criteria and pricing disclosed upfront. Convert only when the managed service saves operational work.
 
 ## Content system
 
@@ -49,7 +49,7 @@ Ask for sponsorship only through verified repository funding links. Explain that
 
 ## Sales motion
 
-Cloud is product-led for small teams. Business and enterprise use founder/customer-engineer sales: qualify production volume, retention, privacy, deployment, identity, procurement, and success outcome. A pilot must have an executive sponsor, technical champion, baseline metric, end date, and conversion decision.
+Cloud is product-led for small teams. Larger organizations use founder/customer-engineer sales: qualify production volume, retention, privacy, deployment, identity, procurement, and success outcome. A pilot must have an executive sponsor, technical champion, baseline metric, end date, and conversion decision.
 
 ## Launch guardrails
 

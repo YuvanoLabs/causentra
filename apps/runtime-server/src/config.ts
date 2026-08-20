@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { dirname, isAbsolute, resolve } from "node:path";
 
-/** Effective configuration for the local OSS runtime. */
+/** Effective configuration for the local Causentra runtime. */
 export interface LocalRuntimeConfig {
   /** Interface to bind. Loopback is the secure default. */
   readonly host: string;

@@ -19,4 +19,4 @@ Search documentation and existing issues before posting. Include versions, opera
 
 Maintainers can help with Causentra behavior and documented integration contracts. They cannot debug proprietary application logic, model quality, provider outages, unreviewed internet deployments, or forks. The Node.js UI collector is loopback-only; the Python collector's supported remote design requires operator-managed TLS, secrets, durable storage, monitoring, backups, and target-infrastructure validation.
 
-Community answers are best-effort. A future enterprise service may offer contracted support, but public bug triage and security fixes will not be withheld to force an upgrade.
+Community answers are best-effort. Future contracted support may add defined coverage, but bug triage and security fixes will not be withheld to force an upgrade.

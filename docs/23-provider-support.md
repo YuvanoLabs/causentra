@@ -45,7 +45,7 @@ response = runtime.call_model(
 
 Async SDKs use `await runtime.call_model_async(...)`. Streaming code uses `runtime.provider_model(...)` and calls `observer.observe_response(chunk)` for terminal/usage chunks. Repeated observations merge only the allowlisted fields.
 
-Cost remains caller-supplied because prices, discounts, regions, cached-token rates and enterprise agreements change independently. `cost_usd` is accepted only with `cost_basis` equal to `provider_reported`, `catalog_estimate`, or `user_supplied`.
+Cost remains caller-supplied because prices, discounts, regions, cached-token rates and negotiated agreements change independently. `cost_usd` is accepted only with `cost_basis` equal to `provider_reported`, `catalog_estimate`, or `user_supplied`.
 
 ## Compatibility policy
 

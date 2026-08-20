@@ -40,6 +40,7 @@ for (const field of ["cff-version: 1.2.0", 'title: "Causentra"', "license: Apach
 
 for (const manifestPath of await manifests("packages", "apps")) {
   const manifest = JSON.parse(await readFile(new URL(manifestPath, root), "utf8"));
+  if (manifest.private === true || manifest.license === "UNLICENSED") continue;
   if (typeof manifest.description !== "string" || manifest.description.length < 30) {
     throw new Error(`${manifestPath} needs a descriptive package summary`);
   }

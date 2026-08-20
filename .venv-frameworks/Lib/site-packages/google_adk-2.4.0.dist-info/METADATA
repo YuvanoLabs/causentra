@@ -1,0 +1,358 @@
+Metadata-Version: 2.4
+Name: google-adk
+Version: 2.4.0
+Summary: Agent Development Kit
+Author-email: Google LLC <googleapis-packages@google.com>
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3 :: Only
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Classifier: Programming Language :: Python :: 3.13
+Classifier: Programming Language :: Python :: 3.14
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Classifier: Typing :: Typed
+License-File: LICENSE
+Requires-Dist: aiosqlite>=0.21
+Requires-Dist: authlib>=1.6.6,<2
+Requires-Dist: click>=8.1.8,<9
+Requires-Dist: fastapi>=0.133,<1
+Requires-Dist: google-auth[pyopenssl]>=2.47
+Requires-Dist: google-genai>=2.9,<3
+Requires-Dist: graphviz>=0.20.2,<1
+Requires-Dist: httpx>=0.27,<1
+Requires-Dist: jsonschema>=4.23,<5
+Requires-Dist: opentelemetry-api>=1.39,<=1.42.1
+Requires-Dist: opentelemetry-sdk>=1.39,<=1.42.1
+Requires-Dist: packaging>=21
+Requires-Dist: pydantic>=2.12,<3
+Requires-Dist: python-dotenv>=1,<2
+Requires-Dist: python-multipart>=0.0.9,<1
+Requires-Dist: pyyaml>=6.0.2,<7
+Requires-Dist: requests>=2.32.4,<3
+Requires-Dist: starlette>=1.0.1,<2
+Requires-Dist: tenacity>=9,<10
+Requires-Dist: typing-extensions>=4.5,<5
+Requires-Dist: tzlocal>=5.3,<6
+Requires-Dist: uvicorn>=0.34,<1
+Requires-Dist: watchdog>=6,<7
+Requires-Dist: websockets>=15.0.1,<16
+Requires-Dist: a2a-sdk>=0.3.4,<0.4 ; extra == "a2a"
+Requires-Dist: google-cloud-agentidentitycredentials>=0.1,<0.2 ; extra == "agent-identity"
+Requires-Dist: google-cloud-iamconnectorcredentials>=0.1,<0.2 ; extra == "agent-identity"
+Requires-Dist: anyio>=4.9,<5 ; extra == "all"
+Requires-Dist: daytona>=0.191 ; extra == "all"
+Requires-Dist: e2b>=2,<3 ; extra == "all"
+Requires-Dist: google-api-python-client>=2.157,<3 ; extra == "all"
+Requires-Dist: google-cloud-aiplatform[agent-engines]>=1.148.1,<2 ; extra == "all"
+Requires-Dist: google-cloud-bigquery>=2.2 ; extra == "all"
+Requires-Dist: google-cloud-bigquery-storage>=2 ; extra == "all"
+Requires-Dist: google-cloud-bigtable>=2.39.1 ; extra == "all"
+Requires-Dist: google-cloud-dataplex>=1.7,<3 ; extra == "all"
+Requires-Dist: google-cloud-discoveryengine>=0.13.12,<0.14 ; extra == "all"
+Requires-Dist: google-cloud-parametermanager>=0.4,<1 ; extra == "all"
+Requires-Dist: google-cloud-pubsub>=2,<3 ; extra == "all"
+Requires-Dist: google-cloud-resource-manager>=1.12,<2 ; extra == "all"
+Requires-Dist: google-cloud-secret-manager>=2.22,<3 ; extra == "all"
+Requires-Dist: google-cloud-spanner>=3.56,<4 ; extra == "all"
+Requires-Dist: google-cloud-speech>=2.30,<3 ; extra == "all"
+Requires-Dist: google-cloud-storage>=2.18,<4 ; extra == "all"
+Requires-Dist: mcp>=1.24,<2 ; extra == "all"
+Requires-Dist: opentelemetry-exporter-gcp-logging>=1.9.0a0,<=1.12.0a0 ; extra == "all"
+Requires-Dist: opentelemetry-exporter-gcp-monitoring>=1.9.0a0,<2 ; extra == "all"
+Requires-Dist: opentelemetry-exporter-gcp-trace>=1.9,<2 ; extra == "all"
+Requires-Dist: opentelemetry-exporter-otlp-proto-http>=1.36 ; extra == "all"
+Requires-Dist: opentelemetry-resourcedetector-gcp>=1.9.0a0,<2 ; extra == "all"
+Requires-Dist: pyarrow>=14 ; extra == "all"
+Requires-Dist: python-dateutil>=2.9.0.post0,<3 ; extra == "all"
+Requires-Dist: sqlalchemy>=2,<3 ; extra == "all"
+Requires-Dist: sqlalchemy-spanner>=1.14 ; extra == "all"
+Requires-Dist: google-antigravity>=0.1,<0.2 ; extra == "antigravity"
+Requires-Dist: protobuf>=6 ; extra == "antigravity"
+Requires-Dist: google-benchmark>=1.9 ; extra == "benchmark"
+Requires-Dist: google-adk-community ; extra == "community"
+Requires-Dist: daytona>=0.191 ; extra == "daytona"
+Requires-Dist: sqlalchemy>=2,<3 ; extra == "db"
+Requires-Dist: sqlalchemy-spanner>=1.14 ; extra == "db"
+Requires-Dist: flit>=3.10 ; extra == "dev"
+Requires-Dist: isort==8.0.1 ; extra == "dev"
+Requires-Dist: mdformat==0.7.22 ; extra == "dev"
+Requires-Dist: mdformat-gfm ; extra == "dev"
+Requires-Dist: mypy>=1.15 ; extra == "dev"
+Requires-Dist: pre-commit>=4 ; extra == "dev"
+Requires-Dist: pre-commit-hooks==4.6 ; extra == "dev"
+Requires-Dist: pyink==25.12 ; extra == "dev"
+Requires-Dist: pylint>=2.6 ; extra == "dev"
+Requires-Dist: pyproject-fmt==2.24 ; extra == "dev"
+Requires-Dist: ruff==0.15.17 ; extra == "dev"
+Requires-Dist: tox>=4.23.2 ; extra == "dev"
+Requires-Dist: tox-uv>=1.33.2 ; extra == "dev"
+Requires-Dist: autodoc-pydantic ; extra == "docs"
+Requires-Dist: furo ; extra == "docs"
+Requires-Dist: myst-parser ; extra == "docs"
+Requires-Dist: sphinx<9 ; extra == "docs"
+Requires-Dist: sphinx-autodoc-typehints ; extra == "docs"
+Requires-Dist: sphinx-click ; extra == "docs"
+Requires-Dist: sphinx-rtd-theme ; extra == "docs"
+Requires-Dist: e2b>=2,<3 ; extra == "e2b"
+Requires-Dist: gepa>=0.1 ; extra == "eval"
+Requires-Dist: google-cloud-aiplatform[evaluation]>=1.148 ; extra == "eval"
+Requires-Dist: jinja2>=3.1.4,<4 ; extra == "eval"
+Requires-Dist: pandas>=2.2.3 ; extra == "eval"
+Requires-Dist: rouge-score>=0.1.2 ; extra == "eval"
+Requires-Dist: tabulate>=0.9 ; extra == "eval"
+Requires-Dist: anthropic>=0.78 ; extra == "extensions"
+Requires-Dist: beautifulsoup4>=3.2.2 ; extra == "extensions"
+Requires-Dist: crewai[tools] ; extra == "extensions" and ( python_version>='3.11' and python_version<'3.12')
+Requires-Dist: docker>=7 ; extra == "extensions"
+Requires-Dist: google-cloud-firestore>=2.11,<3 ; extra == "extensions"
+Requires-Dist: k8s-agent-sandbox>=0.1.1.post3 ; extra == "extensions"
+Requires-Dist: kubernetes>=29 ; extra == "extensions"
+Requires-Dist: langgraph>=0.2.60,<0.4.8 ; extra == "extensions"
+Requires-Dist: litellm>=1.84 ; extra == "extensions"
+Requires-Dist: llama-index-embeddings-google-genai>=0.3 ; extra == "extensions"
+Requires-Dist: llama-index-readers-file>=0.4 ; extra == "extensions"
+Requires-Dist: lxml>=5.3 ; extra == "extensions"
+Requires-Dist: openai>=2.20,<3 ; extra == "extensions"
+Requires-Dist: pypika>=0.50 ; extra == "extensions"
+Requires-Dist: toolbox-adk>=1,<2 ; extra == "extensions"
+Requires-Dist: google-cloud-aiplatform[agent-engines]>=1.148.1,<2 ; extra == "gcp"
+Requires-Dist: google-cloud-bigquery>=2.2 ; extra == "gcp"
+Requires-Dist: google-cloud-bigquery-storage>=2 ; extra == "gcp"
+Requires-Dist: google-cloud-bigtable>=2.39.1 ; extra == "gcp"
+Requires-Dist: google-cloud-dataplex>=1.7,<3 ; extra == "gcp"
+Requires-Dist: google-cloud-discoveryengine>=0.13.12,<0.14 ; extra == "gcp"
+Requires-Dist: google-cloud-parametermanager>=0.4,<1 ; extra == "gcp"
+Requires-Dist: google-cloud-pubsub>=2,<3 ; extra == "gcp"
+Requires-Dist: google-cloud-resource-manager>=1.12,<2 ; extra == "gcp"
+Requires-Dist: google-cloud-secret-manager>=2.22,<3 ; extra == "gcp"
+Requires-Dist: google-cloud-spanner>=3.56,<4 ; extra == "gcp"
+Requires-Dist: google-cloud-speech>=2.30,<3 ; extra == "gcp"
+Requires-Dist: google-cloud-storage>=2.18,<4 ; extra == "gcp"
+Requires-Dist: opentelemetry-exporter-gcp-logging>=1.9.0a0,<=1.12.0a0 ; extra == "gcp"
+Requires-Dist: opentelemetry-exporter-gcp-monitoring>=1.9.0a0,<2 ; extra == "gcp"
+Requires-Dist: opentelemetry-exporter-gcp-trace>=1.9,<2 ; extra == "gcp"
+Requires-Dist: opentelemetry-exporter-otlp-proto-http>=1.36 ; extra == "gcp"
+Requires-Dist: opentelemetry-resourcedetector-gcp>=1.9.0a0,<2 ; extra == "gcp"
+Requires-Dist: pyarrow>=14 ; extra == "gcp"
+Requires-Dist: python-dateutil>=2.9.0.post0,<3 ; extra == "gcp"
+Requires-Dist: anyio>=4.9,<5 ; extra == "mcp"
+Requires-Dist: mcp>=1.24,<2 ; extra == "mcp"
+Requires-Dist: opentelemetry-instrumentation-google-genai>=0.7b1,<1 ; extra == "otel-gcp"
+Requires-Dist: opentelemetry-instrumentation-grpc>=0.43b0,<1 ; extra == "otel-gcp"
+Requires-Dist: opentelemetry-instrumentation-httpx>=0.54b0,<1 ; extra == "otel-gcp"
+Requires-Dist: slack-bolt>=1.22 ; extra == "slack"
+Requires-Dist: a2a-sdk>=0.3,<0.4 ; extra == "test"
+Requires-Dist: anthropic>=0.78 ; extra == "test"
+Requires-Dist: anyio>=4.9,<5 ; extra == "test"
+Requires-Dist: beautifulsoup4>=3.2.2 ; extra == "test"
+Requires-Dist: crewai[tools] ; extra == "test" and ( python_version>='3.11' and python_version<'3.12')
+Requires-Dist: daytona>=0.191 ; extra == "test"
+Requires-Dist: docker>=7 ; extra == "test"
+Requires-Dist: e2b>=2,<3 ; extra == "test"
+Requires-Dist: gepa>=0.1 ; extra == "test"
+Requires-Dist: google-antigravity>=0.1,<0.2 ; extra == "test"
+Requires-Dist: google-api-python-client>=2.157,<3 ; extra == "test"
+Requires-Dist: google-cloud-agentidentitycredentials>=0.1,<0.2 ; extra == "test"
+Requires-Dist: google-cloud-aiplatform[agent-engines, evaluation]>=1.148.1,<2 ; extra == "test"
+Requires-Dist: google-cloud-bigquery>=2.2 ; extra == "test"
+Requires-Dist: google-cloud-bigquery-storage>=2 ; extra == "test"
+Requires-Dist: google-cloud-bigtable>=2.39.1 ; extra == "test"
+Requires-Dist: google-cloud-dataplex>=1.7,<3 ; extra == "test"
+Requires-Dist: google-cloud-discoveryengine>=0.13.12,<0.14 ; extra == "test"
+Requires-Dist: google-cloud-firestore>=2.11,<3 ; extra == "test"
+Requires-Dist: google-cloud-iamconnectorcredentials>=0.1,<0.2 ; extra == "test"
+Requires-Dist: google-cloud-parametermanager>=0.4,<1 ; extra == "test"
+Requires-Dist: google-cloud-pubsub>=2,<3 ; extra == "test"
+Requires-Dist: google-cloud-resource-manager>=1.12,<2 ; extra == "test"
+Requires-Dist: google-cloud-secret-manager>=2.22,<3 ; extra == "test"
+Requires-Dist: google-cloud-spanner>=3.56,<4 ; extra == "test"
+Requires-Dist: google-cloud-speech>=2.30,<3 ; extra == "test"
+Requires-Dist: google-cloud-storage>=2.18,<4 ; extra == "test"
+Requires-Dist: jinja2>=3.1.4,<4 ; extra == "test"
+Requires-Dist: kubernetes>=29 ; extra == "test"
+Requires-Dist: langchain-community>=0.3.17 ; extra == "test"
+Requires-Dist: langgraph>=0.2.60,<0.4.8 ; extra == "test"
+Requires-Dist: litellm>=1.84 ; extra == "test"
+Requires-Dist: llama-index-readers-file>=0.4 ; extra == "test"
+Requires-Dist: lxml>=5.3 ; extra == "test"
+Requires-Dist: mcp>=1.24,<2 ; extra == "test"
+Requires-Dist: openai>=2.20,<3 ; extra == "test"
+Requires-Dist: opentelemetry-exporter-gcp-logging>=1.9.0a0,<=1.12.0a0 ; extra == "test"
+Requires-Dist: opentelemetry-exporter-gcp-monitoring>=1.9.0a0,<2 ; extra == "test"
+Requires-Dist: opentelemetry-exporter-gcp-trace>=1.9,<2 ; extra == "test"
+Requires-Dist: opentelemetry-exporter-otlp-proto-http>=1.36 ; extra == "test"
+Requires-Dist: opentelemetry-instrumentation-google-genai>=0.7b1,<1 ; extra == "test"
+Requires-Dist: opentelemetry-resourcedetector-gcp>=1.9.0a0,<2 ; extra == "test"
+Requires-Dist: pandas>=2.2.3 ; extra == "test"
+Requires-Dist: protobuf>=6 ; extra == "test"
+Requires-Dist: pyarrow>=14 ; extra == "test"
+Requires-Dist: pypika>=0.50 ; extra == "test"
+Requires-Dist: pytest>=9,<10 ; extra == "test"
+Requires-Dist: pytest-asyncio>=0.25 ; extra == "test"
+Requires-Dist: pytest-mock>=3.14 ; extra == "test"
+Requires-Dist: pytest-xdist>=3.6.1 ; extra == "test"
+Requires-Dist: python-dateutil>=2.9.0.post0,<3 ; extra == "test"
+Requires-Dist: python-multipart>=0.0.9 ; extra == "test"
+Requires-Dist: rouge-score>=0.1.2 ; extra == "test"
+Requires-Dist: slack-bolt>=1.22 ; extra == "test"
+Requires-Dist: sqlalchemy>=2,<3 ; extra == "test"
+Requires-Dist: sqlalchemy-spanner>=1.14 ; extra == "test"
+Requires-Dist: tabulate>=0.9 ; extra == "test"
+Requires-Dist: tomli>=2,<3 ; extra == "test" and ( python_version<'3.11')
+Requires-Dist: toolbox-adk>=1,<2 ; extra == "toolbox"
+Requires-Dist: google-api-python-client>=2.157,<3 ; extra == "tools"
+Project-URL: changelog, https://github.com/google/adk-python/blob/main/CHANGELOG.md
+Project-URL: documentation, https://google.github.io/adk-docs/
+Project-URL: homepage, https://google.github.io/adk-docs/
+Project-URL: repository, https://github.com/google/adk-python
+Provides-Extra: a2a
+Provides-Extra: agent-identity
+Provides-Extra: all
+Provides-Extra: antigravity
+Provides-Extra: benchmark
+Provides-Extra: community
+Provides-Extra: daytona
+Provides-Extra: db
+Provides-Extra: dev
+Provides-Extra: docs
+Provides-Extra: e2b
+Provides-Extra: eval
+Provides-Extra: extensions
+Provides-Extra: gcp
+Provides-Extra: mcp
+Provides-Extra: otel-gcp
+Provides-Extra: slack
+Provides-Extra: test
+Provides-Extra: toolbox
+Provides-Extra: tools
+
+# Agent Development Kit (ADK) 2.0
+
+[![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+[![PyPI version](https://img.shields.io/pypi/v/google-adk.svg)](https://pypi.org/project/google-adk/)
+[![Python versions](https://img.shields.io/pypi/pyversions/google-adk.svg)](https://pypi.org/project/google-adk/)
+[![PyPI downloads](https://static.pepy.tech/badge/google-adk/month)](https://pepy.tech/project/google-adk)
+[![Unit Tests](https://github.com/google/adk-python/actions/workflows/python-unit-tests.yml/badge.svg)](https://github.com/google/adk-python/actions/workflows/python-unit-tests.yml)
+[![Docs](https://img.shields.io/badge/docs-latest-blue.svg)](https://google.github.io/adk-docs/)
+
+<h2 align="center">
+  <img src="https://raw.githubusercontent.com/google/adk-python/main/assets/agent-development-kit.png" width="256"/>
+</h2>
+<h3 align="center">
+  An open-source, code-first Python framework for building, evaluating, and deploying sophisticated AI agents with flexibility and control.
+</h3>
+<h3 align="center">
+  Important Links:
+  <a href="https://google.github.io/adk-docs/">Docs</a>,
+  <a href="https://github.com/google/adk-samples">Samples</a> &
+  <a href="https://github.com/google/adk-web">ADK Web</a>.
+</h3>
+
+______________________________________________________________________
+
+> **⚠️ BREAKING CHANGES FROM 1.x**
+>
+> This release includes breaking changes to the agent API, event model, and
+> session schema. **Sessions generated by ADK 2.0 are readable by ADK 1.28+
+> (extra fields will be ignored), but are incompatible with older 1.x versions.**
+
+______________________________________________________________________
+
+## 🔥 What's New in 2.0
+
+- **Workflow Runtime**: A graph-based execution engine for composing
+  deterministic execution flows for agentic apps, with support for routing,
+  fan-out/fan-in, loops, retry, state management, dynamic nodes,
+  human-in-the-loop, and nested workflows.
+
+- **Task API**: Structured agent-to-agent delegation with multi-turn task
+  mode, single-turn controlled output, mixed delegation patterns,
+  human-in-the-loop, and task agents as workflow nodes.
+
+## 🚀 Installation
+
+```bash
+pip install google-adk
+```
+
+**Requirements:** Python 3.10+.
+
+To install optional integrations, you can use the following command:
+
+```bash
+pip install "google-adk[extensions]"
+```
+
+The release cadence is roughly bi-weekly.
+
+## Quick Start
+
+> **Beginner Note:** ADK applications are built using two main classes:
+> **`Agent`** (defines an AI's instructions, tools, and behavior) and
+> **`Workflow`** (orchestrates agents and tasks in a graph-based flow).
+
+### Agent
+
+```python
+from google.adk import Agent
+
+root_agent = Agent(
+    name="greeting_agent",
+    model="gemini-2.5-flash",
+    instruction="You are a helpful assistant. Greet the user warmly.",
+)
+```
+
+### Workflow
+
+```python
+from google.adk import Agent, Workflow
+
+generate_fruit_agent = Agent(
+    name="generate_fruit_agent",
+    instruction="Return the name of a random fruit. Return only the name.",
+)
+
+generate_benefit_agent = Agent(
+    name="generate_benefit_agent",
+    instruction="Tell me a health benefit about the specified fruit.",
+)
+
+root_agent = Workflow(
+    name="root_agent",
+    edges=[("START", generate_fruit_agent, generate_benefit_agent)],
+)
+```
+
+### Run Locally
+
+```bash
+# Interactive CLI
+adk run path/to/my_agent
+
+# Web UI (supports multi-agent directories or pointing directly to a single agent folder)
+adk web path/to/agents_dir
+```
+
+## 📚 Documentation
+
+- **Getting Started**: https://google.github.io/adk-docs/
+- **Samples**: See `contributing/workflow_samples/` and
+  `contributing/task_samples/` for workflow and task API examples.
+
+## 🤝 Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for details.
+
+## 📄 License
+
+This project is licensed under the Apache 2.0 License — see the
+[LICENSE](LICENSE) file for details.
+

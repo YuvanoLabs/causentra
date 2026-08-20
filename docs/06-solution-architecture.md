@@ -5,7 +5,7 @@
 - Keep application instrumentation independent of storage and UI.
 - Preserve a portable, versioned semantic contract.
 - Make local use dependency-light and offline-capable.
-- Allow managed ingestion and enterprise controls without replacing SDKs.
+- Allow managed ingestion and advanced controls without replacing SDKs.
 - Degrade telemetry without breaking the instrumented application.
 
 ## Public Python logical design
@@ -42,9 +42,8 @@ Standards ingress: OTel/OpenInference producer -> OTLP/HTTP JSON or protobuf -> 
 | Stage | Data plane | Control plane |
 |---|---|---|
 | Local | In-process SDK + localhost inspection service | None |
-| OSS release candidate | SDKs, six Python adapters, durable transports/engine, authenticated self-host collector | Local key/project config |
-| Cloud | Regional ingest, stream processing, object/column stores | Identity, orgs, projects, billing, alerts |
-| Enterprise | Customer-managed collector/gateway | SaaS or private control plane; policy/audit |
+| Release candidate | SDKs, six Python adapters, durable transports/engine, authenticated self-host collector | Local key/project config |
+| Future managed deployment | Regional ingest, stream processing, object/column stores | Identity, organizations, projects, billing, alerts, policy and audit |
 
 ## Cloud target architecture
 
@@ -70,10 +69,9 @@ Adapters translate official framework callbacks to the common schema. Exporters 
 - All stored records validate against the public schema.
 - Every maintained adapter passes the public conformance verifier.
 - A real mixed-framework integration keeps one canonical trace and causal parent chain.
-- The unchanged community adapter template compiles and passes conformance in the root suite.
+- The adapter template compiles and passes conformance in the root suite.
 - Trace discovery dimensions are derived from safe stored metadata, never raw payload search.
 - A new exporter requires no runtime API change.
-- Public source imports no enterprise namespace; enterprise consumes exact public package versions only.
 - Every authenticated collector key, query, and uniqueness constraint carries project scope.
 - A trace exported from local can be ingested by cloud without transformation.
 - Tenant scope is mandatory in every future cloud query/store key.

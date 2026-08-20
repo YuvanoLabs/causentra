@@ -14,7 +14,7 @@ const MAX_BODY_BYTES = 1024 * 1024;
 const TRACE_ID_PATTERN = /^[0-9a-f]{32}$/;
 const PUBLIC_DIRECTORY = fileURLToPath(new URL("../../public/", import.meta.url));
 
-/** Options for embedding or starting the local OSS HTTP service. */
+/** Options for embedding or starting the local Causentra HTTP service. */
 export interface RuntimeServerOptions {
   readonly host?: string;
   readonly port?: number;

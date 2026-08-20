@@ -5,8 +5,8 @@ This path produces an authenticated, queryable multi-agent trace without an exte
 ## Prerequisites
 
 - Python 3.10–3.13
-- A local checkout with the current directory set to `opensource/`
-- No broker, Node.js process, or enterprise package is required for this path
+- A local checkout with the current directory set to repository root
+- No broker or Node.js process is required for this path
 
 ## Five-minute Python path
 

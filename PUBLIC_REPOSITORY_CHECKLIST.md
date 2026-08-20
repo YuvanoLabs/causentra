@@ -7,12 +7,12 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Confirm the final product, organization, npm scope, schema domain and trademark position.
 - [ ] Publish at least one accountable maintainer identity and an ownership-continuity plan.
 - [ ] Confirm `smartbytecoder@gmail.com` is monitored and protected with account recovery controls.
-- [ ] Create a verified funding account; add `.github/FUNDING.yml` only with the real handle or URL.
+- [ ] Complete GitHub Sponsors enrollment for `YuvanoLabs`; the repository Sponsor button is configured in `.github/FUNDING.yml`.
 
 ## Repository creation
 
-- [ ] Create the public repository from the contents of `opensource/` only.
-- [ ] Confirm `enterprise/`, `edition-contract.json`, orchestration artifacts, runtime data and local caches are absent from the public repository and its history.
+- [ ] Create the public repository from this workspace root only.
+- [ ] Confirm local caches, runtime test artifacts, credentials, and generated files are excluded from the repository and its history.
 - [ ] Copy the exact description and 20-topic set from [repository discoverability and search readiness](docs/30-discoverability-and-search.md); remove any topic that stops being accurate.
 - [ ] Add a truthful social preview showing the actual dashboard; do not use future-product mockups without labeling them.
 - [ ] Add the final repository URL to Python/npm package metadata and `CITATION.cff`; do not commit guessed organization or domain URLs.
@@ -54,4 +54,4 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Add and validate truthful software structured data on the hosted product page; do not add ratings, customers, pricing, or availability that do not exist.
 - [ ] Monitor indexing, query impressions, qualified onboarding clicks, broken links, and incorrect AI-generated descriptions.
 
-The public source may launch only with explicit evidence/limitations. Package preview, public beta, and enterprise launch require the phase exit evidence in `ROADMAP.md`.
+The source may launch only with explicit evidence and limitations. Package preview, product beta, and managed deployment require the phase exit evidence in `ROADMAP.md`.

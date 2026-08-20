@@ -16,7 +16,7 @@ The public Python product now implements that runtime boundary. It does not clai
 | Python runtime code | **Release-candidate complete** | Optional-framework advisory resolution plus target live-broker, soak, restore, and security evidence |
 | Public packages | **Conditional go** | Namespace ownership, signing, provenance, clean publication rehearsal |
 | Repository discovery | **Locally ready** | Final URL, real social preview, indexing and external authority after publication |
-| Enterprise launch | **Evidence-gated** | Recurring OSS activation and retention |
+| Managed deployment | **Evidence-gated** | Recurring activation and retention |
 
 ## Business-problem fit
 
@@ -33,7 +33,7 @@ The public Python product now implements that runtime boundary. It does not clai
 | Explain failed/slow work | Causal tree, timeline, relationships, filters, CLI/API | Solved |
 | Content minimization | Maintained adapters omit sensitive bodies by default | Strong trust differentiator |
 
-The product addresses the intended operational standardization problem. It is more than an observability wrapper: the Python edition now spans instrumentation, durable processing, delivery, collection, and controlled extension while retaining one public event contract.
+The product addresses the intended operational standardization problem. It is more than an observability wrapper: the Python runtime now spans instrumentation, durable processing, delivery, collection, and controlled extension while retaining one event contract.
 
 ## Coverage statement
 
@@ -72,7 +72,7 @@ Repository-side discovery is implemented through a descriptive README, package k
 
 ## Trust and adoption assessment
 
-Trust-building public commitments are present: Apache-2.0, no enterprise import, no account or forced telemetry, no trace-count limit, local portability, public security fixes, content-minimizing adapters, deletion/export, strict contribution/security processes, and explicit limitations.
+Trust-building commitments are present: Apache-2.0, one package namespace, no account or forced telemetry, no trace-count limit, local portability, security fixes, content-minimizing adapters, deletion/export, strict contribution/security processes, and explicit limitations.
 
 The strongest adoption wedge is a Python team combining two or more agent frameworks/providers and needing a common causal trace plus broker-ready integration. The onboarding story is credible from source; public package installation and a short mixed-framework demonstration will materially reduce friction after owner release controls are ready.
 
@@ -88,7 +88,7 @@ The strongest adoption wedge is a Python team combining two or more agent framew
 | P0 | Public CI matrix and immutable action review | All declared versions/OS jobs pass |
 | P1 | Package ownership, signing, provenance, rollback rehearsal | Clean signed install and verified artifact contents |
 | P1 | Five external onboarding sessions | At least four first traces within five minutes |
-| P2 | Retention measurement | Recurring use before enterprise launch |
+| P2 | Retention measurement | Recurring use before managed deployment |
 
 ## Final assessment
 

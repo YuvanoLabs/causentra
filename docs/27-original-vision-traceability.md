@@ -1,6 +1,6 @@
 # Original vision traceability
 
-This matrix maps `Agent infra.txt` to the release-candidate implementation. “Implemented” means code and deterministic tests exist; it does not imply hosted operation or external certification.
+This matrix maps the product's original vision to the release-candidate implementation. “Implemented” means code and deterministic tests exist; it does not imply hosted operation or external certification.
 
 | Original capability | Public implementation | Status/boundary |
 |---|---|---|
@@ -22,13 +22,13 @@ This matrix maps `Agent infra.txt` to the release-candidate implementation. “I
 | Python collector | Auth, project isolation, quotas, WAL, query/delete, backup, readiness, metrics | Implemented single-node self-hosted data plane |
 | CLI | Python init/doctor/traces/trace/delete/backup/retention plus Node local UI CLI | Implemented |
 | Local dashboard | Node.js loopback dashboard over the same event contract | Implemented public protocol peer |
-| Governance | Capture policy, project authorization, plugin permissions, edition boundary | Implemented runtime controls; enterprise policy engine is enterprise |
-| Managed cloud/team collaboration/SSO/SCIM/audit/SLA | Separate enterprise namespace and contracts | Not launched; gated by OSS retention |
+| Governance | Capture policy, project authorization and plugin permissions | Implemented runtime controls |
+| Managed cloud/team collaboration/SSO/SCIM/audit/SLA | Future Causentra capabilities | Not launched; gated by recurring adoption |
 | Prompt/reasoning/tool-output replay | Excluded by default | Intentional privacy/safety boundary |
 | VS Code extension/marketplace | No release-candidate code | Demand and maintainer gated |
 
 ## Interpretation
 
-The public release candidate implements the infrastructure spine promised by the original architecture: six agent frameworks, portable lifecycle semantics, durable processing, six transports, local/self-host collection, observability, and controlled extensions. Managed collaboration and enterprise identity remain enterprise domains, not missing public dependencies.
+The release candidate implements the infrastructure spine promised by the original architecture: six agent frameworks, portable lifecycle semantics, durable processing, six transports, local/self-host collection, observability, and controlled extensions. Managed collaboration and organization-wide identity are future Causentra capabilities, not missing runtime dependencies.
 
 The project does not claim that installing one package can automatically observe every framework/provider without registration. Native adapters use official extension surfaces; custom and standards-based applications use explicit SDK or OTLP integration. This is the maintainable and trustworthy meaning of cross-framework standardization.

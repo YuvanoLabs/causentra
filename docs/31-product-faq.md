@@ -40,7 +40,7 @@ The durable Python transport layer supports HTTP, WebSocket, Kafka, NATS JetStre
 
 ## Can Causentra run locally or self-hosted?
 
-Yes. The public product requires no account or hosted service. It includes a loopback development dashboard and an authenticated Python collector for a single-node self-hosted data plane. Multi-region high availability remains outside the Community release candidate.
+Yes. Causentra requires no account or hosted service. It includes a loopback development dashboard and an authenticated Python collector for a single-node self-hosted data plane. Multi-region high availability is not yet offered.
 
 ## Is sensitive agent content collected?
 
@@ -56,11 +56,11 @@ The source is a locally verified release candidate. Core code, strict typing, de
 
 ## Is Causentra open source?
 
-The Community edition is Apache-2.0 and remains independently useful without an account, cloud dependency, or local trace-count limit. Security fixes, local portability, core instrumentation, and maintained public adapters remain public.
+Yes. Causentra is Apache-2.0 and remains useful without an account, cloud dependency, or local trace-count limit. Security fixes, local portability, core instrumentation, and maintained adapters are part of the same product.
 
-## What is Causentra Enterprise?
+## What managed capabilities are planned?
 
-Causentra Enterprise is a separately namespaced future edition for managed retention, collaboration, identity, governance, analytics, deployment, and contracted support. It may extend exact released public contracts but cannot become a dependency of the Community product.
+Managed retention, collaboration, identity, governance, analytics, deployment, and contracted support are future Causentra capabilities. They will use the same product namespace and event contract as the local runtime.
 
 ## How should a developer start?
 

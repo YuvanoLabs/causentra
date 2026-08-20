@@ -76,4 +76,4 @@ Deletion in cloud must cover primary stores, projections, caches, and scheduled 
 
 ## Security roadmap
 
-Public beta requires dependency scanning, secret scanning, coordinated disclosure, abuse limits, security contact, and an external review of ingestion. Cloud GA requires SSO-ready identity, RBAC, audit logging, encryption in transit/at rest, backup restore tests, incident response, subprocessors, and privacy terms. Enterprise readiness then adds SAML/OIDC, SCIM, customer-managed keys where justified, residency, private networking, and SOC 2 evidence collection.
+Release requires dependency scanning, secret scanning, coordinated disclosure, abuse limits, security contact, and an external review of ingestion. Managed deployment requires SSO-ready identity, RBAC, audit logging, encryption in transit/at rest, backup restore tests, incident response, subprocessors, privacy terms, SAML/OIDC, SCIM, customer-managed keys where justified, residency, private networking, and SOC 2 evidence collection.

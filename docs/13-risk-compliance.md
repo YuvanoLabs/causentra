@@ -12,7 +12,7 @@
 | Schema fragmentation | Medium/High | RFCs, fixtures, OTel mapping | Adapter-specific core fields grow |
 | Event loss undermines trust | Medium/High | Explicit semantics, spool, loss metrics | Undetected accepted-event loss |
 | Open-source/cloud conflict | Medium/Medium | Published feature boundary | Community fork/complaints repeat |
-| Enterprise work derails core | Medium/High | Design-partner qualification | >40% roadmap one-off work |
+| One-off expansion work derails core | Medium/High | Design-partner qualification | >40% roadmap one-off work |
 | Vendor dependency | Medium/Medium | Portable data and infrastructure interfaces | Exit cost exceeds two quarters |
 | Optional framework supply chain | High/High | Named extras, exact compatibility tests, SBOM/advisory review, explicit dispositions | New critical/high advisory or blocked fix |
 | Search or AI answer misrepresentation | Medium/Medium | Canonical FAQ, dated evidence, `llms.txt`, corrections and claim review | Incorrect capability/availability claim recurs |
@@ -33,7 +33,7 @@ Until compatible upstream releases are validated:
 1. M0: data inventory, secure defaults, dependency/secret scanning, disclosure contact.
 2. Public beta: privacy policy, terms, DPA template, subprocessors, deletion workflow, SBOM/provenance.
 3. Cloud GA: formal access reviews, change management, incident/BCP evidence, vendor risk, retention controls.
-4. Enterprise: SOC 2 Type I then Type II based on demand; GDPR/UK GDPR operating evidence; regional and sector requirements only with qualified opportunities.
+4. Regulated deployment: SOC 2 Type I then Type II based on demand; GDPR/UK GDPR operating evidence; regional and sector requirements only with qualified opportunities.
 
 Certification is an outcome of operating controls, not a substitute for them. Legal counsel must validate jurisdiction-specific commitments.
 

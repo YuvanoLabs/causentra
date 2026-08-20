@@ -21,10 +21,10 @@ Two-week iterations, trunk-based development, short-lived branches, automated ga
 |---|---|---|
 | M0 vertical slice | Python-first SDK, supported TypeScript SDK, and local runtime | Completed: cross-language acceptance scenarios pass |
 | M1 public release candidate | Six Python adapters, durable data plane, authenticated collector, plugins | Completed locally; external assurance pending |
-| M2 public OSS beta | Packages, OTLP mapping, docs site, contribution process | 50 weekly active projects; crash-free ≥99% |
+| M2 product beta | Packages, OTLP mapping, docs site, contribution process | 50 weekly active projects; crash-free ≥99% |
 | M3 cloud private beta | Auth ingest, tenancy, retention, sharing | 5 pilots; zero cross-tenant test failures |
 | M4 cloud GA | Billing, alerts, support, SLOs | 20 paying teams; on-call and DR proven |
-| M5 enterprise | SSO/SCIM, audit, private deployment | 3 production enterprise customers |
+| M5 governed deployment | SSO/SCIM, audit, private deployment | 3 production customers |
 
 ## Release-candidate implementation sequence
 
@@ -47,7 +47,7 @@ Two-week iterations, trunk-based development, short-lived branches, automated ga
 
 ## Team shape through cloud beta
 
-Founding phase: product/architecture lead, two SDK/backend engineers, one full-stack engineer, and fractional design/security/DevRel. Add a reliability engineer before managed production workloads and a customer engineer before enterprise pilots.
+Founding phase: product/architecture lead, two SDK/backend engineers, one full-stack engineer, and fractional design/security/DevRel. Add a reliability engineer before managed production workloads and a customer engineer before governed-deployment pilots.
 
 ## Definition of ready
 

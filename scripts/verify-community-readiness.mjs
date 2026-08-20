@@ -40,7 +40,7 @@ const readme = contents.get("README.md") ?? "";
 for (const requiredClaim of [
   "Status: public source release candidate",
   "What works today",
-  "future enterprise service",
+  "One product, evolving capabilities",
   "Fund the work",
 ]) {
   if (!readme.includes(requiredClaim)) {
@@ -102,7 +102,12 @@ console.log(
 async function markdownFiles(directory) {
   const files = [];
   for (const entry of await readdir(new URL(`${directory}/`, root), { withFileTypes: true })) {
-    if (["node_modules", "dist", ".causentra"].includes(entry.name)) continue;
+    if (
+      ["node_modules", "dist", ".causentra", ".venv", "venv", ".venv-frameworks"].includes(entry.name) ||
+      entry.name.startsWith(".venv-")
+    ) {
+      continue;
+    }
     const child = directory === "." ? entry.name : `${directory}/${entry.name}`;
     if (entry.isDirectory()) files.push(...(await markdownFiles(child)));
     else if (entry.name.endsWith(".md")) files.push(child);

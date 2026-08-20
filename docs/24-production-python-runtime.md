@@ -48,7 +48,7 @@ Compatibility tests install these exact bands and verify native registration. Ad
 - `SqliteCollectorStore.backup(path)` creates a transactionally consistent atomic backup while the embedded collector is running.
 - Security headers, request IDs and generic external errors are enabled. Keys and payloads are never logged.
 
-The public collector is a production single-node data plane. Multi-region replication, SSO, organization RBAC, billing and contracted HA belong to the separate enterprise control plane. SQLite files should reside on durable local block storage with filesystem-level encryption and tested backup/restore. Batch idempotency tombstones intentionally survive trace deletion so a delayed retry cannot resurrect deleted data; prune them only under an explicit retention policy.
+The collector is a production single-node data plane. Multi-region replication, SSO, organization RBAC, billing and contracted HA are future managed-deployment capabilities. SQLite files should reside on durable local block storage with filesystem-level encryption and tested backup/restore. Batch idempotency tombstones intentionally survive trace deletion so a delayed retry cannot resurrect deleted data; prune them only under an explicit retention policy.
 
 ## Plugin security
 

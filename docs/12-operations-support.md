@@ -34,11 +34,11 @@ The executable public runtime procedures for spool backlog/dead letters, secure 
 
 ## Customer support
 
-OSS support uses documentation, Discussions, and issues with no guaranteed response. Paid plans add ticketing and defined coverage. Enterprise plans may add named contacts, shared channels, architecture reviews, and enterprise response. Support never requests raw prompts or secrets by default; diagnostic bundles are reviewable before upload.
+Support uses documentation, Discussions, and issues with no guaranteed response. Paid support may add ticketing, defined coverage, named contacts, shared channels, and architecture reviews. Support never requests raw prompts or secrets by default; diagnostic bundles are reviewable before upload.
 
 ## Release lifecycle
 
-Publish semantic versions, changelog, supported Node/runtime matrix, deprecation notices, migration steps, and checksums/provenance. Critical security fixes receive coordinated releases. Support at most two current minor SDK lines after GA unless enterprise contracts state otherwise.
+Publish semantic versions, supported Node/runtime matrix, deprecation notices, migration steps, and checksums/provenance. Critical security fixes receive coordinated releases. Support at most two current minor SDK lines after GA unless a documented support agreement states otherwise.
 
 ## Operational readiness review
 

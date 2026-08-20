@@ -30,7 +30,7 @@ Useful focused commands:
 ```bash
 npm run typecheck
 npm test
-npm run verify:oss
+npm run verify
 npm run verify:packages
 ```
 
@@ -42,7 +42,6 @@ npm run verify:install:adapters
 
 ## Change standards
 
-- Preserve the one-way edition boundary: public code must never import enterprise code.
 - Keep instrumentation fail-open; telemetry failure must not replace application results or exceptions.
 - Default to excluding prompt, output, state, tool-argument, metadata, and error-message content.
 - Add or update tests for behavior, failure paths, privacy, and framework compatibility.

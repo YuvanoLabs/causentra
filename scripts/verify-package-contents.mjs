@@ -44,7 +44,6 @@ for (const [workspace, entry] of packages) {
     (path) =>
       path.includes("/test/") ||
       path.startsWith("test/") ||
-      path.startsWith("enterprise/") ||
       path.includes("node_modules"),
   );
   if (forbidden.length > 0) {

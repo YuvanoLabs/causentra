@@ -17,7 +17,7 @@ from ..adapter import AdapterEventBridge
 from ..types import EventAttributes, EventExporter, Redactor, TraceContext
 
 try:  # Keeps the dependency-free base package importable.
-    from google.adk.plugins import BasePlugin as _BasePlugin  # type: ignore[import-untyped]
+    from google.adk.plugins import BasePlugin as _BasePlugin
 except ImportError:  # pragma: no cover - exercised by dependency-free installs
 
     class _BasePlugin:  # type: ignore[no-redef]

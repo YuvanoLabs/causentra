@@ -2,7 +2,7 @@
 
 ## Stable boundary
 
-`RuntimeEvent` schema `1.0` is the interchange boundary across SDKs, adapters, local storage, collectors, and future enterprise services. Package versions and schema versions evolve independently.
+`RuntimeEvent` schema `1.0` is the interchange boundary across SDKs, adapters, local storage, collectors, and future managed services. Package versions and schema versions evolve independently.
 
 The canonical artifact is `@causentra/sdk/schema/v1`, backed by fixtures in `packages/sdk/fixtures/v1` and the runtime validator.
 

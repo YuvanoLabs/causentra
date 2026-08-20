@@ -10,7 +10,7 @@ The original idea targets teams operating multiple AI agents and providers. The 
 
 Python is the primary SDK and adapter surface. TypeScript remains maintained. Both produce `RuntimeEvent` 1.0, use W3C Trace Context, and send to the same HTTP/OTLP collector. Neither language owns the schema.
 
-Public Python code lives under `python/src/causentra`. Future private Python extensions must use the sibling enterprise repository and the `causentra_enterprise` namespace. Public code cannot import enterprise code; enterprise consumes released public contracts.
+Python code lives under `python/src/causentra` and is released with the same product contract as the TypeScript packages.
 
 ## Consequences
 

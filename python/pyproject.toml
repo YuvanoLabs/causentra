@@ -39,7 +39,6 @@ Homepage = "https://github.com/smartbytecoder/causentra"
 Documentation = "https://github.com/smartbytecoder/causentra/tree/main/docs"
 Repository = "https://github.com/smartbytecoder/causentra"
 Issues = "https://github.com/smartbytecoder/causentra/issues"
-Changelog = "https://github.com/smartbytecoder/causentra/blob/main/CHANGELOG.md"
 
 [project.scripts]
 causentra = "causentra.cli:main"

@@ -28,7 +28,7 @@ Status: public source release candidate. Do not describe Causentra as a hosted s
 - [Data, API, and security model](docs/07-data-api-security.md): privacy defaults and threat model
 - [Verification evidence](docs/26-verification-evidence.md): tests, builds, benchmarks, audits, and known findings
 - [Release readiness](docs/19-local-release-readiness.md): completed work and external production gates
-- [Open-source value standard](docs/20-oss-value-standard.md): permanent Community commitments
+- [Product readiness review](docs/21-public-product-readiness-review.md): current evidence, limitations, and launch gates
 
 ## Project participation
 

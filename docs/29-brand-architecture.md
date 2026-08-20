@@ -24,9 +24,6 @@ Category description:
 | Causentra Replay | Safe event redelivery and future sandboxed evaluation workflows |
 | Causentra Relay | Durable HTTP, WebSocket and broker transport layer |
 | Causentra Connectors | Maintained framework and provider adapters |
-| Causentra Community | Apache-2.0 public edition |
-| Causentra Enterprise | Private extensions built only on released public contracts |
-| Causentra Cloud | Reserved future managed service; not currently offered |
 
 “Replay” never means automatic re-execution of side-effecting tools. Current public replay is durable event redelivery to an idempotent handler.
 
@@ -38,16 +35,14 @@ Category description:
 | Python primary class | `CausentraRuntime` |
 | Python CLI | `causentra` |
 | Python collector CLI | `causentra-collector` |
-| Enterprise Python import | `causentra_enterprise` |
 | Public npm scope | `@causentra/*` |
-| Private npm scope | `@causentra-enterprise/*` |
 | Environment prefix | `CAUSENTRA_*` |
 | Semantic attributes | `causentra.*` |
 | Local state directory | `.causentra/` |
 
-## Edition language
+## Product language
 
-Use **Causentra Community** for the public edition and **Causentra Enterprise** for private extensions. Do not call the public edition “basic,” “lite,” or “free-only.” The public runtime is a complete local product and remains the adoption and trust foundation.
+Use **Causentra** for the entire product. Describe hosted or managed capabilities as future Causentra capabilities, not as a separate namespace or product tier.
 
 ## Voice
 
