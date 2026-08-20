@@ -117,7 +117,13 @@ npm run python:benchmark
 npm run python:benchmark:collector
 ```
 
-Published-package installation instructions will be added only after package ownership, provenance, and release signing are verified. Until then, commands in this section are intentionally source-based.
+The Python distribution is released to PyPI from protected version tags once package ownership and trusted publishing are configured. After the first public release, users install it with:
+
+```bash
+python -m pip install causentra
+```
+
+See the [PyPI release runbook](docs/32-pypi-release.md) for the owner setup and release process.
 
 ## Integrate an application
 

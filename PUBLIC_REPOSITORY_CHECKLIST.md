@@ -33,6 +33,8 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Run live Kafka, NATS, Redis, MQTT, WebSocket, TLS/proxy, failure-recovery, backup/restore, and 24-hour soak gates on target infrastructure.
 - [ ] Verify the Python 3.10–3.13 and Node 22/24 Windows, Linux and macOS matrices pass remotely.
 - [ ] Verify Python/npm package ownership, trusted publishing/provenance, signing and recovery access.
+- [ ] Register `causentra` as a PyPI Trusted Publisher for this repository's `.github/workflows/release.yml` workflow and the `pypi` GitHub environment; require a maintainer review on that environment.
+- [ ] Confirm the first tag matches the Python package version exactly (currently `v0.1.0a1`), then verify `python -m pip install causentra` from a clean environment after publication.
 - [ ] Review every wheel, sdist, and npm archive; publish no package from the orchestration parent.
 - [ ] Complete an independent security review and resolve critical/high findings.
 - [ ] Record a release rollback/deprecation procedure and security advisory workflow.

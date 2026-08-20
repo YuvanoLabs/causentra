@@ -30,6 +30,7 @@ Exact optional framework validation uses the supported bands in `python/pyprojec
 - Choose final names and verify package/organization ownership.
 - Add the final canonical repository/documentation URLs to package and citation metadata; configure repository description, topics, social preview, sitemap, webmaster tools, and IndexNow only after those URLs exist.
 - Verify `smartbytecoder@gmail.com` is monitored; configure private vulnerability reporting, governance, branch protection, signing, provenance, and release permissions.
+- Configure the PyPI Trusted Publisher for the `smartbytecoder/causentra` repository, `.github/workflows/release.yml` workflow, and protected `pypi` GitHub environment. No long-lived PyPI API token is required or stored.
 - Run dependency/SBOM review and an independent security assessment.
 - Validate compatible upstream fixes for the CrewAI and Semantic Kernel optional graphs, then rerun exact adapter and advisory gates; do not promote those extras or the aggregate `frameworks` extra while the current findings remain.
 - Run target broker, TLS, proxy, backup/restore, failure-injection, and 24-hour soak tests.

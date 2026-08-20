@@ -2,6 +2,8 @@ node_modules/
 dist/
 build/
 *.egg-info/
+python/.eggs/*
+!python/.eggs/.gitkeep
 __pycache__/
 *.py[cod]
 .pytest_cache/
