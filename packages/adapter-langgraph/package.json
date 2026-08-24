@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "Privacy-first LangGraph and LangChain observability adapter for Causentra",
   "keywords": ["langgraph", "langchain", "ai-agents", "agent-observability", "tracing", "opentelemetry"],
-  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/adapter-langgraph#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/adapter-langgraph#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "url": "git+https://github.com/YuvanoLabs/causentra.git",
     "directory": "packages/adapter-langgraph"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "type": "module",
   "main": "./dist/src/index.js",

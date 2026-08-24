@@ -136,6 +136,7 @@ See the [PyPI release runbook](docs/32-pypi-release.md) for installation variant
 - [Five-minute authenticated Python onboarding](docs/28-developer-onboarding.md)
 - [Direct SDK, six native framework adapters, collector and transport recipes](docs/17-integration-guide.md)
 - [Production Python runtime](docs/24-production-python-runtime.md)
+- [Single-node production deployment runbook](docs/34-production-deployment-runbook.md)
 - [Transport and plugin operations](docs/25-transport-plugin-operations.md)
 - [Adapter template](templates/community-adapter/README.md)
 - [Event schema compatibility policy](docs/18-schema-compatibility.md)

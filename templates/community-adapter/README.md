@@ -11,6 +11,7 @@ This copyable scaffold demonstrates the minimum acceptable Causentra adapter: pu
 5. Map lifecycle events explicitly. Do not monkey-patch private methods or spread arbitrary framework objects into attributes.
 6. Add a deterministic real-framework integration test in addition to the included contract fixture.
 7. Copy the repository `LICENSE`, create an accurate `NOTICE`, document limitations and shutdown behavior, then run the complete workspace verification.
+8. After copying the template outside this repository, run `npm install` before building or testing so its pinned TypeScript and Node test declarations are available.
 
 From the repository root, the unchanged template is validated with:
 

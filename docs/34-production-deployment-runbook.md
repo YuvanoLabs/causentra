@@ -1,65 +1,35 @@
 # Production deployment runbook
 
-This runbook is for the supported Causentra Python collector: a single-node,
+This runbook covers the supported Causentra Python collector: a single-node,
 project-isolated service backed by SQLite on durable local block storage. It is
-not a high-availability or organization-RBAC design. Do not describe this
-deployment as multi-region, managed SaaS, or a substitute for an OS/container
-security boundary.
+not a multi-region high-availability design or an organization-RBAC control
+plane.
 
-## Production acceptance boundary
+## Deployment acceptance
 
-The deployment owner accepts this runbook only after all of the following are
-true:
+Before admitting production traffic, a named team must own the host, encrypted
+volume, TLS certificate lifecycle, secret store, backup target, monitoring, and
+rollback. Use one project key per workload and a different operator key for
+`/metrics`. Keep raw keys only in the approved secret store; configuration holds
+only SHA-256 digests.
 
-- a named team owns the host, volume, certificate lifecycle, secret store,
-  backup target, and monitoring destination;
-- every workload has a unique project key and `/metrics` has a separate
-  operator key;
-- remote traffic is TLS-protected and is not directly exposed to the public
-  internet without an approved network boundary;
-- the producer outbox and collector database have an explicit retention policy
-  and free-space alerts; and
-- a restore drill and temporary collector-outage drill passed using synthetic
-  data.
-
-These are deployment gates, not a claim that the published `0.1.0a1` alpha has
-completed independent assurance. The remaining product-release gates are in
-[verification evidence](26-verification-evidence.md) and the [readiness
-review](21-public-product-readiness-review.md).
-
-## Prepare identities and storage
-
-Install a named release into an isolated environment. Select only the extras
-that the workload needs; the aggregate `frameworks` extra is for compatibility
-testing, not a production dependency policy.
+Install a named release and create one digest per raw key without echoing it:
 
 ```bash
 python -m venv /opt/causentra/venv
 /opt/causentra/venv/bin/python -m pip install --upgrade pip
 /opt/causentra/venv/bin/python -m pip install --pre causentra
-```
-
-Create the database directory on an encrypted, durable local volume. The
-service account needs read/write access to the database and read-only access to
-configuration and certificates. Keep raw bearer keys only in the approved secret
-store; the collector configuration stores only their lowercase SHA-256 digests.
-
-Use the no-echo helper once for each high-entropy key:
-
-```bash
 /opt/causentra/venv/bin/causentra-key-hash
 ```
 
-Record the digest in configuration, deliver the raw key only to its producer or
-operator secret, and rotate by adding a new principal, moving clients, then
-removing the old principal. Never put a raw key in configuration, a unit file,
-the repository, an image, or a log.
+Select only the framework extras in use. The aggregate `frameworks` extra is a
+compatibility-lab dependency set, not a production dependency policy.
 
-## Configure the collector
+## Collector configuration
 
-Save this strict JSON document as `/etc/causentra/collector.json`. Relative
-database and TLS paths are resolved from the configuration file, so absolute
-paths make recovery unambiguous. Replace every placeholder before startup.
+Save strict JSON as `/etc/causentra/collector.json`; replace placeholders before
+starting the service. Relative database and TLS paths resolve from this file, so
+absolute paths make recovery unambiguous.
 
 ```json
 {
@@ -69,13 +39,13 @@ paths make recovery unambiguous. Replace every placeholder before startup.
     {
       "id": "payments-producer-2026-08",
       "projectId": "payments-production",
-      "sha256": "<sha256 from causentra-key-hash>",
+      "sha256": "<digest from causentra-key-hash>",
       "role": "project"
     },
     {
       "id": "operations-metrics-2026-08",
       "projectId": "operations",
-      "sha256": "<different sha256 from causentra-key-hash>",
+      "sha256": "<different digest from causentra-key-hash>",
       "role": "operator"
     }
   ],
@@ -99,19 +69,15 @@ paths make recovery unambiguous. Replace every placeholder before startup.
 }
 ```
 
-The collector refuses a non-loopback bind without a certificate and private key
-unless `allowInsecureRemote` is explicitly set to `true`. That override is only
-for an isolated development network. Set both TLS fields or neither; TLS 1.2 is
-the minimum when the collector terminates TLS itself.
+The collector rejects a non-loopback bind without TLS unless an unsafe override
+is explicitly enabled. That override is development-only. `413` means body or
+batch capacity was exceeded; `429` means a rate limit was exceeded. Neither is a
+successful delivery.
 
-The limits are starting values, not universal sizing advice. Establish capacity
-from workload measurements. A `413` means a body or batch limit was exceeded;
-`429` means a rate limit was exceeded. Neither is a successful delivery.
+## Service lifecycle
 
-## Run with a supervised lifecycle
-
-For a Linux host using systemd, run a dedicated unprivileged account. Adapt the
-paths to the deployment standard.
+Run an unprivileged service account under a supervisor. This systemd baseline
+must be tested against the host's certificate and database permissions.
 
 ```ini
 [Unit]
@@ -136,79 +102,52 @@ ProtectHome=true
 WantedBy=multi-user.target
 ```
 
-Use platform-native secret management, certificate rotation, a firewall, and
-volume encryption. Validate stricter service hardening against required
-certificate and database paths before enforcing it. On `SIGTERM`, the collector
-stops accepting work, drains active requests, checkpoints SQLite WAL, then closes
-the store. Give the supervisor more time than `requestTimeoutSeconds + 5`.
+Use platform-native secret management, firewall controls, TLS renewal, and
+volume encryption. On `SIGTERM`, the collector drains active requests,
+checkpoints SQLite WAL, and closes the store. Give the supervisor more than
+`requestTimeoutSeconds + 5` to complete this sequence.
 
-## Validate before admitting production traffic
-
-From a trusted host with the project raw key in an approved secret file:
+## Pre-production exercises
 
 ```bash
 causentra --url https://collector.internal.example:4318 \
   --key-file /run/secrets/causentra-project-key doctor
 ```
 
-`doctor` must report healthy, ready, and authenticated. Send one synthetic trace
-through the same durable exporter settings the application will use, then verify
-that the project key can list and read only its own trace. An operator key is
-required for `/metrics`; a project key must receive `403`.
+`doctor` must report healthy, ready, and authenticated. Then use the real
+producer settings to send a synthetic trace and validate each condition:
 
 | Exercise | Pass condition |
 |---|---|
-| Restart collector during delivery | The producer outbox redelivers; no committed event is lost and duplicates are safe. |
-| Stop producer during delivery | `flush()` reports pending work; a restart drains the SQLite outbox. |
-| Exhaust a limit | The collector returns `413` or `429`, alerting reports the rejection, and the service remains healthy. |
-| Cross-project query | A key cannot list, read, or delete another project’s data. |
-| Invalid key | The collector returns a generic authorization failure and no key is logged. |
+| Restart during delivery | The producer outbox redelivers and duplicates are safe. |
+| Stop a producer during delivery | `flush()` reports pending work; restart drains the outbox. |
+| Exhaust a limit | The collector returns `413` or `429`, alerting sees it, and the service stays healthy. |
+| Cross-project request | A key cannot list, read, or delete another project's data. |
+| Invalid key | Authorization fails generically and no key is logged. |
 
-Monitor request failures, rate limits, accepted and duplicate events, storage
-usage, outbox/dead-letter counts, process restarts, TLS expiry, and disk free
-space. Alert if a producer `flush()` returns false, a worker dies, dead letters
-grow, or capacity crosses the agreed warning threshold.
+Alert on request failures, rate limits, accepted and duplicate events, storage
+usage, outbox/dead-letter counts, process restarts, certificate expiry, and disk
+free space. A false `flush()`, worker death, or growing dead letters requires an
+incident record and explicit duplicate-safe recovery.
 
-## Back up, restore, and retain deliberately
+## Backup, retention, and rollback
 
-Create an online-consistent backup with the CLI; do not copy SQLite files while
-the collector is active.
+Use the online-consistent backup command; do not copy SQLite files while the
+collector is active.
 
 ```bash
-causentra backup \
-  --config /etc/causentra/collector.json \
+causentra backup --config /etc/causentra/collector.json \
   --output /var/backups/causentra/collector-$(date +%F).db
-```
-
-Test the backup on a stopped, isolated collector before relying on it. Verify
-readiness, a project-scoped trace count, and a synthetic ingest/query/delete
-cycle. Restore only while the collector is stopped; preserve ownership and
-permissions, then repeat the same validation before reopening traffic.
-
-Trace deletion does not remove idempotency tombstones: a delayed retry must not
-resurrect deleted data. Prune only under a retention policy that exceeds the
-maximum expected retry window:
-
-```bash
-causentra prune-idempotency \
-  --config /etc/causentra/collector.json \
+causentra prune-idempotency --config /etc/causentra/collector.json \
   --older-than-days 30
 ```
 
-## Release handoff and rollback
+Test restores on an isolated stopped collector. Verify readiness, project-scoped
+trace counts, and a synthetic ingest/query/delete cycle before reopening
+traffic. Idempotency tombstones outlive trace deletion so delayed retries cannot
+resurrect deleted data; prune only after the documented retry window.
 
-Promote a deployment only with a recorded package version, artifact digest,
-resolved dependency lock/SBOM, configuration revision, validation timestamp, and
-rollback owner. Upgrade one node or isolated environment first; exercise ingest,
-query, deletion, graceful shutdown, and restore before broad rollout.
-
-Keep the prior environment and a verified database backup through the rollback
-window. If rollback is required, stop the collector, restore the prior
-application environment and database only when needed, then validate readiness
-and a synthetic trace before reopening traffic. Do not silently purge an outbox
-or dead letters to make a dashboard look healthy—record the incident and use
-explicit duplicate-safe recovery.
-
-For runtime semantics, transport guarantees, and plugin boundaries, see
-[production runtime](24-production-python-runtime.md) and [transport and plugin
-operations](25-transport-plugin-operations.md).
+Promote only a recorded package version, artifact digest, dependency lock/SBOM,
+configuration revision, validation timestamp, and rollback owner. Keep the prior
+environment and a verified backup through the rollback window. Do not purge an
+outbox or dead letters merely to make a dashboard appear healthy.

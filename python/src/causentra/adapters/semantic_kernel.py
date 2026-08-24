@@ -44,7 +44,7 @@ class SemanticKernelFilterAdapter:
         """Register this adapter on a ``semantic_kernel.Kernel`` instance."""
 
         try:
-            from semantic_kernel.filters import FilterTypes
+            from semantic_kernel.filters import FilterTypes  # type: ignore[import-not-found]
         except ImportError as error:  # pragma: no cover - optional dependency guard
             raise ImportError(
                 "Semantic Kernel support requires causentra[semantic-kernel]"

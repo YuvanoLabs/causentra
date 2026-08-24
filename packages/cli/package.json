@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "CLI for local AI agent traces, diagnostics, export, and lifecycle operations",
   "keywords": ["ai-agents", "agent-observability", "tracing", "cli", "local-first", "opentelemetry"],
-  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/cli#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/cli#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "url": "git+https://github.com/YuvanoLabs/causentra.git",
     "directory": "packages/cli"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "type": "module",
   "bin": {

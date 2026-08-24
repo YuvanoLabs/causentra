@@ -3,13 +3,13 @@
   "version": "0.0.1",
   "private": true,
   "description": "Local-first production infrastructure for observable AI agents",
-  "homepage": "https://github.com/smartbytecoder/causentra#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git"
+    "url": "git+https://github.com/YuvanoLabs/causentra.git"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "workspaces": [
     "packages/*",

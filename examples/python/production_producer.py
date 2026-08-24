@@ -1,8 +1,8 @@
-"""Production-oriented durable producer example for an authenticated collector.
+"""Production-oriented durable producer for an authenticated Causentra collector.
 
-This example intentionally emits only synthetic lifecycle facts. Replace the
-``process_ticket`` body with application work; do not pass prompts, model
-responses, tool arguments, credentials, or exception messages to Causentra.
+The example emits synthetic lifecycle facts only. Replace the marked blocks with
+application work; never pass prompts, responses, tool payloads, keys, or raw
+exception messages to Causentra.
 """
 
 from __future__ import annotations
@@ -20,43 +20,40 @@ from causentra import (
 )
 
 
-def _read_project_key() -> str:
-    """Read the project key from a secret file without logging its value."""
+def _project_key() -> str:
+    """Read the project key from an operator-provided secret file."""
 
-    key_path = Path(os.environ["CAUSENTRA_KEY_FILE"])
     try:
-        key = key_path.read_text(encoding="utf-8").strip()
+        value = Path(os.environ["CAUSENTRA_KEY_FILE"]).read_text(encoding="utf-8").strip()
     except OSError as error:
         raise RuntimeError("CAUSENTRA_KEY_FILE could not be read") from error
-    if not 32 <= len(key) <= 512:
+    if not 32 <= len(value) <= 512:
         raise RuntimeError("collector project key must contain 32 to 512 characters")
-    return key
+    return value
 
 
-def _collector_endpoint() -> str:
-    """Return a valid collector ingestion URL, requiring TLS off loopback."""
+def _endpoint() -> str:
+    """Validate that remote delivery uses HTTPS and has no embedded credentials."""
 
-    endpoint = os.environ["CAUSENTRA_ENDPOINT"]
-    parsed = urlparse(endpoint)
+    value = os.environ["CAUSENTRA_ENDPOINT"]
+    parsed = urlparse(value)
     if parsed.path != "/v1/events" or parsed.query or parsed.fragment:
-        raise RuntimeError("CAUSENTRA_ENDPOINT must be an origin ending in /v1/events")
+        raise RuntimeError("CAUSENTRA_ENDPOINT must end in /v1/events")
     if parsed.username or parsed.password or not parsed.hostname:
         raise RuntimeError("CAUSENTRA_ENDPOINT must not embed credentials")
-    is_loopback = parsed.hostname.lower() == "localhost" or parsed.hostname.startswith("127.")
-    if parsed.scheme not in {"http", "https"} or (not is_loopback and parsed.scheme != "https"):
+    loopback = parsed.hostname.lower() == "localhost" or parsed.hostname.startswith("127.")
+    if parsed.scheme not in {"http", "https"} or (not loopback and parsed.scheme != "https"):
         raise RuntimeError("a remote CAUSENTRA_ENDPOINT must use HTTPS")
-    return endpoint
+    return value
 
 
-def process_ticket(runtime: CausentraRuntime) -> None:
-    """Instrument an application operation without capturing application content."""
+def _process_ticket(runtime: CausentraRuntime) -> None:
+    """Instrument an application operation without recording application content."""
 
     with runtime.trace("resolve-support-ticket"):
         with runtime.agent("triage"):
             with runtime.model(
-                "classify",
-                provider_name="openai",
-                request_model="deployment-model-id",
+                "classify", provider_name="openai", request_model="deployment-model-id"
             ):
                 # Call the application's model client here.
                 pass
@@ -67,22 +64,18 @@ def process_ticket(runtime: CausentraRuntime) -> None:
 
 
 def main() -> int:
-    """Emit one synthetic operation and durably drain it before exit."""
+    """Durably emit one synthetic operation and drain delivery before exit."""
 
-    spool_path = Path(os.environ.get("CAUSENTRA_SPOOL", ".causentra/producer-spool.db"))
     exporter = DurableTransportExporter(
-        SqliteEventSpool(spool_path),
-        HttpTransport(
-            _collector_endpoint(),
-            headers={"Authorization": f"Bearer {_read_project_key()}"},
-        ),
+        SqliteEventSpool(Path(os.environ.get("CAUSENTRA_SPOOL", ".causentra/outbox.db"))),
+        HttpTransport(_endpoint(), headers={"Authorization": f"Bearer {_project_key()}"}),
         batch_size=100,
         delivery_timeout=10.0,
         lease_seconds=30.0,
     )
     runtime = CausentraRuntime(os.environ.get("CAUSENTRA_SERVICE", "support-service"), exporter)
     try:
-        process_ticket(runtime)
+        _process_ticket(runtime)
         if not runtime.flush(10.0):
             print("Causentra has pending or dead-lettered delivery work", file=sys.stderr)
             return 1

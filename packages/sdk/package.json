@@ -10,14 +10,14 @@
     "opentelemetry",
     "local-first"
   ],
-  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/sdk#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/sdk#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "url": "git+https://github.com/YuvanoLabs/causentra.git",
     "directory": "packages/sdk"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "type": "module",
   "main": "./dist/src/index.js",

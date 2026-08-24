@@ -2,6 +2,7 @@ import { access, readFile, readdir } from "node:fs/promises";
 import { extname, join } from "node:path";
 
 const root = new URL("../", import.meta.url);
+const canonicalRepository = "https://github.com/YuvanoLabs/causentra";
 const requiredFiles = [
   "CITATION.cff",
   "llms.txt",
@@ -37,6 +38,16 @@ const citation = await readFile(new URL("CITATION.cff", root), "utf8");
 for (const field of ["cff-version: 1.2.0", 'title: "Causentra"', "license: Apache-2.0"]) {
   if (!citation.includes(field)) throw new Error(`CITATION.cff is missing ${field}`);
 }
+for (const field of [
+  `repository-code: "${canonicalRepository}"`,
+  `url: "${canonicalRepository}"`,
+]) {
+  if (!citation.includes(field)) {
+    throw new Error(`CITATION.cff is missing canonical repository metadata: ${field}`);
+  }
+}
+
+assertCanonicalLinks("package.json", JSON.parse(await readFile(new URL("package.json", root), "utf8")));
 
 for (const manifestPath of await manifests("packages", "apps")) {
   const manifest = JSON.parse(await readFile(new URL(manifestPath, root), "utf8"));
@@ -47,12 +58,23 @@ for (const manifestPath of await manifests("packages", "apps")) {
   if (!Array.isArray(manifest.keywords) || manifest.keywords.length < 5) {
     throw new Error(`${manifestPath} needs at least five accurate search keywords`);
   }
+  assertCanonicalLinks(manifestPath, manifest);
 }
 
 const pythonProject = await readFile(new URL("python/pyproject.toml", root), "utf8");
 for (const keyword of ["agent-observability", "multi-agent", "opentelemetry", "otlp"]) {
   if (!pythonProject.includes(`"${keyword}"`)) {
     throw new Error(`Python package metadata is missing keyword: ${keyword}`);
+  }
+}
+for (const field of [
+  `Homepage = "${canonicalRepository}"`,
+  `Documentation = "${canonicalRepository}/tree/main/docs"`,
+  `Repository = "${canonicalRepository}"`,
+  `Issues = "${canonicalRepository}/issues"`,
+]) {
+  if (!pythonProject.includes(field)) {
+    throw new Error(`Python package metadata is missing canonical repository field: ${field}`);
   }
 }
 
@@ -74,6 +96,19 @@ for (const workflow of await files(".github/workflows")) {
 console.log(
   `Discoverability verified: ${String(requiredFiles.length)} machine/human discovery files, package metadata, and immutable workflow actions.`,
 );
+
+function assertCanonicalLinks(manifestPath, manifest) {
+  const repository = typeof manifest.repository === "string" ? manifest.repository : manifest.repository?.url;
+  if (typeof repository !== "string" || !repository.includes("github.com/YuvanoLabs/causentra")) {
+    throw new Error(`${manifestPath} must declare the canonical repository URL`);
+  }
+  if (typeof manifest.homepage !== "string" || !manifest.homepage.startsWith(canonicalRepository)) {
+    throw new Error(`${manifestPath} must declare a canonical homepage URL`);
+  }
+  if (typeof manifest.bugs?.url !== "string" || manifest.bugs.url !== `${canonicalRepository}/issues`) {
+    throw new Error(`${manifestPath} must declare the canonical issue tracker URL`);
+  }
+}
 
 async function manifests(...directories) {
   const result = [];

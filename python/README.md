@@ -107,7 +107,7 @@ causentra --key-file collector.key traces
 
 The CLI keeps the raw generated key in a separate file, refuses to overwrite files, requires explicit trace-ID confirmation for deletion, and also provides consistent backup and idempotency-tombstone retention commands.
 
-See [production runtime](../docs/24-production-python-runtime.md) and [transport/plugin operations](../docs/25-transport-plugin-operations.md).
+See the [production deployment runbook](../docs/34-production-deployment-runbook.md), [production runtime](../docs/24-production-python-runtime.md), and [transport/plugin operations](../docs/25-transport-plugin-operations.md).
 
 Prompts, outputs, tool arguments, arbitrary framework state, and error messages are not captured by default. Instrumentation failure never replaces application behavior.
 

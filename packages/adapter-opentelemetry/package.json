@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "OpenTelemetry and OTLP bridge for portable multi-agent Causentra traces",
   "keywords": ["opentelemetry", "otlp", "ai-agents", "agent-observability", "distributed-tracing", "multi-agent"],
-  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/packages/adapter-opentelemetry#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/adapter-opentelemetry#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "url": "git+https://github.com/YuvanoLabs/causentra.git",
     "directory": "packages/adapter-opentelemetry"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "type": "module",
   "main": "./dist/src/index.js",

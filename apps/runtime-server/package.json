@@ -3,14 +3,14 @@
   "version": "0.0.1",
   "description": "Local-first AI agent trace collector, OTLP receiver, and Causentra dashboard",
   "keywords": ["ai-agents", "agent-observability", "otlp", "trace-collector", "dashboard", "local-first"],
-  "homepage": "https://github.com/smartbytecoder/causentra/tree/main/apps/runtime-server#readme",
+  "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/apps/runtime-server#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartbytecoder/causentra.git",
+    "url": "git+https://github.com/YuvanoLabs/causentra.git",
     "directory": "apps/runtime-server"
   },
   "bugs": {
-    "url": "https://github.com/smartbytecoder/causentra/issues"
+    "url": "https://github.com/YuvanoLabs/causentra/issues"
   },
   "type": "module",
   "main": "./dist/src/index.js",

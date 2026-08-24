@@ -32,10 +32,10 @@ or market statement in the guide has been independently verified.
   explicitly places managed RBAC/SSO/HA in future scope
   ([`docs/24-production-python-runtime.md`](24-production-python-runtime.md)).
 
-## Completed in this working tree (uncommitted)
+## Completed in this repository
 
-These five increments are implemented but have not been committed as part of
-this planning pass:
+These five increments are implemented and covered by the validation evidence
+listed with each item:
 
 1. **Python policy redaction:** opt-in email, Luhn-card and Indian-PAN value
    detection, composed with key redaction. Validation:

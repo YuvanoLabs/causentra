@@ -5,8 +5,8 @@ abstract: "Open-source, privacy-first observability and tracing runtime for mult
 type: software
 version: 0.1.0-alpha.1
 license: Apache-2.0
-repository-code: "https://github.com/smartbytecoder/causentra"
-url: "https://github.com/smartbytecoder/causentra"
+repository-code: "https://github.com/YuvanoLabs/causentra"
+url: "https://github.com/YuvanoLabs/causentra"
 authors:
   - name: "Causentra contributors"
 keywords:

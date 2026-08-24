@@ -35,10 +35,10 @@ classifiers = [
 dependencies = []
 
 [project.urls]
-Homepage = "https://github.com/smartbytecoder/causentra"
-Documentation = "https://github.com/smartbytecoder/causentra/tree/main/docs"
-Repository = "https://github.com/smartbytecoder/causentra"
-Issues = "https://github.com/smartbytecoder/causentra/issues"
+Homepage = "https://github.com/YuvanoLabs/causentra"
+Documentation = "https://github.com/YuvanoLabs/causentra/tree/main/docs"
+Repository = "https://github.com/YuvanoLabs/causentra"
+Issues = "https://github.com/YuvanoLabs/causentra/issues"
 
 [project.scripts]
 causentra = "causentra.cli:main"

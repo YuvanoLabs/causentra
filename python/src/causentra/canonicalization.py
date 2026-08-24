@@ -17,7 +17,7 @@ def canonicalize_json(value: JsonValue) -> bytes:
 
     _validate_json_value(value)
     try:
-        import rfc8785
+        import rfc8785  # type: ignore[import-not-found]
 
         return cast(bytes, rfc8785.dumps(value))
     except ImportError as error:
@@ -25,7 +25,7 @@ def canonicalize_json(value: JsonValue) -> bytes:
 
 
 def _validate_json_value(value: Any) -> None:
-    if value is None or isinstance(value, (str, bool)):
+    if value is None or isinstance(value, str | bool):
         return
     if isinstance(value, int):
         if not -(2**53 - 1) <= value <= 2**53 - 1:

@@ -31,6 +31,8 @@
 | Brand | [Causentra brand architecture](29-brand-architecture.md) | Product family, technical identifiers, language and clearance gate |
 | Discovery | [Repository discoverability and search readiness](30-discoverability-and-search.md) | GitHub metadata, search intent, answer engines and measurement |
 | Questions | [Causentra product FAQ](31-product-faq.md) | Concise, citable product, support, privacy and readiness answers |
+| Deploy | [Production deployment runbook](34-production-deployment-runbook.md) | Single-node collector configuration, validation, recovery and release handoff |
+| Readiness | [Production-readiness assessment](35-production-readiness-assessment.md) | Decision boundary, source verification and external release gates |
 | Delivery | [Evidence-based gap delivery backlog](33-gap-delivery-backlog.md) | Reconciled gaps, completed increments, dependencies and release gates |
 | Decisions | [Architecture decisions](adr/README.md) | Durable technical decisions |
 | Contract | [OpenAPI specification](openapi.yaml) | Local ingestion and query API |

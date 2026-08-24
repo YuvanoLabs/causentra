@@ -198,7 +198,7 @@ def _load_private_key(value: Any) -> Any:
     _, serialization, ec, private_type, _ = _crypto()
     if isinstance(value, private_type):
         key = value
-    elif isinstance(value, (bytes, str)):
+    elif isinstance(value, bytes | str):
         pem = value.encode("ascii") if isinstance(value, str) else value
         key = serialization.load_pem_private_key(pem, password=None)
     else:
@@ -214,7 +214,7 @@ def _load_public_key(value: Any) -> Any:
         raise TypeError("verification key must be public")
     if isinstance(value, public_type):
         key = value
-    elif isinstance(value, (bytes, str)):
+    elif isinstance(value, bytes | str):
         pem = value.encode("ascii") if isinstance(value, str) else value
         try:
             serialization.load_pem_private_key(pem, password=None)
@@ -255,7 +255,7 @@ def _descriptor(
 def _envelope_descriptor(envelope: DetachedSignatureEnvelope) -> dict[str, JsonValue]:
     return {
         "signatureVersion": envelope["signatureVersion"],
-        "artifact": envelope["artifact"],
+        "artifact": cast(JsonValue, envelope["artifact"]),
         "canonicalization": envelope["canonicalization"],
         "algorithm": envelope["algorithm"],
         "keyId": envelope["keyId"],
