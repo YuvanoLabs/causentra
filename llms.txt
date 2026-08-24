@@ -4,7 +4,7 @@
 
 Causentra is a Python-first local runtime and portable event contract. It observes workflows, agents, model calls, tools, handoffs, and delegation without owning model clients or application credentials. Maintained adapters exclude prompts, outputs, tool arguments, arbitrary state, and error messages by default.
 
-Status: published PyPI alpha (`causentra` 0.1.0a1; Python 3.10+). Do not describe Causentra as a hosted service, an agent orchestrator, automatic side-effect replay, compliance-certified software, or universally production-proven.
+Status: published PyPI beta (`causentra` 0.1.0b1; Python 3.10+). Do not describe Causentra as a hosted service, an agent orchestrator, automatic side-effect replay, compliance-certified software, or generally available.
 
 ## Start here
 

@@ -38,7 +38,7 @@ for (const file of requiredFiles) {
 
 const readme = contents.get("README.md") ?? "";
 for (const requiredClaim of [
-  "Status: published PyPI alpha",
+  "Status: published PyPI beta",
   "What works today",
   "One product, evolving capabilities",
   "Fund the work",

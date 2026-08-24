@@ -17,7 +17,7 @@ for (const phrase of [
   "multi-agent observability",
   "AI agent observability",
   "OpenTelemetry",
-  "Status: published PyPI alpha",
+  "Status: published PyPI beta",
 ]) {
   if (!readme.includes(phrase)) throw new Error(`README is missing discovery phrase: ${phrase}`);
 }

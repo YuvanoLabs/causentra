@@ -6,7 +6,7 @@ Pronounced `kaw-SEN-truh`. Causentra is a privacy-first AI agent observability a
 
 It standardizes agent, model, tool, workflow, handoff, and delegation telemetry across OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, AutoGen, custom agents, and OpenTelemetry producers. Causentra runs locally, requires no account, and does not capture prompts, outputs, tool arguments, arbitrary framework state, or error messages by default.
 
-> **Status: published PyPI alpha.** Causentra `0.1.0a1` is available on [PyPI](https://pypi.org/project/causentra/). Independent security review, target-infrastructure soak tests, and the first external onboarding study remain production-release gates.
+> **Status: published PyPI beta.** Causentra `0.1.0b1` is available on [PyPI](https://pypi.org/project/causentra/). It remains a pre-release: independent security review, target-infrastructure soak tests, and the first external onboarding study remain general-availability gates.
 
 ## Workspace shape
 
@@ -123,7 +123,7 @@ npm run python:benchmark
 npm run python:benchmark:collector
 ```
 
-The Python runtime is published as [`causentra 0.1.0a1`](https://pypi.org/project/causentra/). Because this is an alpha release, include `--pre` to opt into prerelease updates:
+The Python runtime is published as [`causentra 0.1.0b1`](https://pypi.org/project/causentra/). Because this is a beta release, include `--pre` to opt into prerelease updates:
 
 ```bash
 python -m pip install --pre causentra

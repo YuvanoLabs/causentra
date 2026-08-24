@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "causentra"
-version = "0.1.0a1"
+version = "0.1.0b1"
 description = "Privacy-first, framework-neutral runtime telemetry for Python AI agents"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -24,7 +24,7 @@ keywords = [
   "local-first",
 ]
 classifiers = [
-  "Development Status :: 3 - Alpha",
+  "Development Status :: 4 - Beta",
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.10",
   "Programming Language :: Python :: 3.11",

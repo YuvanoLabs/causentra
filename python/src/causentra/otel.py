@@ -150,7 +150,7 @@ def start_otlp_exporter(
     provider = TracerProvider(resource=Resource.create({"service.name": service_name}))
     otlp = OTLPSpanExporter(endpoint=endpoint, headers=dict(headers or {}), timeout=timeout)
     provider.add_span_processor(BatchSpanProcessor(otlp))
-    tracer = provider.get_tracer("causentra", "0.1.0a1")
+    tracer = provider.get_tracer("causentra", "0.1.0b1")
     return OpenTelemetryEventExporter(
         tracer,
         force_flush=provider.force_flush,

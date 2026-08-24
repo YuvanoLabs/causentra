@@ -4,7 +4,7 @@ Python-first instrumentation, durable event delivery, processing, and authentica
 
 ## Install
 
-Causentra is published on [PyPI](https://pypi.org/project/causentra/) for Python 3.10 and later. The current `0.1.0a1` alpha is installed explicitly with `--pre`:
+Causentra is published on [PyPI](https://pypi.org/project/causentra/) for Python 3.10 and later. The current `0.1.0b1` beta is installed explicitly with `--pre`:
 
 ```bash
 python -m pip install --pre causentra
@@ -111,4 +111,4 @@ See the [production deployment runbook](../docs/34-production-deployment-runbook
 
 Prompts, outputs, tool arguments, arbitrary framework state, and error messages are not captured by default. Instrumentation failure never replaces application behavior.
 
-Causentra `0.1.0a1` is a published PyPI alpha. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain production-release gates.
+Causentra `0.1.0b1` is a published PyPI beta. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain general-availability gates.
