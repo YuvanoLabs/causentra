@@ -13,6 +13,7 @@ __pycache__/
 htmlcov/
 .venv/
 .venv-publish/
+.venv-frameworks/
 venv/
 .agent-runtime/
 .causentra/
@@ -33,3 +34,4 @@ coverage/
 *.pfx
 *.crt
 .DS_Store
+docs/improvementPlan/*

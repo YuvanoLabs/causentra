@@ -22,6 +22,17 @@ For contributor development from this repository, use the editable source instal
 python -m pip install -e ".[dev,openai-agents,langgraph]"
 ```
 
+The optional signing prerequisite is installed separately when needed:
+
+```bash
+python -m pip install -e ".[dev,signing]"
+```
+
+`causentra[signing]` declares the bounded `rfc8785>=0.1.4,<0.2` range and exposes
+`canonicalize_json` for RFC 8785 UTF-8 bytes. This is canonicalization
+infrastructure only; no signer or verifier exists yet. Review the dependency,
+golden vectors and security posture before using it in a release.
+
 ```python
 from causentra import CausentraRuntime, HttpBatchExporter
 

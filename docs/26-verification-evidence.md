@@ -24,6 +24,19 @@ npm run python:benchmark
 npm run python:benchmark:collector
 ```
 
+The deep-trace runtime benchmark also supports a quick smoke run:
+
+```bash
+python python/benchmarks/runtime_overhead.py --count 8
+```
+
+It prints one JSON document comparing the default runtime with the opt-in
+observation-only loop detector. Each run reports operation count, emitted event
+count, elapsed time, events/second, and p50/p95 operation emission latency. The
+measurement is local and synchronous with a `MemoryExporter`; it excludes
+network/exporter delivery, does not establish a production SLO, and is evidence
+for relative instrumentation overhead only.
+
 ## Release evidence levels
 
 | Level | Meaning |
@@ -50,6 +63,7 @@ Evidence date: 2026-07-17. Environment: Windows, Python 3.11.9, Node 26.5.0.
 | Runtime benchmark | Python p95 0.1366 ms/event and TypeScript 0.0272 ms/event; budget below 5 ms/event |
 | Collector benchmark | 4,801 events/second; budget at least 1,000 events/second |
 | Security tooling | npm audit: 0 vulnerabilities; the dependency-free Python core reports no known advisories; Bandit medium/high gate passed |
+| Targeted npm remediation (2026-08-23) | Pre-existing `ajv@8.20.0 -> fast-uri@3.1.3` advisory remediated with compatible `fast-uri@3.1.5`; `npm audit --omit=dev` reports 0 vulnerabilities |
 | Optional framework environment | Exact six-adapter tests: 12 passed with pytest 9.1.1 and `pip check` clean; audit: 8 advisories across `chromadb`, `json-repair`, `mcp`, and `werkzeug` |
 
 The six live transport tests are present but intentionally not counted as passed locally because no broker or hosted receiver was started. The manual workflow fails when any required target endpoint is absent.

@@ -1,4 +1,7 @@
 export { CausentraRuntime } from "./runtime.js";
+export { canonicalizeJson } from "./canonicalization.js";
+export { signDetachedArtifact, verifyDetachedSignature } from "./signatures.js";
+export type { DetachedArtifact, DetachedSignatureEnvelope, DetachedSigningOptions, DetachedVerificationOptions, SignatureKeyResolver, SignatureVerificationFailure, SignatureVerificationResult, VerificationKey } from "./signatures.js";
 export { AdapterEventBridge, normalizeExternalId } from "./adapter.js";
 export type {
   AdapterEventBridgeOptions,
@@ -30,7 +33,8 @@ export type {
 } from "./runtime.js";
 export { HttpBatchExporter, MemoryExporter } from "./exporters.js";
 export type { HttpBatchExporterOptions } from "./exporters.js";
-export { createRedactor, defaultRedactor } from "./redaction.js";
+export { createPolicyRedactor, createRedactor, defaultRedactor } from "./redaction.js";
+export type { PolicyRedactorOptions } from "./redaction.js";
 export {
   EventValidationError,
   MAX_ATTRIBUTES_BYTES,

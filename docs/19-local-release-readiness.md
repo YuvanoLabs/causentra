@@ -3,7 +3,7 @@
 ## Completed in the workspace
 
 - Unified Apache-2.0 workspace with one Python package and one TypeScript namespace
-- Dependency-free Python core with strict types, privacy-safe lifecycle API, W3C context, provider extraction, and OTel bridge
+- Dependency-free Python base install with strict types, privacy-safe lifecycle API, W3C context, provider extraction, and OTel bridge; optional `signing` extra provides a bounded RFC 8785 canonicalization prerequisite
 - Six native Python framework adapters tested against exact supported versions; CrewAI and Semantic Kernel remain production-gated by optional upstream advisories
 - Eight deep provider mappings and tested compatibility profiles for all 15 canonical provider IDs
 - SQLite durable spool and HTTP, WebSocket, Kafka, NATS JetStream, Redis Streams, and MQTT transports
@@ -12,6 +12,7 @@
 - Integrity-checked process plugin protocol with default-deny trust, permissions, environment, and executable policy
 - Node.js local dashboard/collector, TypeScript protocol peer, OTLP ingress, CLI, trace portability, and causal relationship inspection
 - Versioned schema fixtures, conformance tests, clean package installs, benchmarks, and repository boundary checks
+- RFC 8785 canonicalization contract/vectors and optional Python/TypeScript helpers are implemented; detached signing/verifying remains absent
 - Published Python package: [`causentra 0.1.0a1` on PyPI](https://pypi.org/project/causentra/)
 - Immutable GitHub Actions references, bounded CI jobs, citation metadata, repository discovery metadata, product FAQ, and machine-checked `llms.txt` links
 
@@ -33,6 +34,7 @@ Exact optional framework validation uses the supported bands in `python/pyprojec
 - Verify `smartbytecoder@gmail.com` is monitored; configure private vulnerability reporting, governance, branch protection, signing, provenance, and release permissions.
 - Configure PyPI Trusted Publishing, provenance, and a protected release environment before automating subsequent PyPI releases. The initial `0.1.0a1` release was published manually.
 - Run dependency/SBOM review and an independent security assessment.
+- Review the optional `canonicalize@4.0.0` and `rfc8785>=0.1.4,<0.2` dependencies, JCS interoperability vectors, and maintenance posture before any signing release.
 - Validate compatible upstream fixes for the CrewAI and Semantic Kernel optional graphs, then rerun exact adapter and advisory gates; do not promote those extras or the aggregate `frameworks` extra while the current findings remain.
 - Run target broker, TLS, proxy, backup/restore, failure-injection, and 24-hour soak tests.
 - Record Python/OS matrix CI results and published-package clean-install rehearsal.

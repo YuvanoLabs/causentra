@@ -1,6 +1,7 @@
 """Public Causentra Python API."""
 
 from .adapter import AdapterEventBridge
+from .canonicalization import canonicalize_json
 from .collector import (
     ApiPrincipal,
     CollectorConfig,
@@ -50,9 +51,10 @@ from .providers import (
     provider_profile,
     provider_response_attributes,
 )
-from .redaction import default_redactor
+from .redaction import PolicyRedactor, default_redactor
 from .relationships import relationship_attributes
-from .runtime import CausentraRuntime, ProviderModelOperation
+from .runtime import CausentraRuntime, LoopDetectionPolicy, ProviderModelOperation
+from .signatures import sign_detached_artifact, verify_detached_signature
 from .spool import (
     SpoolConflictError,
     SpoolDeadLetter,
@@ -102,6 +104,7 @@ __all__ = [
     "IdempotencyConflictError",
     "IngestResult",
     "KafkaTransport",
+    "LoopDetectionPolicy",
     "MemoryExporter",
     "MqttTransport",
     "NatsJetStreamTransport",
@@ -114,6 +117,7 @@ __all__ = [
     "PluginPolicyError",
     "PluginProtocolError",
     "PluginRuntime",
+    "PolicyRedactor",
     "ProviderModelOperation",
     "ProviderProfile",
     "RedisStreamsTransport",
@@ -134,6 +138,7 @@ __all__ = [
     "WebSocketTransport",
     "adapter_conformance_errors",
     "assert_adapter_conformant",
+    "canonicalize_json",
     "default_redactor",
     "event_from_wire",
     "extract_trace_context",
@@ -146,7 +151,9 @@ __all__ = [
     "provider_profile",
     "provider_response_attributes",
     "relationship_attributes",
+    "sign_detached_artifact",
     "start_collector",
     "start_otlp_exporter",
     "validate_event",
+    "verify_detached_signature",
 ]

@@ -6,6 +6,21 @@
 
 The canonical artifact is `@causentra/sdk/schema/v1`, backed by fixtures in `packages/sdk/fixtures/v1` and the runtime validator.
 
+Detached telemetry signatures are a separate compatibility surface and do not
+modify `RuntimeEvent` 1.0. The contract is available as
+`@causentra/sdk/schema/signature-v1`, backed by
+`packages/sdk/schema/signature-v1.schema.json` and language-neutral valid/invalid
+fixtures under `packages/sdk/fixtures/signature/v1`. The schema fixes
+`causentra.signature/v1`, `RFC8785-JCS`, artifact kinds, lowercase SHA-256
+identity digests, and algorithm/encoding pairs (`ECDSA_P256_SHA256` with
+`base64-der`; optional `ED25519` with `base64-raw`). The schema contract and fixtures, RFC 8785 canonicalizer, and shared vectors are complete. The TypeScript local ECDSA P-256 signer/verifier is now implemented; Python parity, KMS/Vault adapters, and collector enforcement remain pending.
+
+The canonicalization prerequisite is now available separately: TypeScript
+`canonicalizeJson` uses exact `canonicalize@4.0.0`, while Python's optional
+`signing` extra uses `rfc8785>=0.1.4,<0.2`. Both consume shared vectors under
+`packages/sdk/fixtures/signature/v1/canonicalization/`, reject values outside
+the interoperable JSON domain, and return UTF-8 bytes. The canonicalization helper itself does not sign or verify artifacts; the local TypeScript signer/verifier remains subject to security/maintenance review.
+
 ## Change policy
 
 | Change | Schema effect | Requirement |

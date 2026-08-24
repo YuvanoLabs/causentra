@@ -1,0 +1,15 @@
+{
+  "signatureVersion": "causentra.signature/v1",
+  "artifact": {
+    "kind": "trace-bundle",
+    "identity": "trace:0123456789abcdef0123456789abcdef",
+    "schemaVersion": "1.0",
+    "sha256": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"
+  },
+  "canonicalization": "RFC8785-JCS",
+  "algorithm": "ECDSA_P256_SHA256",
+  "keyId": "kms:causentra-audit",
+  "keyVersion": "7",
+  "signatureEncoding": "base64-der",
+  "signature": "EUCIQDoAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIgYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+}

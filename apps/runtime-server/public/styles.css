@@ -88,6 +88,14 @@ h1 em { color: var(--accent-2); font-family: Georgia, serif; font-weight: 400; }
 .trace-metrics strong, .trace-metrics span { display: block; }
 .trace-metrics strong { font-size: 22px; }
 .trace-metrics span { margin-top: 5px; color: var(--muted); font: 9px/1 ui-monospace, monospace; text-transform: uppercase; letter-spacing: .1em; }
+.timing-breakdown { margin-bottom: 34px; }
+.timing-breakdown h3 { margin: 0 0 18px; font-size: 14px; }
+.timing-metrics { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
+.timing-metrics > div { padding: 14px; background: var(--panel); }
+.timing-metrics strong, .timing-metrics span { display: block; }
+.timing-metrics strong { font-size: 17px; }
+.timing-metrics span { margin-top: 5px; color: var(--muted); font: 8px/1.2 ui-monospace, monospace; text-transform: uppercase; }
+.timing-note { margin: 10px 0 0; color: var(--muted); font: 10px/1.5 ui-monospace, monospace; }
 .timeline h3, .causal-tree h3, .relationship-graph h3 { margin: 0 0 18px; font-size: 14px; }
 .relationship-graph { margin-bottom: 34px; }
 .relationship { padding: 14px; display: grid; grid-template-columns: minmax(90px, 1fr) auto minmax(90px, 1fr); align-items: center; gap: 12px; border: 1px solid var(--line); border-left: 2px solid var(--warn); background: linear-gradient(90deg, rgba(216,255,99,.04), rgba(133,245,169,.04)); }
@@ -127,6 +135,7 @@ h1 em { color: var(--accent-2); font-family: Georgia, serif; font-weight: 400; }
   .trace-panel { border-right: 0; border-bottom: 1px solid var(--line); }
   .trace-list { max-height: 300px; }
   .trace-metrics { grid-template-columns: 1fr 1fr; }
+  .timing-metrics { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 520px) {

@@ -185,6 +185,7 @@ async function route(
   const asset = new Map<string, readonly [string, string]>([
     ["/", ["index.html", "text/html; charset=utf-8"]],
     ["/app.js", ["app.js", "text/javascript; charset=utf-8"]],
+    ["/timing.js", ["timing.js", "text/javascript; charset=utf-8"]],
     ["/styles.css", ["styles.css", "text/css; charset=utf-8"]],
   ]).get(url.pathname);
   if (method === "GET" && asset !== undefined) {

@@ -1,3 +1,5 @@
+import { deriveTimingBreakdown } from "./timing.js";
+
 const traceList = document.querySelector("#trace-list");
 const detail = document.querySelector("#detail");
 const template = document.querySelector("#trace-item-template");
@@ -120,7 +122,34 @@ function renderDetail(trace) {
   timeline.append(timelineTitle);
   for (const eventData of events) timeline.append(eventRow(eventData));
   const relationships = relationshipGraph(events);
-  detail.append(header, metrics, ...(relationships === undefined ? [] : [relationships]), causalTree(events), timeline);
+  detail.append(header, metrics, timingBreakdown(summary, events), ...(relationships === undefined ? [] : [relationships]), causalTree(events), timeline);
+}
+
+function timingBreakdown(summary, events) {
+  const timing = deriveTimingBreakdown(summary, events);
+  const section = element("section", "timing-breakdown");
+  const title = document.createElement("h3");
+  title.textContent = "Timing breakdown";
+  section.append(title);
+  const metrics = element("div", "timing-metrics");
+  metrics.append(
+    metric(formatTiming(timing.traceWallMs), "trace wall time"),
+    metric(formatTiming(timing.model.durationMs), "completed model time"),
+    metric(formatTiming(timing.tool.durationMs), "completed tool time"),
+    metric(formatTiming(timing.unionWallMs), "model/tool wall coverage"),
+    metric(formatTiming(timing.unattributedWallMs), "unattributed wall time"),
+  );
+  section.append(metrics);
+  const note = element("p", "timing-note");
+  if (timing.overlap) {
+    note.textContent = "Model and tool category totals overlap; wall coverage uses their union and does not double-count it.";
+  } else if (timing.model.incomplete || timing.tool.incomplete) {
+    note.textContent = "Unknown: one or more model/tool spans have incomplete timing.";
+  } else {
+    note.textContent = "Unattributed wall time is the trace remainder after the model/tool interval union; it is not a framework-overhead estimate.";
+  }
+  section.append(note);
+  return section;
 }
 
 function relationshipGraph(events) {
@@ -343,6 +372,7 @@ function formatDuration(value) {
   if (value < 1_000) return `${value.toFixed(value < 10 ? 1 : 0)} ms`;
   return `${(value / 1_000).toFixed(2)} s`;
 }
+function formatTiming(value) { return value === undefined ? "Unknown" : formatDuration(value); }
 
 void refresh();
 setInterval(() => void refresh(), 10_000);

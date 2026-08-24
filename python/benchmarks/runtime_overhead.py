@@ -1,34 +1,76 @@
-"""Reproducible local hot-path benchmark; excludes network delivery."""
+"""Reproducible local deep-trace benchmark; excludes network delivery."""
 
 from __future__ import annotations
 
-import statistics
+import argparse
+import json
 import time
+from typing import Any
 
-from causentra import CausentraRuntime, MemoryExporter
+from causentra import CausentraRuntime, LoopDetectionPolicy, MemoryExporter
 
 
-def sample(spans: int = 100) -> float:
+def percentile(values: list[float], fraction: float) -> float:
+    ordered = sorted(values)
+    if not ordered:
+        return 0.0
+    position = (len(ordered) - 1) * fraction
+    lower = int(position)
+    upper = min(lower + 1, len(ordered) - 1)
+    weight = position - lower
+    return ordered[lower] + (ordered[upper] - ordered[lower]) * weight
+
+
+def benchmark(iterations: int, *, loop_detection: bool) -> dict[str, Any]:
     exporter = MemoryExporter()
-    runtime = CausentraRuntime("benchmark", exporter)
-    started = time.perf_counter()
-    with runtime.trace("workflow"):
-        for index in range(spans):
-            with runtime.tool(f"tool-{index}", attributes={"index": index}):
+    policy = LoopDetectionPolicy(threshold=3) if loop_detection else None
+    runtime = CausentraRuntime("deep-trace-benchmark", exporter, loop_detection=policy)
+    latencies: list[float] = []
+    started = time.perf_counter_ns()
+    with runtime.trace("repeated-operations"):
+        for index in range(iterations):
+            operation_started = time.perf_counter_ns()
+            with runtime.tool("repeat-tool", attributes={"iteration": index}):
                 pass
-    elapsed_ms = (time.perf_counter() - started) * 1_000
-    return elapsed_ms / len(exporter.events)
+            latencies.append((time.perf_counter_ns() - operation_started) / 1_000_000)
+            operation_started = time.perf_counter_ns()
+            with runtime.model("repeat-model", attributes={"iteration": index}):
+                pass
+            latencies.append((time.perf_counter_ns() - operation_started) / 1_000_000)
+    elapsed_ms = (time.perf_counter_ns() - started) / 1_000_000
+    operation_count = iterations * 2
+    return {
+        "loopDetection": loop_detection,
+        "operationCount": operation_count,
+        "emittedEventCount": len(exporter.events),
+        "elapsedMs": round(elapsed_ms, 6),
+        "eventsPerSecond": round(len(exporter.events) / (elapsed_ms / 1_000), 3),
+        "operationLatencyP50Ms": round(percentile(latencies, 0.50), 6),
+        "operationLatencyP95Ms": round(percentile(latencies, 0.95), 6),
+    }
 
 
 def main() -> None:
-    for _ in range(5):
-        sample()
-    samples = [sample() for _ in range(50)]
-    p95 = statistics.quantiles(samples, n=20)[18]
-    print(f"Python runtime overhead: median={statistics.median(samples):.4f} ms/event")
-    print(f"Python runtime overhead: p95={p95:.4f} ms/event (network excluded)")
-    if p95 >= 5.0:
-        raise SystemExit("p95 exceeds the 5 ms/event M0 budget")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--count",
+        type=int,
+        default=128,
+        help="repetitions of each same-name tool/model operation (default: 128)",
+    )
+    arguments = parser.parse_args()
+    if arguments.count < 1:
+        parser.error("--count must be positive")
+    # Warm the interpreter without including startup effects in the report.
+    benchmark(min(arguments.count, 8), loop_detection=False)
+    result = {
+        "iterationsPerOperation": arguments.count,
+        "runs": [
+            benchmark(arguments.count, loop_detection=False),
+            benchmark(arguments.count, loop_detection=True),
+        ],
+    }
+    print(json.dumps(result, sort_keys=True))
 
 
 if __name__ == "__main__":

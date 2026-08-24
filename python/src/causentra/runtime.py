@@ -9,7 +9,7 @@ import threading
 import time
 from collections.abc import Awaitable, Callable, Mapping
 from contextlib import suppress
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from types import TracebackType
 from typing import Any, Generic, Literal, TypeVar
@@ -44,6 +44,53 @@ _SESSION_ID = re.compile(r"^[0-9a-f]{32}$")
 _ResponseT = TypeVar("_ResponseT")
 
 
+@dataclass(slots=True)
+class LoopDetectionPolicy:
+    """Opt-in observation policy for repeated operation starts in one trace."""
+
+    threshold: int = 3
+    _counts: dict[tuple[str, str | None, str, str], int] = field(init=False, repr=False)
+    _reported: set[tuple[str, str | None, str, str]] = field(init=False, repr=False)
+    _lock: threading.Lock = field(init=False, repr=False)
+
+    def __post_init__(self) -> None:
+        if isinstance(self.threshold, bool) or not isinstance(self.threshold, int):
+            raise ValueError("loop detection threshold must be an integer")
+        if self.threshold < 2:
+            raise ValueError("loop detection threshold must be at least 2")
+        self._counts = {}
+        self._reported = set()
+        self._lock = threading.Lock()
+
+    def observe(
+        self,
+        trace_id: str,
+        parent_span_id: str | None,
+        family: str,
+        name: str,
+    ) -> int | None:
+        """Return the first threshold count for a key, otherwise ``None``."""
+
+        key = (trace_id, parent_span_id, family, name)
+        with self._lock:
+            counts = self._counts
+            count = counts.get(key, 0) + 1
+            counts[key] = count
+            if count == self.threshold and key not in self._reported:
+                self._reported.add(key)
+                return count
+        return None
+
+    def reset(self, trace_id: str) -> None:
+        """Discard all detector state for a completed trace."""
+
+        with self._lock:
+            for key in tuple(self._counts):
+                if key[0] == trace_id:
+                    self._counts.pop(key, None)
+                    self._reported.discard(key)
+
+
 class CausentraRuntime:
     """Capture nested agent operations without changing application behavior.
 
@@ -61,6 +108,7 @@ class CausentraRuntime:
         include_error_message: bool = False,
         on_error: Callable[[RuntimeErrorContext], None] | None = None,
         now: Callable[[], datetime] | None = None,
+        loop_detection: LoopDetectionPolicy | None = None,
     ) -> None:
         if not service_name.strip() or len(service_name) > 256:
             raise ValueError("service_name must be non-empty and at most 256 characters")
@@ -73,6 +121,7 @@ class CausentraRuntime:
         self._include_error_message = include_error_message
         self._on_error = on_error or (lambda _context: None)
         self._now = now or (lambda: datetime.now(timezone.utc))
+        self._loop_detection = loop_detection
         self._sequences: dict[str, int] = {}
         self._sequence_lock = threading.Lock()
         self._active: contextvars.ContextVar[_ActiveContext | None] = contextvars.ContextVar(
@@ -305,6 +354,28 @@ class CausentraRuntime:
     def _forget_trace(self, trace_id: str) -> None:
         with self._sequence_lock:
             self._sequences.pop(trace_id, None)
+        if self._loop_detection is not None:
+            self._loop_detection.reset(trace_id)
+
+    def _observe_loop(self, context: _ActiveContext, family: str, name: str) -> None:
+        policy = self._loop_detection
+        if policy is None:
+            return
+        count = policy.observe(context.trace_id, context.parent_span_id, family, name)
+        if count is None:
+            return
+        self._emit(
+            context,
+            "custom.loop.detected",
+            "loop detected",
+            "unset",
+            {
+                "causentra.loop.family": family,
+                "causentra.loop.operation": name,
+                "causentra.loop.repeat_count": count,
+                "causentra.loop.threshold": policy.threshold,
+            },
+        )
 
 
 class _Operation:
@@ -346,6 +417,7 @@ class _Operation:
         self._context = _ActiveContext(trace_id, span_id, parent_id, session)
         self._started = time.perf_counter()
         self._runtime._emit(self._context, f"{family}.start", self._name, "unset", self._attributes)
+        self._runtime._observe_loop(self._context, family, self._name)
         self._token = self._runtime._active.set(self._context)
         return TraceContext(trace_id, span_id, parent_id, session)
 

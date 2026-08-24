@@ -1,0 +1,32 @@
+[
+  {
+    "name": "nested-property-sorting",
+    "input": { "b": 1, "a": { "d": 2, "c": 3 } },
+    "canonical": "{\"a\":{\"c\":3,\"d\":2},\"b\":1}",
+    "sha256": "78d48859c3252943aab7306f76c80f3f07783582e05ab8f944ce0696f2dbfc67"
+  },
+  {
+    "name": "arrays-preserved",
+    "input": { "items": [3, { "z": true, "a": false }, null] },
+    "canonical": "{\"items\":[3,{\"a\":false,\"z\":true},null]}",
+    "sha256": "828c4bbcd406f15b549a375203c610081d72b89d7220b79f1ece270e4ce4af8e"
+  },
+  {
+    "name": "control-unicode",
+    "input": { "text": "line\n\t é/😀" },
+    "canonical": "{\"text\":\"line\\n\\t é/😀\"}",
+    "sha256": "f1c2d079aa480fe2dd8288ca6a15f6bb9c1837522c967c2d1e960ee7a42b8c7a"
+  },
+  {
+    "name": "rfc-number-cases",
+    "input": { "n": 1e-7, "small": 1e-6, "decimal": 333.3333333333333, "negative": -1e-6 },
+    "canonical": "{\"decimal\":333.3333333333333,\"n\":1e-7,\"negative\":-0.000001,\"small\":0.000001}",
+    "sha256": "37b928b747499101e83c3d8f0c7654e17d59dcd2f882ccf056e89e74b8315724"
+  },
+  {
+    "name": "negative-zero-normalization",
+    "input": { "negativeZero": -0.0, "positiveZero": 0 },
+    "canonical": "{\"negativeZero\":0,\"positiveZero\":0}",
+    "sha256": "b0c2c07db4207dcf5a56bc72cec90fd46bf8c44406ccc432e3a2d67dc39504f1"
+  }
+]

@@ -214,7 +214,7 @@ The carrier uses the W3C `traceparent` header. Invalid, unsupported, or all-zero
 
 ## OpenAI Agents SDK
 
-Supported contract: `@openai/agents >=0.13.4 <0.14.0`.
+Supported contract: `@openai/agents >=0.13.4 <0.15.0` (validated through 0.14.2).
 
 ```ts
 import { addTraceProcessor } from "@openai/agents";

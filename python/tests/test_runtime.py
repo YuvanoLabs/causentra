@@ -4,7 +4,7 @@ import asyncio
 
 import pytest
 
-from causentra import CausentraRuntime, MemoryExporter
+from causentra import CausentraRuntime, LoopDetectionPolicy, MemoryExporter
 
 
 def test_nested_lifecycle_privacy_relationships_and_models() -> None:
@@ -119,3 +119,76 @@ def test_runtime_instances_do_not_leak_active_context() -> None:
 def test_invalid_session_identifier_fails_during_configuration() -> None:
     with pytest.raises(ValueError, match="session_id"):
         CausentraRuntime("service", MemoryExporter(), session_id="tenant-name")
+
+
+def test_loop_detection_is_disabled_by_default() -> None:
+    exporter = MemoryExporter()
+    runtime = CausentraRuntime("service", exporter)
+
+    with runtime.trace("workflow"):
+        with runtime.tool("repeat"):
+            pass
+        with runtime.tool("repeat"):
+            pass
+
+    assert not [event for event in exporter.events if event.type == "custom.loop.detected"]
+
+
+def test_loop_detection_emits_once_at_threshold_without_operation_payload() -> None:
+    exporter = MemoryExporter()
+    runtime = CausentraRuntime("service", exporter, loop_detection=LoopDetectionPolicy(threshold=2))
+
+    with runtime.trace("workflow"):
+        with runtime.tool("repeat", attributes={"private": "must-not-copy"}):
+            pass
+        with runtime.tool("repeat", attributes={"private": "must-not-copy"}):
+            pass
+        with runtime.tool("repeat", attributes={"private": "must-not-copy"}):
+            pass
+
+    diagnostics = [event for event in exporter.events if event.type == "custom.loop.detected"]
+    assert len(diagnostics) == 1
+    assert diagnostics[0].name == "loop detected"
+    assert diagnostics[0].attributes == {
+        "causentra.loop.family": "tool",
+        "causentra.loop.operation": "repeat",
+        "causentra.loop.repeat_count": 2,
+        "causentra.loop.threshold": 2,
+    }
+    assert len([event for event in exporter.events if event.type == "tool.start"]) == 3
+    second_start = [event for event in exporter.events if event.type == "tool.start"][1]
+    assert second_start.sequence < diagnostics[0].sequence
+
+
+def test_loop_detection_keys_include_parent_scope_and_resets_after_trace() -> None:
+    exporter = MemoryExporter()
+    runtime = CausentraRuntime("service", exporter, loop_detection=LoopDetectionPolicy(threshold=2))
+
+    with runtime.trace("first"):
+        with runtime.agent("outer"):
+            with runtime.tool("repeat"):
+                pass
+            with runtime.tool("repeat"):
+                pass
+        with runtime.agent("other"):
+            with runtime.tool("repeat"):
+                pass
+            with runtime.tool("repeat"):
+                pass
+    with runtime.trace("second"):
+        with runtime.tool("repeat"):
+            pass
+        with runtime.tool("repeat"):
+            pass
+
+    diagnostics = [event for event in exporter.events if event.type == "custom.loop.detected"]
+    assert len(diagnostics) == 3
+
+
+def test_loop_detection_rejects_threshold_below_two() -> None:
+    with pytest.raises(ValueError, match="at least 2"):
+        LoopDetectionPolicy(threshold=1)
+    with pytest.raises(ValueError, match="integer"):
+        LoopDetectionPolicy(threshold=True)  # type: ignore[arg-type]
+    with pytest.raises(ValueError, match="integer"):
+        LoopDetectionPolicy(threshold=2.5)  # type: ignore[arg-type]

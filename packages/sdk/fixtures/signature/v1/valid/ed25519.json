@@ -1,0 +1,15 @@
+{
+  "signatureVersion": "causentra.signature/v1",
+  "artifact": {
+    "kind": "event-batch",
+    "identity": "batch-2026-08-23-0001",
+    "schemaVersion": "1.0",
+    "sha256": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+  },
+  "canonicalization": "RFC8785-JCS",
+  "algorithm": "ED25519",
+  "keyId": "vault:transit-audit",
+  "keyVersion": "2",
+  "signatureEncoding": "base64-raw",
+  "signature": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+}
