@@ -19,7 +19,7 @@ if not exist "%VENV_PYTHON%" (
 )
 
 echo Installing publishing tools...
-"%VENV_PYTHON%" -m pip install --upgrade pip build twine || goto :failure
+"%VENV_PYTHON%" -m pip install --upgrade pip "setuptools>=77" build twine || goto :failure
 
 echo Removing previous Causentra build artifacts...
 del /q "python\dist\causentra-*" 2>nul

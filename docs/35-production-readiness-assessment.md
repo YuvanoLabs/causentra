@@ -10,9 +10,9 @@ availability.
 The Python collector and durable producer are suitable for a controlled,
 single-node production data plane when an operator completes the [deployment
 runbook](34-production-deployment-runbook.md), locks the selected dependency
-graph, and records the required operating evidence. The published `0.1.0b1`
-package is a beta and must not be described as unconditional general
-availability until the external gates close.
+graph, and records the required operating evidence. The published `1.0.0`
+package is the stable release; its package status does not replace the
+environment-specific assurance required before a deployment accepts traffic.
 
 ## Repository controls
 
@@ -54,5 +54,5 @@ Source verification does not establish these environment-dependent conditions:
 | Operations | On-call ownership, alert routing, incident workflow, and rollback rehearsal. |
 | Usability | External onboarding sessions that reproduce tracing and recovery without maintainer assistance. |
 
-The automated evidence and beta limitations are maintained in
+The automated evidence and deployment limitations are maintained in
 [verification evidence](26-verification-evidence.md) and the [product FAQ](31-product-faq.md).

@@ -12,7 +12,7 @@ from ..adapter import AdapterEventBridge
 from ..types import EventAttributes, EventExporter, Redactor, TraceContext
 
 try:  # Keeps the dependency-free base package importable.
-    from crewai.events import (  # type: ignore[import-untyped]
+    from crewai.events import (
         BaseEventListener as _BaseEventListener,
     )
 except ImportError:  # pragma: no cover - exercised by dependency-free installs
@@ -62,7 +62,7 @@ class CrewAIEventListener(_BaseEventListener):  # type: ignore[misc]
         """Register against CrewAI's public singleton event bus."""
 
         try:
-            from crewai.events.types.agent_events import (  # type: ignore[import-untyped]
+            from crewai.events.types.agent_events import (
                 AgentExecutionCompletedEvent,
                 AgentExecutionErrorEvent,
                 AgentExecutionStartedEvent,
@@ -70,22 +70,22 @@ class CrewAIEventListener(_BaseEventListener):  # type: ignore[misc]
                 LiteAgentExecutionErrorEvent,
                 LiteAgentExecutionStartedEvent,
             )
-            from crewai.events.types.crew_events import (  # type: ignore[import-untyped]
+            from crewai.events.types.crew_events import (
                 CrewKickoffCompletedEvent,
                 CrewKickoffFailedEvent,
                 CrewKickoffStartedEvent,
             )
-            from crewai.events.types.llm_events import (  # type: ignore[import-untyped]
+            from crewai.events.types.llm_events import (
                 LLMCallCompletedEvent,
                 LLMCallFailedEvent,
                 LLMCallStartedEvent,
             )
-            from crewai.events.types.task_events import (  # type: ignore[import-untyped]
+            from crewai.events.types.task_events import (
                 TaskCompletedEvent,
                 TaskFailedEvent,
                 TaskStartedEvent,
             )
-            from crewai.events.types.tool_usage_events import (  # type: ignore[import-untyped]
+            from crewai.events.types.tool_usage_events import (
                 ToolUsageErrorEvent,
                 ToolUsageFinishedEvent,
                 ToolUsageStartedEvent,

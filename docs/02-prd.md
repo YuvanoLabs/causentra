@@ -16,7 +16,7 @@ A Python-first agent team can capture, retain, inspect, and query a failed or sl
 | Runtime overhead at 100 events/trace | p95 <5 ms/event excluding network |
 | Local ingestion availability during test run | ≥99.5% |
 | Valid event persistence | 100% in graceful-shutdown tests |
-| Critical-path automated coverage | ≥80% branch target after beta |
+| Critical-path automated coverage | ≥80% branch target after the stable 1.0 release |
 | Sensitive payload capture | Off unless explicitly supplied |
 
 ## In scope
@@ -77,7 +77,7 @@ A Python-first agent team can capture, retain, inspect, and query a failed or sl
 | FR-17 | Render source-to-target handoff and delegation relationships | Must |
 | FR-18 | Provide an executable, privacy-safe adapter scaffold | Must |
 | FR-19 | Replay a workflow in a guarded sandbox | Later |
-| FR-20 | Provide privacy-safe deep response telemetry for eight priority providers and tested canonical profiles for all 15 OTel provider identifiers | Must |
+| FR-20 | Provide privacy-safe deep response telemetry for eight priority providers plus seven tested compatible profiles across all 15 OTel provider identifiers | Must |
 | FR-21 | Provide durable at-least-once HTTP, WebSocket, Kafka, NATS, Redis, and MQTT delivery | Must |
 | FR-22 | Provide a durable event engine with named routing, retries, dead letters, and explicit redelivery | Must |
 | FR-23 | Provide authenticated project-isolated self-host collection with quotas, readiness, metrics, and deletion | Must |
@@ -86,4 +86,4 @@ A Python-first agent team can capture, retain, inspect, and query a failed or sl
 
 ## Release policy
 
-The Python runtime is published as the `0.1.0b1` beta on [PyPI](https://pypi.org/project/causentra/). Core runtime requirements are implemented with deterministic local evidence. Provenance, target-infrastructure recovery/soak results, and an independent security review remain general-availability gates.
+The Python runtime is published as the stable `1.0.0` release on [PyPI](https://pypi.org/project/causentra/). Core runtime requirements are implemented with deterministic local evidence. Provenance, target-infrastructure recovery/soak results, and an independent security review remain deployment assurance requirements.

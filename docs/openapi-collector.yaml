@@ -52,6 +52,7 @@ paths:
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
         "409": { $ref: "#/components/responses/Error" }
+        "422": { $ref: "#/components/responses/Error" }
         "429": { $ref: "#/components/responses/Error" }
         "507": { $ref: "#/components/responses/Error" }
   /v1/traces:
@@ -76,6 +77,7 @@ paths:
                     items: { $ref: "#/components/schemas/TraceSummary" }
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
         "429": { $ref: "#/components/responses/Error" }
   /v1/traces/{traceId}:
     parameters:
@@ -90,14 +92,16 @@ paths:
               schema:
                 type: object
                 additionalProperties: false
-                required: [traceId, events]
+                required: [traceId, projection, events]
                 properties:
                   traceId: { $ref: "#/components/schemas/TraceId" }
+                  projection: { enum: [summary, debug] }
                   events:
                     type: array
                     items: { $ref: "#/components/schemas/RuntimeEvent" }
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
     delete:
       operationId: deleteTrace
@@ -115,11 +119,36 @@ paths:
                   deletedEvents: { type: integer, minimum: 1 }
         "400": { $ref: "#/components/responses/Error" }
         "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
         "404": { $ref: "#/components/responses/Error" }
+  /v1/audit:
+    get:
+      operationId: listAuditDecisions
+      description: Requires the `audit:read` scope. Returns metadata only, never event payloads.
+      parameters:
+        - name: limit
+          in: query
+          schema: { type: integer, minimum: 1, maximum: 500, default: 100 }
+      responses:
+        "200":
+          description: Recent authorization and signature decisions.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                required: [decisions]
+                properties:
+                  decisions:
+                    type: array
+                    items: { $ref: "#/components/schemas/AuditDecision" }
+        "400": { $ref: "#/components/responses/Error" }
+        "401": { $ref: "#/components/responses/Error" }
+        "403": { $ref: "#/components/responses/Error" }
   /metrics:
     get:
       operationId: metrics
-      description: Requires an operator-role bearer key.
+      description: Requires the `metrics:read` scope (included by the operator role).
       responses:
         "200":
           description: Prometheus text exposition.
@@ -168,15 +197,38 @@ components:
           minItems: 1
           maxItems: 1000
           items: { $ref: "#/components/schemas/RuntimeEvent" }
+        signature: { $ref: "#/components/schemas/DetachedSignature" }
     IngestResult:
       type: object
       additionalProperties: false
-      required: [batchId, accepted, duplicates, replayedBatch]
+      required: [batchId, accepted, duplicates, replayedBatch, verification]
       properties:
         batchId: { type: string }
         accepted: { type: integer, minimum: 0 }
         duplicates: { type: integer, minimum: 0 }
         replayedBatch: { type: boolean }
+        verification: { enum: [unsigned, verified] }
+    DetachedSignature:
+      type: object
+      additionalProperties: false
+      required: [signatureVersion, artifact, canonicalization, algorithm, keyId, keyVersion, signatureEncoding, signature]
+      properties:
+        signatureVersion: { const: "causentra.signature/v1" }
+        artifact:
+          type: object
+          additionalProperties: false
+          required: [kind, identity, schemaVersion, sha256]
+          properties:
+            kind: { const: event-batch }
+            identity: { type: string }
+            schemaVersion: { const: "1.0" }
+            sha256: { type: string, pattern: "^[0-9a-f]{64}$" }
+        canonicalization: { const: RFC8785-JCS }
+        algorithm: { const: ECDSA_P256_SHA256 }
+        keyId: { type: string }
+        keyVersion: { type: string }
+        signatureEncoding: { const: base64-der }
+        signature: { type: string }
     RuntimeEvent:
       type: object
       additionalProperties: false
@@ -209,6 +261,17 @@ components:
         lastEventAt: { type: string, format: date-time }
         eventCount: { type: integer, minimum: 1 }
         errorCount: { type: integer, minimum: 0 }
+    AuditDecision:
+      type: object
+      additionalProperties: false
+      required: [receivedAt, keyId, projectId, action, outcome, requestId]
+      properties:
+        receivedAt: { type: number }
+        keyId: { type: string }
+        projectId: { type: string }
+        action: { type: string }
+        outcome: { type: string }
+        requestId: { type: string }
     Error:
       type: object
       additionalProperties: false

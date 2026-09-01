@@ -3,7 +3,7 @@ message: "If Causentra supports your research or engineering work, cite the soft
 title: "Causentra"
 abstract: "Open-source, privacy-first observability and tracing runtime for multi-agent AI systems."
 type: software
-version: 0.1.0-beta.1
+version: 1.0.0
 license: Apache-2.0
 repository-code: "https://github.com/YuvanoLabs/causentra"
 url: "https://github.com/YuvanoLabs/causentra"

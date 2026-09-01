@@ -42,7 +42,7 @@ Standards ingress: OTel/OpenInference producer -> OTLP/HTTP JSON or protobuf -> 
 | Stage | Data plane | Control plane |
 |---|---|---|
 | Local | In-process SDK + localhost inspection service | None |
-| Release candidate | SDKs, six Python adapters, durable transports/engine, authenticated self-host collector | Local key/project config |
+| Stable 1.0 release | SDKs, six Python adapters, durable transports/engine, authenticated self-host collector | Local key/project config |
 | Future managed deployment | Regional ingest, stream processing, object/column stores | Identity, organizations, projects, billing, alerts, policy and audit |
 
 ## Cloud target architecture

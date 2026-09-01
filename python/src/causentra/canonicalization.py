@@ -17,7 +17,7 @@ def canonicalize_json(value: JsonValue) -> bytes:
 
     _validate_json_value(value)
     try:
-        import rfc8785  # type: ignore[import-not-found]
+        import rfc8785
 
         return cast(bytes, rfc8785.dumps(value))
     except ImportError as error:

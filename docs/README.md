@@ -34,6 +34,8 @@
 | Deploy | [Production deployment runbook](34-production-deployment-runbook.md) | Single-node collector configuration, validation, recovery and release handoff |
 | Readiness | [Production-readiness assessment](35-production-readiness-assessment.md) | Decision boundary, source verification and external release gates |
 | Delivery | [Evidence-based gap delivery backlog](33-gap-delivery-backlog.md) | Reconciled gaps, completed increments, dependencies and release gates |
+| Controls | [Local assurance controls](37-assurance-controls.md) | Signed ingestion, scopes, loop aggregation, offline evaluation and price catalogs |
+| Packages | [Package catalog](38-package-catalog.md) | Stable Python and npm release line, package purpose and installation |
 | Decisions | [Architecture decisions](adr/README.md) | Durable technical decisions |
 | Contract | [OpenAPI specification](openapi.yaml) | Local ingestion and query API |
 | Contract | [Python collector OpenAPI](openapi-collector.yaml) | Authenticated project-scoped data-plane API |

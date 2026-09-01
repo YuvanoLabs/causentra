@@ -1,6 +1,6 @@
 # Governance
 
-Causentra uses maintainer-led, evidence-driven governance during its release-candidate phase. The objective is to grow into a multi-maintainer project without allowing commercial priorities to weaken product quality or user control.
+Causentra uses maintainer-led, evidence-driven governance for its stable release line. The objective is to grow into a multi-maintainer project without allowing commercial priorities to weaken product quality or user control.
 
 ## Roles
 

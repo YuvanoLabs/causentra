@@ -126,3 +126,17 @@ def test_store_validates_direct_events_and_creates_consistent_backup(tmp_path: P
     assert backup.ready()
     assert backup.stats("project-a").events == len(events)
     backup.close()
+
+
+def test_store_bounds_metadata_only_audit_retention(tmp_path: Path) -> None:
+    store = SqliteCollectorStore(tmp_path / "collector.db", max_audit_records=2)
+    for action in ("first", "second", "third"):
+        store.record_audit(
+            key_id="reader",
+            project_id="project-a",
+            action=action,
+            outcome="allowed",
+            request_id=action,
+        )
+    assert [record["action"] for record in store.list_audit()] == ["third", "second"]
+    store.close()

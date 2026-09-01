@@ -22,9 +22,10 @@ from typing import Any, Protocol, TypeVar, cast, runtime_checkable
 from urllib.parse import urlparse
 
 from .spool import SpoolRecord, SpoolStats, SqliteEventSpool
-from .types import RuntimeErrorContext, RuntimeEvent
+from .types import JsonValue, RuntimeErrorContext, RuntimeEvent
 
 _ResultT = TypeVar("_ResultT")
+BatchSignatureFactory = Callable[[str, list[JsonValue]], Mapping[str, Any]]
 
 
 class TransportDeliveryError(RuntimeError):
@@ -292,6 +293,7 @@ class HttpTransport:
         headers: Mapping[str, str] | None = None,
         ssl_context: ssl.SSLContext | None = None,
         allow_insecure_remote: bool = False,
+        batch_signature_factory: BatchSignatureFactory | None = None,
     ) -> None:
         _secure_endpoint(
             endpoint, secure_scheme="https", allow_insecure_remote=allow_insecure_remote
@@ -304,11 +306,15 @@ class HttpTransport:
         if reserved:
             raise ValueError(f"HTTP transport header is reserved: {sorted(reserved)[0]}")
         self._ssl_context = ssl_context
+        if batch_signature_factory is not None and not callable(batch_signature_factory):
+            raise ValueError("batch_signature_factory must be callable")
+        self._batch_signature_factory = batch_signature_factory
 
     def send(self, batch: TransportBatch, *, timeout: float) -> None:
+        payload = self._payload(batch)
         request = urllib.request.Request(
             self._endpoint,
-            data=batch.payload,
+            data=payload,
             headers={
                 **self._headers,
                 "Content-Type": "application/json",
@@ -336,6 +342,23 @@ class HttpTransport:
             ) from error
         except (OSError, urllib.error.URLError, TimeoutError) as error:
             raise TransportDeliveryError(f"HTTP delivery failed: {error}") from error
+
+    def _payload(self, batch: TransportBatch) -> bytes:
+        factory = self._batch_signature_factory
+        if factory is None:
+            return batch.payload
+        try:
+            body = json.loads(batch.payload)
+            events = body.get("events") if isinstance(body, dict) else None
+            if not isinstance(events, list):
+                raise ValueError("transport batch does not contain an events array")
+            signature = factory(batch.batch_id, cast(list[JsonValue], events))
+            if not isinstance(signature, Mapping):
+                raise ValueError("batch signature factory returned a non-mapping envelope")
+            body["signature"] = dict(signature)
+            return json.dumps(body, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+        except (TypeError, ValueError, json.JSONDecodeError) as error:
+            raise TransportDeliveryError("HTTP batch signature generation failed") from error
 
     def close(self, timeout: float | None = None) -> None:
         del timeout

@@ -1,19 +1,21 @@
 # Causentra on PyPI
 
-The Python runtime is publicly published as [`causentra 0.1.0b1`](https://pypi.org/project/causentra/) for Python 3.10 and later. This public beta ships a source distribution and a universal wheel.
+The Python runtime is publicly published as the stable [`causentra 1.0.0`](https://pypi.org/project/causentra/) release for Python 3.10 and later. It ships a source distribution and a universal wheel.
+
+The matching TypeScript workspace packages use the same `1.0.0` release line;
+their purpose, installation, and Node.js requirement are listed in the
+[package catalog](38-package-catalog.md).
 
 ## Install and use
 
-`0.1.0b1` is a beta, so opt into prereleases explicitly:
-
 ```bash
-python -m pip install --pre causentra
+python -m pip install causentra
 ```
 
 Install named extras only when the application needs their matching framework:
 
 ```bash
-python -m pip install --pre "causentra[openai-agents,langgraph]"
+python -m pip install "causentra[openai-agents,langgraph]"
 ```
 
 ```python
@@ -31,7 +33,7 @@ See the [integration guide](17-integration-guide.md) for framework adapters, tra
 
 ## Releasing a subsequent version
 
-The initial alpha (`0.1.0a1`) is immutable. `0.1.0b1` is the first public beta. Every later release must use a new version: PyPI will not let anyone replace a published file.
+The initial alpha (`0.1.0a1`) and beta (`0.1.0b1`) are immutable. The stable release is `1.0.0`. Every later release must use a new version: PyPI will not let anyone replace a published file.
 
 1. Choose the next version in `python/pyproject.toml`, update the version string in `python/src/causentra/otel.py`, and ensure the release evidence is complete.
 2. From a clean checkout, run:
@@ -51,7 +53,7 @@ The initial alpha (`0.1.0a1`) is immutable. `0.1.0b1` is the first public beta. 
 3. Commit the release change, create an annotated version tag, and push the branch and tag:
 
    ```bash
-   git tag -a v0.1.0b1 -m "Causentra 0.1.0b1"
+   git tag -a v1.0.0 -m "Causentra 1.0.0"
    git push origin main --follow-tags
    ```
 
@@ -65,7 +67,7 @@ The initial alpha (`0.1.0a1`) is immutable. `0.1.0b1` is the first public beta. 
 
    On Windows, use `.venv-causentra-check\Scripts\python.exe` instead.
 
-The current public release is a beta (`0.1.0b1`). Pip considers pre-releases only when no final release satisfies the request; use `python -m pip install --pre causentra` if a later final release is already installed or selected.
+The current public release is stable (`1.0.0`). Install an exact version with `python -m pip install "causentra==1.0.0"` when a deployment requires a fixed artifact.
 
 ## Release automation
 

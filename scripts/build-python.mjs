@@ -7,7 +7,7 @@ await mkdir(new URL("../python/.eggs/", import.meta.url), { recursive: true });
 
 const result = spawnSync(
   "python",
-  ["-m", "build", "--no-isolation", "--outdir", "python/dist", "python"],
+  ["-m", "build", "--outdir", "python/dist", "python"],
   { cwd: root, stdio: "inherit" },
 );
 

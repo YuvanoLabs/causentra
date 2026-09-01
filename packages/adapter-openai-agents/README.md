@@ -1,5 +1,9 @@
 # @causentra/openai-agents
 
+Release line: `1.0.0` for Node.js 22+. This verified workspace package is not
+yet listed in the public npm registry; see the [package catalog](../../docs/38-package-catalog.md)
+for source and archive consumption.
+
 Adds Causentra as a secondary tracing processor for the OpenAI Agents SDK.
 
 ```ts

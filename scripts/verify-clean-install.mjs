@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -61,18 +61,7 @@ try {
     join(consumerDirectory, "package.json"),
     `${JSON.stringify({ name: "causentra-install-smoke", version: "0.0.0", private: true, type: "module" }, null, 2)}\n`,
   );
-  const archives = [
-    join(packageDirectory, "causentra-sdk-0.0.1.tgz"),
-    ...(includeFrameworks
-      ? [
-          join(packageDirectory, "causentra-openai-agents-0.0.1.tgz"),
-          join(packageDirectory, "causentra-langgraph-0.0.1.tgz"),
-          join(packageDirectory, "causentra-opentelemetry-0.0.1.tgz"),
-        ]
-      : []),
-    join(packageDirectory, "causentra-server-0.0.1.tgz"),
-    join(packageDirectory, "causentra-cli-0.0.1.tgz"),
-  ];
+  const archives = packages.map((workspace) => archivePath(workspace, packageDirectory));
   run([
     "install",
     "--ignore-scripts",
@@ -121,4 +110,27 @@ function run(arguments_, environment_, cwd = root) {
     env: environment_,
     stdio: "inherit",
   });
+}
+
+function archivePath(workspace, destination) {
+  const manifest = JSON.parse(
+    readFileSync(join(root, workspaceDirectory(workspace), "package.json"), "utf8"),
+  );
+  const filename = `${String(manifest.name).replace(/^@/u, "").replaceAll("/", "-")}-${String(manifest.version)}.tgz`;
+  return join(destination, filename);
+}
+
+function workspaceDirectory(workspace) {
+  return {
+    "@causentra/sdk": "packages/sdk",
+    "@causentra/openai-agents": "packages/adapter-openai-agents",
+    "@causentra/langgraph": "packages/adapter-langgraph",
+    "@causentra/opentelemetry": "packages/adapter-opentelemetry",
+    "@causentra/server": "apps/runtime-server",
+    "@causentra/cli": "packages/cli",
+  }[workspace] ?? fail(`unknown workspace ${workspace}`);
+}
+
+function fail(message) {
+  throw new Error(message);
 }

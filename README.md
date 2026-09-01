@@ -6,7 +6,7 @@ Pronounced `kaw-SEN-truh`. Causentra is a privacy-first AI agent observability a
 
 It standardizes agent, model, tool, workflow, handoff, and delegation telemetry across OpenAI Agents, LangGraph/LangChain, CrewAI, Google ADK, Semantic Kernel, AutoGen, custom agents, and OpenTelemetry producers. Causentra runs locally, requires no account, and does not capture prompts, outputs, tool arguments, arbitrary framework state, or error messages by default.
 
-> **Status: published PyPI beta.** Causentra `0.1.0b1` is available on [PyPI](https://pypi.org/project/causentra/). It remains a pre-release: independent security review, target-infrastructure soak tests, and the first external onboarding study remain general-availability gates.
+> **Status: stable PyPI release.** Causentra `1.0.0` is available on [PyPI](https://pypi.org/project/causentra/). Production deployments must still complete the security, target-infrastructure, and operational controls in the [deployment runbook](docs/34-production-deployment-runbook.md).
 
 ## Workspace shape
 
@@ -14,20 +14,20 @@ This repository is the unified Causentra product workspace. All maintained packa
 
 From root:
 
-- `npm install` to bootstrap the workspace.
+- `npm install` and `python -m pip install -e "python[dev]"` to bootstrap the workspace.
 - `npm run verify` to run the full repository verification flow.
 
 Install the Python runtime in an application with:
 
 ```bash
-python -m pip install --pre causentra
+python -m pip install causentra
 ```
 
 | Start | Understand | Verify |
 |---|---|---|
 | [Five-minute Python onboarding](docs/28-developer-onboarding.md) | [Framework and provider support](docs/23-provider-support.md) | [Production readiness](docs/21-public-product-readiness-review.md) |
 | [Integration recipes](docs/17-integration-guide.md) | [Architecture](docs/06-solution-architecture.md) | [Verification evidence](docs/26-verification-evidence.md) |
-| [Product FAQ](docs/31-product-faq.md) | [Privacy and security](docs/07-data-api-security.md) | [Current limitations](docs/19-local-release-readiness.md) |
+| [Product FAQ](docs/31-product-faq.md) | [Package catalog](docs/38-package-catalog.md) | [Deployment requirements](docs/34-production-deployment-runbook.md) |
 
 ## Why this project exists
 
@@ -57,7 +57,7 @@ Framework-native tracing remains useful for framework-specific depth. OpenTeleme
 | OpenAI Agents adapters | Maintained; Python `0.18.x` and JavaScript `0.13.x` |
 | LangGraph/LangChain adapters | Maintained; Python `1.2.x`/`1.4.x` and supported JS bands |
 | CrewAI, Google ADK, Semantic Kernel and AutoGen adapters | Maintained Python adapters against narrow tested bands; CrewAI and Semantic Kernel production use is currently dependency-audit gated |
-| Framework-neutral TypeScript SDK | Maintained protocol peer |
+| Framework-neutral TypeScript SDK | Verified `@causentra/sdk` 1.0.0 workspace protocol peer; see the [package catalog](docs/38-package-catalog.md) for registry status |
 | Custom Python and TypeScript agents | Supported through explicit SDK spans |
 | Authenticated Python collector | Durable SQLite WAL, project isolation, quotas, readiness and operator metrics |
 | Local dashboard collector | Maintained Node.js loopback service and durable NDJSON store |
@@ -73,10 +73,10 @@ Framework-native tracing remains useful for framework-specific depth. OpenTeleme
 | OpenTelemetry semantic projection and OTLP/HTTP protobuf exporter | Maintained public bridge; GenAI conventions remain evolving |
 | W3C Trace Context carrier | Maintained in the TypeScript SDK |
 | Cross-framework trace continuity | Tested with real OpenAI Agents + compiled LangGraph execution |
-| Provider/model/token/cost support | 8 deep Python response mappings; all 15 OTel provider IDs have tested compatibility profiles; custom IDs remain supported |
+| Provider/model/token/cost support | 8 deep Python response mappings plus 7 compatible profiles across all 15 canonical provider IDs; custom IDs remain supported |
 | AutoGen and other OTel-native Python frameworks | AutoGen native OTel exporter maintained; generic OTLP remains the open path |
 
-Support is deliberately tiered: six Python framework families have maintained native adapters; eight providers have deep response mappings; all 15 canonical providers have compatibility profiles; and standards-compliant producers can use OTLP. Provider SDK monkey-patching is not used. Applications wrap calls with `call_model`, `call_model_async`, or `provider_model`, preserving SDK ownership and credentials.
+Support is deliberately tiered: six Python framework families have maintained native adapters; eight providers have deep response mappings; seven more have compatible profiles, covering all 15 canonical provider IDs; and standards-compliant producers can use OTLP. Provider SDK monkey-patching is not used. Applications wrap calls with `call_model`, `call_model_async`, or `provider_model`, preserving SDK ownership and credentials.
 
 Adapter compatibility is not a security waiver. The current CrewAI and Semantic Kernel dependency graphs contain unresolved upstream advisories and are not approved for production promotion; use named extras and review the [dated verification evidence](docs/26-verification-evidence.md).
 
@@ -95,7 +95,7 @@ npm run dev
 Install the published Python SDK with the maintained adapters you use, then emit a trace:
 
 ```bash
-python -m pip install --pre "causentra[openai-agents,langgraph,transports]"
+python -m pip install "causentra[openai-agents,langgraph,transports]"
 npm run example:python
 ```
 
@@ -123,10 +123,10 @@ npm run python:benchmark
 npm run python:benchmark:collector
 ```
 
-The Python runtime is published as [`causentra 0.1.0b1`](https://pypi.org/project/causentra/). Because this is a beta release, include `--pre` to opt into prerelease updates:
+The Python runtime is published as the stable [`causentra 1.0.0`](https://pypi.org/project/causentra/) release:
 
 ```bash
-python -m pip install --pre causentra
+python -m pip install causentra
 ```
 
 See the [PyPI release runbook](docs/32-pypi-release.md) for installation variants and future release operations.
@@ -143,7 +143,7 @@ See the [PyPI release runbook](docs/32-pypi-release.md) for installation variant
 - [Data, API, and security model](docs/07-data-api-security.md)
 - [Current limitations and release evidence](docs/19-local-release-readiness.md)
 
-The common contract standardizes trace correlation, W3C context handoff, and the `workflow`, `agent`, `model`, `tool`, error, timing, status, provider/model/usage, and cost-provenance vocabulary. It does not ship provider price tables, infer costs silently, capture hidden reasoning, or re-execute tools. Event replay means redelivery to an idempotent handler, never agent side-effect replay. See the [product readiness review](docs/21-public-product-readiness-review.md).
+The common contract standardizes trace correlation, W3C context handoff, and the `workflow`, `agent`, `model`, `tool`, error, timing, status, provider/model/usage, and cost-provenance vocabulary. It ships no provider price table and never infers costs silently; callers may opt into a versioned local catalog with explicit `catalog_estimate` provenance. It does not capture hidden reasoning or re-execute tools. Event replay means redelivery to an idempotent handler, never agent side-effect replay. See the [local assurance controls](docs/37-assurance-controls.md) and [product readiness review](docs/21-public-product-readiness-review.md).
 
 ## One product, evolving capabilities
 
@@ -157,19 +157,19 @@ Causentra has one codebase, one event contract, and one package namespace. It in
 - Project roles and decision rights are defined in [GOVERNANCE.md](GOVERNANCE.md).
 - The evidence-driven public roadmap is in [ROADMAP.md](ROADMAP.md).
 
-## Fund the work (Support this project)
+## Support this project
 
 Causentra is an Apache-2.0 project with one maintained product line.
 
 If this project helps your team, there are three ways to contribute meaningfully:
 
-- Sponsor the roadmap: help us move validation gates, reduce debt, and accelerate production readiness.
+- Contribute validation evidence: help move validation gates, reduce debt, and improve production readiness.
 - Contribute code or docs: implement adapters, improve tests, tighten edge-case coverage, or reduce ambiguity in docs.
 - Improve ecosystem quality: report reproducible issues, benchmark missing cases, and review architecture claims.
 
-### Why sponsorship matters
+### Why support helps
 
-This project is at a critical stage where runtime reliability, security evidence, and production-grade documentation need sustained review. Sponsorship supports:
+This project is at a critical stage where runtime reliability, security evidence, and production-grade documentation need sustained review. Community support helps with:
 - Continuous maintenance and triage
 - Security and compatibility test expansion
 - Better compatibility and release hardening

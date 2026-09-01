@@ -18,14 +18,15 @@ or market statement in the guide has been independently verified.
   [`python/src/causentra/spool.py`](../python/src/causentra/spool.py),
   [`python/src/causentra/event_engine.py`](../python/src/causentra/event_engine.py),
   and [`python/src/causentra/transports.py`](../python/src/causentra/transports.py).
-- Project-scoped bearer-key collection, quotas, readiness and operator metrics
+- Project-scoped bearer-key collection, quotas, readiness, scoped metrics, and
+  metadata-only audit decisions
   exist in [`python/src/causentra/collector.py`](../python/src/causentra/collector.py)
   and [`python/src/causentra/collector_store.py`](../python/src/causentra/collector_store.py).
-- Explicit retention pruning exists; active agent-loop suppression or
-  aggregation does not. See [`apps/runtime-server/src/store.ts`](../apps/runtime-server/src/store.ts)
-  and [`apps/runtime-server/src/server.ts`](../apps/runtime-server/src/server.ts).
-- Cost fields require explicit provenance, but there is no built-in price
-  catalog or prompt-management service (`packages/sdk/src/model-telemetry.ts`).
+- Explicit retention pruning, observation, and opt-in bounded lifecycle-loop
+  aggregation exist. See [`python/src/causentra/aggregation.py`](../python/src/causentra/aggregation.py).
+- Cost fields require explicit provenance. There is no bundled provider price
+  table; callers can supply an effective-dated local catalog. Prompt management
+  remains unimplemented by design.
 - The local dashboard, causal tree, and timing breakdown are developer-facing;
   organization RBAC, Kubernetes multi-tenant hosting, prompt management, and a
   Rust core are not current M0 capabilities. The production-runtime document
@@ -62,55 +63,49 @@ listed with each item:
 Each item is intentionally small and has a dependency and an observable exit
 criterion.
 
-1. **Design a trace-signing contract — completed as ADR-006 (design only).**
+1. **Design a trace-signing contract — completed as ADR-006.**
    [`docs/adr/006-versioned-detached-telemetry-signatures.md`](adr/006-versioned-detached-telemetry-signatures.md)
    defines canonical bytes, a detached envelope, key purposes, rotation and
-   verification failure behavior. No remote/KMS production signer or dependency exists.
+   verification failure behavior. No live key-service interoperability evidence
+   is bundled with the repository.
    **Completed milestones:** standalone schema/fixtures and an opt-in TypeScript local ECDSA P-256 signer/verifier under `packages/sdk`. RFC 8785 canonicalization helpers now exist as optional prerequisite infrastructure (`canonicalize@4.0.0` and Python
-   `rfc8785>=0.1.4,<0.2`), but signing remains unimplemented.
-2. **Extend detached signing — pending Python parity, KMS/Vault adapters, and collector enforcement.** Add a local test signer/verifier and
-   exporter/collector hooks; add KMS/Vault adapters only behind explicit
-   optional integrations. Dependency: item 1. Acceptance: tampering is rejected,
-   signatures survive export/import, and unsigned legacy traces have an explicit
-   status.
-3. **Design collector field projections and authorization.** Specify summary vs
-   debug projections, principal scopes, audit events and failure semantics
-   before JWT/role work. Dependency: existing project isolation and policy
-   redaction. Acceptance: threat model, API contract and cross-project/field
-   leakage tests.
-4. **Implement restricted collector projections/RBAC slice.** Start with
-   project/operator scopes and field stripping at the query boundary; defer
-   organization/team control plane. Dependency: item 3. Acceptance: restricted
-   principals cannot retrieve raw attributes, every read/delete remains scoped,
-   and authorization decisions are auditable.
-5. **Add loop aggregation only after observation evidence.** Use the new detector
-   metrics to choose bounded grouping/circuit-breaker policy; do not suppress
-   application operations. Dependency: completed observation policy and deep
-   benchmark. Acceptance: explicit opt-in policy, bounded event/storage growth,
-   replayability, and unchanged application results.
-6. **Define an offline deterministic evaluation contract.** Start with rules over
-   exported trace bundles and `evaluation.score` extension events; do not add an
-   LLM judge or network dependency yet. Dependency: stable signed/exported
-   bundle semantics. Acceptance: repeatable scores tied to trace/event IDs and
-   privacy-safe fixtures.
-7. **Seek product approval for an optional price catalog.** Only if cost tables
-   are a committed product outcome, define versioned provider/model rates,
-   effective dates and unknown-model behavior. Dependency: product decision and
-   existing explicit cost provenance. Acceptance: deterministic lookup tests;
-   no silent price guesses. Prompt management remains a separate product/design
-   gate.
+   `rfc8785>=0.1.4,<0.2`). Python signing, explicit KMS/Vault digest adapters,
+   normalized batch signing, and collector enforcement are now implemented.
+2. **Extend detached signing — completed locally.** Tampering is rejected before
+   verified-path storage, legacy unsigned batches are explicitly labelled, and
+   tests cover local keys plus mock KMS/Vault digest behavior. Live key-service
+   interoperability remains an operator evidence gate.
+3. **Design collector field projections and authorization — completed.** The
+   API defines summary/debug projections, scopes, audit decision metadata, and
+   failure semantics in [`docs/37-assurance-controls.md`](37-assurance-controls.md).
+4. **Implement restricted collector projections/RBAC slice — completed.** A
+   restricted principal cannot retrieve stored attributes or delete traces;
+   reads/deletes remain project-scoped and decisions are durable/auditable.
+   Organization/team control-plane RBAC remains outside single-node scope.
+5. **Add loop aggregation — completed as an opt-in exporter policy.** Empty,
+   repeated leaf pairs are bounded into a replayable summary event; nested or
+   payload-bearing operations pass through unchanged and application results are
+   unaffected.
+6. **Define an offline deterministic evaluation contract — completed.** Rules
+   operate on one exported trace bundle and provide stable score attributes for
+   caller-created `evaluation.score` events; there is no LLM judge or network
+   dependency.
+7. **Add an optional price catalog — completed.** The caller supplies a
+   versioned, effective-dated integer-rate catalog; unknown rates return no
+   estimate and every estimate carries explicit `catalog_estimate` provenance.
+   Prompt management remains a separate product/design gate.
 8. **Profile and soak before considering a Rust core.** Run deep traces, memory
    allocation profiling, serialization tests, backlog recovery and target
    infrastructure soak. Dependency: benchmark evidence and real workload
    samples. Acceptance: published p50/p95/CPU/memory/disk evidence and a
    measured bottleneck with a proposed FFI boundary. Rust is not an immediate
    implementation commitment.
-9. **1.0 release and security gates.** Complete independent security review,
+9. **Ongoing 1.x release and security controls.** Complete independent security review,
    dependency/SBOM review, target transport/TLS/backup/restore/24-hour soak,
    onboarding evidence, signed artifacts and release provenance. Dependency:
    items 1–8 where applicable. Acceptance: release checklist in
    [`docs/19-local-release-readiness.md`](19-local-release-readiness.md) is
-   closed with evidence; no alpha-stage claims remain.
+   closed with evidence; no prerelease-stage claims remain.
 
 ## Explicit design/decision gates
 
@@ -119,7 +114,7 @@ deployment, and a Rust serialization/core rewrite are not immediate coding
 tasks. Each requires a product/architecture decision, operating model, threat
 model, cost evidence and a bounded design before implementation is authorized.
 The current local dashboard and single-node collector remain valid for the
-documented alpha/release-candidate scope.
+documented stable single-node scope.
 
 ## Sponsorship-plan next actions (non-contact work)
 

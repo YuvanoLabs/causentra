@@ -36,4 +36,4 @@ Avoid claims that Causentra replaces OpenTelemetry, guarantees deterministic rep
 
 ## Competitive validation
 
-Before public beta, refresh the competitor matrix using current primary product documentation, test onboarding for the five most-used alternatives, and record feature parity by evidence. Do not base roadmap priority on static market claims.
+Before a major product expansion, refresh the competitor matrix using current primary product documentation, test onboarding for the five most-used alternatives, and record feature parity by evidence. Do not base roadmap priority on static market claims.

@@ -10,8 +10,12 @@ Causentra is building an open, portable local instrumentation layer. Sustainable
 - Material organizational sponsorship and conflicts of interest are disclosed.
 - Paid work is labeled when it directly shapes a public contribution.
 
-## Sponsor button
+## Sponsorship status
 
-The repository Sponsor button is configured for the `YuvanoLabs` GitHub organization through [`.github/FUNDING.yml`](.github/FUNDING.yml). Before accepting payments, an organization owner must complete GitHub Sponsors enrollment, including its required payment, tax, and verification steps. Do not send money to an account claiming to represent Causentra unless it is linked from the repository Sponsor button and this file.
+Causentra does not currently expose a GitHub Sponsors profile or accept funding
+through this repository. Do not send money to an account claiming to represent
+Causentra unless a future, owner-approved funding channel is documented here.
 
-Until that enrollment is active, the highest-value support is to run the product on a real synthetic workflow, report reproducible findings, review the schema, contribute an adapter test, or star the repository.
+The highest-value support today is to run the product on a real synthetic
+workflow, report reproducible findings, review the schema, contribute an adapter
+test, or star the repository.

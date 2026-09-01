@@ -18,7 +18,7 @@ Install a named release and create one digest per raw key without echoing it:
 ```bash
 python -m venv /opt/causentra/venv
 /opt/causentra/venv/bin/python -m pip install --upgrade pip
-/opt/causentra/venv/bin/python -m pip install --pre causentra
+/opt/causentra/venv/bin/python -m pip install causentra
 /opt/causentra/venv/bin/causentra-key-hash
 ```
 

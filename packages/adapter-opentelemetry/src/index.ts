@@ -186,7 +186,7 @@ export function startCausentraRuntimeOtlp(
   });
   provider.register();
   const exporter = new OpenTelemetryEventExporter({
-    tracer: provider.getTracer("causentra", "0.0.1"),
+    tracer: provider.getTracer("causentra", "1.0.0"),
     forceFlush: () => provider.forceFlush(),
     shutdown: () => provider.shutdown(),
     ...(options.onError === undefined ? {} : { onError: options.onError }),

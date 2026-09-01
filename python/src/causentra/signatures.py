@@ -44,6 +44,7 @@ class DetachedSignatureEnvelope(TypedDict):
 VerificationKey = Mapping[str, Any]
 
 SignatureKeyResolver = Callable[[str, str], VerificationKey | None]
+DetachedSignatureSigner = Callable[[bytes], bytes]
 
 
 class SignatureVerificationResult(TypedDict, total=False):
@@ -70,6 +71,37 @@ _ENVELOPE_KEYS = frozenset(
 _ARTIFACT_KEYS = frozenset({"kind", "identity", "schemaVersion", "sha256"})
 
 
+def batch_signature_artifact(
+    batch_id: str, events: list[JsonValue], *, transport_version: str = "1.0"
+) -> DetachedArtifact:
+    """Return the exact normalized event-batch artifact covered by a signature.
+
+    The idempotency identifier is included even when it arrived in the HTTP
+    header, preventing an envelope from being replayed against a different
+    batch. This helper is intentionally transport-neutral so producers can use
+    the same bytes as the collector.
+    """
+
+    if not _matches(batch_id, _ID_CHARS, 256):
+        raise ValueError("invalid batch identity")
+    if transport_version != "1.0":
+        raise ValueError("unsupported transport version")
+    if not isinstance(events, list) or not events:
+        raise ValueError("batch events must be a non-empty JSON array")
+    artifact: DetachedArtifact = {
+        "kind": "event-batch",
+        "identity": batch_id,
+        "schemaVersion": "1.0",
+        "value": {
+            "transportVersion": transport_version,
+            "batchId": batch_id,
+            "events": events,
+        },
+    }
+    _validate_artifact(artifact)
+    return artifact
+
+
 def sign_detached_artifact(
     artifact: Mapping[str, Any],
     *,
@@ -79,14 +111,38 @@ def sign_detached_artifact(
 ) -> DetachedSignatureEnvelope:
     """Sign a JSON artifact with an opt-in local ECDSA P-256 private key."""
 
+    private = _load_private_key(private_key)
+    return sign_detached_artifact_with_signer(
+        artifact,
+        key_id=key_id,
+        key_version=key_version,
+        sign_descriptor=lambda descriptor: private.sign(descriptor, _ecdsa_sha256()),
+    )
+
+
+def sign_detached_artifact_with_signer(
+    artifact: Mapping[str, Any],
+    *,
+    key_id: str,
+    key_version: str,
+    sign_descriptor: DetachedSignatureSigner,
+) -> DetachedSignatureEnvelope:
+    """Sign with a caller-provided descriptor signer, including KMS/Vault adapters.
+
+    The callback receives canonical descriptor bytes, never artifact payload
+    bytes. It must return DER-encoded ECDSA P-256 signature bytes. Private
+    material and transport credentials remain entirely outside this package.
+    """
+
     _validate_artifact(artifact)
     _validate_identity(key_id, _ID_CHARS, "key ID")
     _validate_identity(key_version, _VERSION_CHARS, "key version")
-    private = _load_private_key(private_key)
     typed_artifact = cast(DetachedArtifact, artifact)
     digest = _digest_artifact(typed_artifact["value"])
     descriptor = _descriptor(typed_artifact, digest, key_id, key_version)
-    signature = private.sign(_canonical_descriptor(descriptor), _ecdsa_sha256())
+    signature = sign_descriptor(_canonical_descriptor(descriptor))
+    if not isinstance(signature, bytes) or not 8 <= len(signature) <= 2_048:
+        raise ValueError("sign_descriptor must return bounded DER signature bytes")
     return {
         "signatureVersion": "causentra.signature/v1",
         "artifact": {

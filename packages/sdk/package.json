@@ -1,6 +1,6 @@
 {
   "name": "@causentra/sdk",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Framework-neutral multi-agent observability and tracing SDK for Causentra",
   "keywords": [
     "ai-agents",

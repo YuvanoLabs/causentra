@@ -31,7 +31,7 @@ Until compatible upstream releases are validated:
 ## Compliance sequence
 
 1. M0: data inventory, secure defaults, dependency/secret scanning, disclosure contact.
-2. Public beta: privacy policy, terms, DPA template, subprocessors, deletion workflow, SBOM/provenance.
+2. Stable public release: privacy policy, terms, DPA template, subprocessors, deletion workflow, SBOM/provenance.
 3. Cloud GA: formal access reviews, change management, incident/BCP evidence, vendor risk, retention controls.
 4. Regulated deployment: SOC 2 Type I then Type II based on demand; GDPR/UK GDPR operating evidence; regional and sector requirements only with qualified opportunities.
 

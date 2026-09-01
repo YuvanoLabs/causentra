@@ -2,7 +2,7 @@
 
 This roadmap covers Causentra. Exit criteria depend on evidence, not dates.
 
-## Current: Python release candidate
+## Current: stable Python release
 
 - [x] One privacy-safe lifecycle schema across Python and TypeScript
 - [x] Six maintained Python framework adapters and two maintained TypeScript adapter families
@@ -10,12 +10,13 @@ This roadmap covers Causentra. Exit criteria depend on evidence, not dates.
 - [x] Durable producer spool with HTTP, WebSocket, Kafka, NATS JetStream, Redis Streams, and MQTT delivery
 - [x] Durable event engine with named subscriptions, retry, dead letters, and explicit redelivery
 - [x] Authenticated, project-isolated Python collector with quotas, readiness, metrics, and durable SQLite WAL storage
+- [x] Opt-in signed batch enforcement, scoped collector projections/audit, bounded loop aggregation, offline evaluation, and explicit local price catalogs
 - [x] Permissioned, integrity-checked child-process plugin protocol
 - [x] Causal tree, handoff/delegation view, safe filters, CLI, dashboard, and portable trace lifecycle
 
 ## Gate A: trustworthy source launch
 
-- Assign monitored maintainer, security, conduct, and funding contacts
+- Assign monitored maintainer, security, conduct, and support contacts
 - Pin reviewed CI actions; enable branch protection and private vulnerability reporting
 - Publish benchmark results from a documented target machine
 - Commission an independent security review and resolve critical/high findings
@@ -23,7 +24,7 @@ This roadmap covers Causentra. Exit criteria depend on evidence, not dates.
 
 Exit: no open critical/high release finding; all automated gates pass from a clean checkout; recovery evidence is reviewed.
 
-## Gate B: public package preview
+## Gate B: public package adoption
 
 - Verify package namespace ownership, signing, provenance, and rollback procedure
 - Test the declared Python/OS matrix in the public CI environment

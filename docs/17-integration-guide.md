@@ -15,7 +15,7 @@ This Node.js inspection server is intentionally unauthenticated. It refuses a no
 ## Python SDK
 
 ```bash
-python -m pip install --pre "causentra[openai-agents,langgraph]"
+python -m pip install "causentra[openai-agents,langgraph]"
 ```
 
 Choose only the named framework extras used by the application: `openai-agents`, `langgraph`, `crewai`, `google-adk`, `semantic-kernel`, or `autogen`. The aggregate `frameworks` extra is for compatibility validation; production deployments should use a reviewed lock/constraints file and current advisory report.
@@ -169,6 +169,15 @@ engine.subscribe(
 Handlers must be idempotent. Retry exhaustion is retained as a dead letter. `replay_completed` and `requeue_dead_letters` are explicit operator actions. See [transport and plugin operations](25-transport-plugin-operations.md).
 
 ## TypeScript SDK
+
+The TypeScript packages are verified `1.0.0` workspace artifacts and are not
+yet listed in the public npm registry. From a repository checkout with Node.js
+22 or later, install and build them with:
+
+```bash
+npm install
+npm run build
+```
 
 ```ts
 import { CausentraRuntime, HttpBatchExporter } from "@causentra/sdk";

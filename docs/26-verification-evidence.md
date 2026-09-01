@@ -51,18 +51,18 @@ The workspace establishes the first three levels locally. CI definitions cover t
 
 ## Latest local evidence
 
-Evidence date: 2026-07-17. Environment: Windows, Python 3.11.9, Node 26.5.0.
+Evidence date: 2026-08-31. Environment: Windows, Python 3.11.9, Node 26.5.0.
 
 | Gate | Result |
 |---|---|
-| Python runtime | 92 passed, including authenticated onboarding; 10 environment-gated skips; strict Ruff and mypy passed |
+| Python runtime | 124 passed, including authenticated onboarding and local assurance controls; 13 environment-gated skips; strict Ruff and mypy passed from a clean isolated environment |
 | Exact Python frameworks | 12 passed across the six supported framework families |
-| Packaging | wheel/sdist built; dependency-free clean-wheel install passed |
-| TypeScript workspace | strict build plus 45 package/integration/template tests passed |
-| Repository/docs/packages | Causentra brand gate, repository discovery gate, 119 local documentation links, archive contents, and clean consumer installs for all six npm archives plus exact framework peers passed |
-| Runtime benchmark | Python p95 0.1366 ms/event and TypeScript 0.0272 ms/event; budget below 5 ms/event |
-| Collector benchmark | 4,801 events/second; budget at least 1,000 events/second |
-| Security tooling | npm audit: 0 vulnerabilities; the dependency-free Python core reports no known advisories; Bandit medium/high gate passed |
+| Packaging | PEP 517-isolated wheel/sdist build, Twine metadata validation, and dependency-free clean-wheel install passed |
+| TypeScript workspace | strict build, package/integration/template tests, archive contents, and clean consumer install passed |
+| Repository/docs/packages | Causentra brand gate, repository discovery gate, 192 local documentation links, and clean consumer installs for all six npm archives plus exact framework peers passed |
+| Runtime benchmark | Python p95 0.1727 ms/event and TypeScript 0.0253 ms/event; budget below 5 ms/event |
+| Collector benchmark | 8,030 events/second; budget at least 1,000 events/second |
+| Security tooling | npm audit: 0 vulnerabilities; dependency-free Python audit: no known vulnerabilities; Bandit medium/high source gate and `pip check` passed |
 | Targeted npm remediation (2026-08-23) | Pre-existing `ajv@8.20.0 -> fast-uri@3.1.3` advisory remediated with compatible `fast-uri@3.1.5`; `npm audit --omit=dev` reports 0 vulnerabilities |
 | Optional framework environment | Exact six-adapter tests: 12 passed with pytest 9.1.1 and `pip check` clean; audit: 8 advisories across `chromadb`, `json-repair`, `mcp`, and `werkzeug` |
 

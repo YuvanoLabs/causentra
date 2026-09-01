@@ -1,6 +1,6 @@
 {
   "name": "@causentra/cli",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "CLI for local AI agent traces, diagnostics, export, and lifecycle operations",
   "keywords": ["ai-agents", "agent-observability", "tracing", "cli", "local-first", "opentelemetry"],
   "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/cli#readme",
@@ -26,8 +26,8 @@
     "start": "node dist/src/index.js"
   },
   "dependencies": {
-    "@causentra/sdk": "0.0.1",
-    "@causentra/server": "0.0.1"
+    "@causentra/sdk": "1.0.0",
+    "@causentra/server": "1.0.0"
   },
   "engines": { "node": ">=22.0.0" },
   "publishConfig": {

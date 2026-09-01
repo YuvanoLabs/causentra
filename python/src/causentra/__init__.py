@@ -1,12 +1,15 @@
 """Public Causentra Python API."""
 
 from .adapter import AdapterEventBridge
+from .aggregation import LoopAggregationExporter, LoopAggregationPolicy
 from .canonicalization import canonicalize_json
 from .collector import (
     ApiPrincipal,
     CollectorConfig,
     CollectorLimits,
     RunningCollector,
+    SignatureVerificationConfig,
+    SignatureVerificationKey,
     hash_api_key,
     load_collector_config,
     start_collector,
@@ -20,6 +23,14 @@ from .collector_store import (
     SqliteCollectorStore,
 )
 from .conformance import adapter_conformance_errors, assert_adapter_conformant
+from .evaluation import (
+    EvaluationFinding,
+    EvaluationRule,
+    TraceEvaluation,
+    evaluate_trace,
+    evaluate_trace_bundle,
+    evaluation_id,
+)
 from .event_engine import (
     DeadLetter,
     EventEngine,
@@ -42,6 +53,7 @@ from .plugins import (
     PluginProtocolError,
     PluginRuntime,
 )
+from .price_catalog import CatalogCostEstimate, ModelPriceRate, PriceCatalog
 from .propagation import extract_trace_context, inject_trace_context
 from .providers import (
     DEEP_PROVIDER_NAMES,
@@ -54,7 +66,13 @@ from .providers import (
 from .redaction import PolicyRedactor, default_redactor
 from .relationships import relationship_attributes
 from .runtime import CausentraRuntime, LoopDetectionPolicy, ProviderModelOperation
-from .signatures import sign_detached_artifact, verify_detached_signature
+from .signatures import (
+    batch_signature_artifact,
+    sign_detached_artifact,
+    sign_detached_artifact_with_signer,
+    verify_detached_signature,
+)
+from .signing_backends import KmsDigestSigner, VaultTransitDigestSigner
 from .spool import (
     SpoolConflictError,
     SpoolDeadLetter,
@@ -64,6 +82,7 @@ from .spool import (
     SqliteEventSpool,
 )
 from .transports import (
+    BatchSignatureFactory,
     BatchTransport,
     DurableTransportExporter,
     HttpTransport,
@@ -85,7 +104,9 @@ __all__ = [
     "WELL_KNOWN_GENAI_PROVIDERS",
     "AdapterEventBridge",
     "ApiPrincipal",
+    "BatchSignatureFactory",
     "BatchTransport",
+    "CatalogCostEstimate",
     "CausentraRuntime",
     "CollectorCapacityError",
     "CollectorConfig",
@@ -94,6 +115,8 @@ __all__ = [
     "CollectorStoreStats",
     "DeadLetter",
     "DurableTransportExporter",
+    "EvaluationFinding",
+    "EvaluationRule",
     "EventEngine",
     "EventEngineCapacityError",
     "EventEngineConflictError",
@@ -104,8 +127,12 @@ __all__ = [
     "IdempotencyConflictError",
     "IngestResult",
     "KafkaTransport",
+    "KmsDigestSigner",
+    "LoopAggregationExporter",
+    "LoopAggregationPolicy",
     "LoopDetectionPolicy",
     "MemoryExporter",
+    "ModelPriceRate",
     "MqttTransport",
     "NatsJetStreamTransport",
     "NonRetryableEventError",
@@ -118,6 +145,7 @@ __all__ = [
     "PluginProtocolError",
     "PluginRuntime",
     "PolicyRedactor",
+    "PriceCatalog",
     "ProviderModelOperation",
     "ProviderProfile",
     "RedisStreamsTransport",
@@ -125,6 +153,8 @@ __all__ = [
     "RunningCollector",
     "RuntimeErrorContext",
     "RuntimeEvent",
+    "SignatureVerificationConfig",
+    "SignatureVerificationKey",
     "SpoolConflictError",
     "SpoolDeadLetter",
     "SpoolFullError",
@@ -133,13 +163,19 @@ __all__ = [
     "SqliteCollectorStore",
     "SqliteEventSpool",
     "TraceContext",
+    "TraceEvaluation",
     "TransportBatch",
     "TransportDeliveryError",
+    "VaultTransitDigestSigner",
     "WebSocketTransport",
     "adapter_conformance_errors",
     "assert_adapter_conformant",
+    "batch_signature_artifact",
     "canonicalize_json",
     "default_redactor",
+    "evaluate_trace",
+    "evaluate_trace_bundle",
+    "evaluation_id",
     "event_from_wire",
     "extract_trace_context",
     "hash_api_key",
@@ -152,6 +188,7 @@ __all__ = [
     "provider_response_attributes",
     "relationship_attributes",
     "sign_detached_artifact",
+    "sign_detached_artifact_with_signer",
     "start_collector",
     "start_otlp_exporter",
     "validate_event",

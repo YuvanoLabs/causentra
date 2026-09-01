@@ -1,6 +1,6 @@
 {
   "name": "@causentra/server",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Local-first AI agent trace collector, OTLP receiver, and Causentra dashboard",
   "keywords": ["ai-agents", "agent-observability", "otlp", "trace-collector", "dashboard", "local-first"],
   "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/apps/runtime-server#readme",
@@ -28,7 +28,7 @@
     "start": "node dist/src/index.js"
   },
   "dependencies": {
-    "@causentra/sdk": "0.0.1",
+    "@causentra/sdk": "1.0.0",
     "protobufjs": "8.7.2"
   },
   "files": [

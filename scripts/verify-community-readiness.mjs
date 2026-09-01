@@ -38,10 +38,10 @@ for (const file of requiredFiles) {
 
 const readme = contents.get("README.md") ?? "";
 for (const requiredClaim of [
-  "Status: published PyPI beta",
+  "Status: stable PyPI release",
   "What works today",
   "One product, evolving capabilities",
-  "Fund the work",
+  "Support this project",
 ]) {
   if (!readme.includes(requiredClaim)) {
     throw new Error(`README is missing required public-status language: ${requiredClaim}`);

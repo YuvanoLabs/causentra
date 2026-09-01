@@ -26,11 +26,15 @@ def test_authenticated_quickstart_delivers_a_trace(tmp_path: Path) -> None:
     key_file = tmp_path / "collector.key"
     key_file.write_text(_KEY + "\n", encoding="utf-8")
     collector = start_collector(config)
+    source_root = str(Path(__file__).parents[1] / "src")
     environment = {
         **os.environ,
         "CAUSENTRA_ENDPOINT": f"{collector.url}/v1/events",
         "CAUSENTRA_KEY_FILE": str(key_file),
         "CAUSENTRA_SPOOL": str(tmp_path / "producer-spool.db"),
+        "PYTHONPATH": os.pathsep.join(
+            value for value in (source_root, os.environ.get("PYTHONPATH")) if value
+        ),
     }
     example = Path(__file__).parents[2] / "examples" / "python" / "authenticated_quickstart.py"
     try:

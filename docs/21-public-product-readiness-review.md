@@ -13,8 +13,8 @@ The public Python product now implements that runtime boundary. It does not clai
 | Decision | Status | Remaining evidence |
 |---|---|---|
 | Public source repository | **Go after owner setup** | Real contacts, repository controls, independent security review |
-| Python runtime code | **Release-candidate complete** | Optional-framework advisory resolution plus target live-broker, soak, restore, and security evidence |
-| Public Python package | **Published beta** | `causentra 0.1.0b1` is live on PyPI; general availability remains evidence-gated |
+| Python runtime code | **Stable release** | Optional-framework advisory resolution plus target live-broker, soak, restore, and security evidence |
+| Public Python package | **Stable release** | `causentra 1.0.0` is the released package; deployment evidence remains environment-specific |
 | Repository discovery | **Locally ready** | Final URL, real social preview, indexing and external authority after publication |
 | Managed deployment | **Evidence-gated** | Recurring activation and retention |
 
@@ -92,4 +92,4 @@ The strongest adoption wedge is a Python team combining two or more agent framew
 
 ## Final assessment
 
-The public implementation now meets the original multi-agent, multi-provider standardization direction and extends it with durable event/transport, authenticated collection, and controlled plugins. It is ready for owner-controlled release-candidate validation. Calling any software universally “10/10 production ready” before independent review and target-infrastructure evidence would weaken the trust this product is designed to earn.
+The public implementation now meets the original multi-agent, multi-provider standardization direction and extends it with durable event/transport, authenticated collection, and controlled plugins. It is released as a stable package. Production deployments still need independent review and target-infrastructure evidence; that is an operator assurance boundary, not a beta-package designation.

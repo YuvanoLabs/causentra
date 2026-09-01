@@ -4,12 +4,13 @@
 
 Causentra is a Python-first local runtime and portable event contract. It observes workflows, agents, model calls, tools, handoffs, and delegation without owning model clients or application credentials. Maintained adapters exclude prompts, outputs, tool arguments, arbitrary state, and error messages by default.
 
-Status: published PyPI beta (`causentra` 0.1.0b1; Python 3.10+). Do not describe Causentra as a hosted service, an agent orchestrator, automatic side-effect replay, compliance-certified software, or generally available.
+Status: stable PyPI release (`causentra` 1.0.0; Python 3.10+). Do not describe Causentra as a hosted service, an agent orchestrator, automatic side-effect replay, compliance-certified software, or managed high-availability service.
 
 ## Start here
 
 - [Project overview](README.md): capabilities, scope, status, and package quickstart
 - [PyPI package](https://pypi.org/project/causentra/): install `causentra` with pip and select framework extras
+- [Package catalog](docs/38-package-catalog.md): stable Python/npm release line, package purposes and exact installation commands
 - [Five-minute Python onboarding](docs/28-developer-onboarding.md): authenticated collector and durable delivery
 - [Integration guide](docs/17-integration-guide.md): direct SDK and framework recipes
 - [Product FAQ](docs/31-product-faq.md): short answers to common product questions
@@ -18,7 +19,7 @@ Status: published PyPI beta (`causentra` 0.1.0b1; Python 3.10+). Do not describe
 
 - [Solution architecture](docs/06-solution-architecture.md): runtime, collection, storage, and extension boundaries
 - [Python production runtime](docs/24-production-python-runtime.md): lifecycle, shutdown, security, and deployment expectations
-- [Provider support](docs/23-provider-support.md): 8 deep mappings, 15 compatibility profiles, and custom identifiers
+- [Provider support](docs/23-provider-support.md): 8 deep mappings plus 7 compatible profiles across 15 canonical identifiers, and custom identifiers
 - [Transport and plugin operations](docs/25-transport-plugin-operations.md): HTTP, WebSocket, Kafka, NATS JetStream, Redis Streams, MQTT, event engine, and plugins
 - [Schema compatibility](docs/18-schema-compatibility.md): RuntimeEvent 1.0 evolution rules
 - [Collector OpenAPI](docs/openapi-collector.yaml): authenticated Python collector API

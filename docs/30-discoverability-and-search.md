@@ -21,7 +21,7 @@ Use **Causentra** as the repository name. Keep the first README heading descript
 | Install Causentra for Python | [PyPI project](https://pypi.org/project/causentra/) and `README.md` | current version, Python requirement, extras, installation command |
 | LangGraph or OpenAI Agents tracing | integration guide and adapter READMEs | exact registration and tested versions |
 | CrewAI, Google ADK, Semantic Kernel, or AutoGen observability | integration guide | maintained adapter recipes |
-| Multi-provider agent telemetry | provider support contract | 8 deep mappings and 15 compatibility profiles |
+| Multi-provider agent telemetry | provider support contract | 8 deep mappings plus 7 compatible profiles across 15 canonical identifiers |
 | OpenTelemetry/OTLP agent tracing | architecture and OTel package README | projection, export, and ingestion contracts |
 | Kafka or NATS agent events | transport operations | acknowledgement and recovery behavior |
 | Privacy-first/local LLM observability | security model | default exclusions and deployment boundary |

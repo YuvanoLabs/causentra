@@ -30,13 +30,14 @@ Native API errors use `{ "error": { "code": string, "message": string } }`. Nati
 |---|---|---|---|
 | `GET` | `/health` | None | Process liveness |
 | `GET` | `/ready` | None | SQLite integrity/readiness |
-| `POST` | `/v1/events` | Project bearer key | Atomic, idempotent batch ingestion |
-| `GET` | `/v1/traces?limit=50` | Project bearer key | Project-scoped summaries |
-| `GET` | `/v1/traces/:traceId` | Project bearer key | Project-scoped ordered events |
-| `DELETE` | `/v1/traces/:traceId` | Project bearer key | Delete one project trace |
-| `GET` | `/metrics` | Operator bearer key | Process and scoped storage metrics |
+| `POST` | `/v1/events` | `events:ingest` | Atomic, idempotent batch ingestion; optional enforced detached signature |
+| `GET` | `/v1/traces?limit=50` | `traces:read` | Project-scoped summaries |
+| `GET` | `/v1/traces/:traceId` | `traces:read` (+ `traces:debug` for attributes) | Project-scoped ordered events with summary/debug projection |
+| `DELETE` | `/v1/traces/:traceId` | `traces:delete` | Delete one project trace |
+| `GET` | `/v1/audit` | `audit:read` | Metadata-only authorization/signature decisions |
+| `GET` | `/metrics` | `metrics:read` | Process and scoped storage metrics |
 
-Only SHA-256 key digests are configured. Keys should be randomly generated with at least 256 bits of entropy. Batch/event uniqueness includes project scope; identifier reuse with different bytes is a conflict. JSON fields and types are strict. Body, batch, request rate, event rate, concurrency, socket time, total store, and per-project store limits are configurable. See [Python collector OpenAPI](openapi-collector.yaml).
+Only SHA-256 key digests are configured. Keys should be randomly generated with at least 256 bits of entropy. Compatibility `project` keys retain ingest/read/debug/delete access; `reader`, `debug`, `writer`, and explicit scopes support least privilege. Batch/event uniqueness includes project scope; identifier reuse with different covered bytes is a conflict. JSON fields and types are strict. Body, batch, request rate, event rate, concurrency, socket time, total store, and per-project store limits are configurable. See [Python collector OpenAPI](openapi-collector.yaml) and [local assurance controls](37-assurance-controls.md).
 
 OTLP conversion preserves trace/span/parent IDs, timestamps, status, service, instrumentation scope, provider, model and usage facts. It omits known content-bearing GenAI, OpenInference, LangSmith, tool and exception fields before applying recursive redaction. This is a safe metadata bridge, not lossless archival of arbitrary OTLP span content.
 

@@ -62,6 +62,7 @@ class SqliteCollectorStore:
         max_payload_bytes: int = 20 * 1024 * 1024 * 1024,
         max_project_events: int | None = None,
         max_project_payload_bytes: int | None = None,
+        max_audit_records: int = 1_000_000,
         busy_timeout: float = 5.0,
     ) -> None:
         if max_events <= 0:
@@ -82,6 +83,12 @@ class SqliteCollectorStore:
             )
         if busy_timeout <= 0:
             raise ValueError("busy_timeout must be positive")
+        if (
+            isinstance(max_audit_records, bool)
+            or not isinstance(max_audit_records, int)
+            or max_audit_records <= 0
+        ):
+            raise ValueError("max_audit_records must be a positive integer")
         self._path = Path(path)
         self._path.parent.mkdir(parents=True, exist_ok=True)
         self._connection = sqlite3.connect(
@@ -99,6 +106,7 @@ class SqliteCollectorStore:
         self._max_payload_bytes = max_payload_bytes
         self._max_project_events = project_events
         self._max_project_payload_bytes = project_bytes
+        self._max_audit_records = max_audit_records
         self._lock = threading.RLock()
         self._closed = False
         self._migrate()
@@ -328,6 +336,73 @@ class SqliteCollectorStore:
             )
         return int(cursor.rowcount)
 
+    def record_audit(
+        self,
+        *,
+        key_id: str,
+        project_id: str,
+        action: str,
+        outcome: str,
+        request_id: str,
+    ) -> None:
+        """Persist a bounded authorization or verification decision without payload data."""
+
+        required = (key_id, action, outcome, request_id)
+        if not all(isinstance(value, str) and value for value in required):
+            raise ValueError("audit fields must be non-empty strings")
+        if len(key_id) > 64 or len(project_id) > 64 or len(action) > 64 or len(outcome) > 64:
+            raise ValueError("audit fields exceed their bounded length")
+        if len(request_id) > 64:
+            raise ValueError("audit request ID exceeds its bounded length")
+        with self._transaction():
+            count = self._connection.execute("SELECT COUNT(*) FROM collector_audit").fetchone()
+            assert count is not None
+            excess = int(count[0]) - self._max_audit_records + 1
+            if excess > 0:
+                self._connection.execute(
+                    """
+                    DELETE FROM collector_audit WHERE audit_id IN (
+                        SELECT audit_id FROM collector_audit ORDER BY audit_id ASC LIMIT ?
+                    )
+                    """,
+                    (excess,),
+                )
+            self._connection.execute(
+                """
+                INSERT INTO collector_audit(
+                    received_at, key_id, project_id, action, outcome, request_id
+                )
+                VALUES (?, ?, ?, ?, ?, ?)
+                """,
+                (time.time(), key_id, project_id, action, outcome, request_id),
+            )
+
+    def list_audit(self, limit: int = 100) -> tuple[dict[str, Any], ...]:
+        """Return bounded metadata-only decision records for an audit principal."""
+
+        if limit <= 0 or limit > 500:
+            raise ValueError("limit must be between 1 and 500")
+        with self._lock:
+            self._ensure_open()
+            rows = self._connection.execute(
+                """
+                SELECT received_at, key_id, project_id, action, outcome, request_id
+                FROM collector_audit ORDER BY audit_id DESC LIMIT ?
+                """,
+                (limit,),
+            ).fetchall()
+        return tuple(
+            {
+                "receivedAt": float(row["received_at"]),
+                "keyId": str(row["key_id"]),
+                "projectId": str(row["project_id"]),
+                "action": str(row["action"]),
+                "outcome": str(row["outcome"]),
+                "requestId": str(row["request_id"]),
+            }
+            for row in rows
+        )
+
     def prune_batches(self, *, older_than: float, limit: int = 10_000) -> int:
         if limit <= 0:
             raise ValueError("limit must be positive")
@@ -454,6 +529,25 @@ class SqliteCollectorStore:
                 """
                 CREATE INDEX IF NOT EXISTS collector_batch_retention_index
                 ON collector_batches(received_at)
+                """
+            )
+            self._connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS collector_audit (
+                    audit_id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    received_at REAL NOT NULL,
+                    key_id TEXT NOT NULL,
+                    project_id TEXT NOT NULL,
+                    action TEXT NOT NULL,
+                    outcome TEXT NOT NULL,
+                    request_id TEXT NOT NULL
+                )
+                """
+            )
+            self._connection.execute(
+                """
+                CREATE INDEX IF NOT EXISTS collector_audit_received_index
+                ON collector_audit(received_at DESC)
                 """
             )
 

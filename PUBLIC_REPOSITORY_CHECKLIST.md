@@ -7,7 +7,7 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Confirm the final product, organization, npm scope, schema domain and trademark position.
 - [ ] Publish at least one accountable maintainer identity and an ownership-continuity plan.
 - [ ] Confirm `smartbytecoder@gmail.com` is monitored and protected with account recovery controls.
-- [ ] Complete GitHub Sponsors enrollment for `YuvanoLabs`; the repository Sponsor button is configured in `.github/FUNDING.yml`.
+- [ ] If funding is enabled, publish the owner-approved funding policy and configure its verified channel.
 
 ## Repository creation
 
@@ -16,7 +16,7 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Copy the exact description and 20-topic set from [repository discoverability and search readiness](docs/30-discoverability-and-search.md); remove any topic that stops being accurate.
 - [ ] Add a truthful social preview showing the actual dashboard; do not use future-product mockups without labeling them.
 - [ ] Add the final repository URL to Python/npm package metadata and `CITATION.cff`; do not commit guessed organization or domain URLs.
-- [ ] Enable Issues, Discussions, private vulnerability reporting, and Sponsorships after their policies/channels exist.
+- [ ] Enable Issues, Discussions, and private vulnerability reporting after their policies/channels exist.
 
 ## Repository controls
 
@@ -32,10 +32,10 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Run `npm ci`, `npm run verify`, `npm run verify:install:adapters`, both benchmarks, and dependency audits from a clean checkout.
 - [ ] Run live Kafka, NATS, Redis, MQTT, WebSocket, TLS/proxy, failure-recovery, backup/restore, and 24-hour soak gates on target infrastructure.
 - [ ] Verify the Python 3.10–3.13 and Node 22/24 Windows, Linux and macOS matrices pass remotely.
-- [x] Publish the first Python beta: [`causentra 0.1.0b1` on PyPI](https://pypi.org/project/causentra/).
+- [x] Publish the stable Python release: [`causentra 1.0.0` on PyPI](https://pypi.org/project/causentra/).
 - [ ] Verify Python/npm package ownership, trusted publishing/provenance, signing and recovery access for subsequent releases.
 - [ ] Register `causentra` as a PyPI Trusted Publisher for this repository's `.github/workflows/release.yml` workflow and the `pypi` GitHub environment; require a maintainer review on that environment.
-- [x] Verify `python -m pip install --pre causentra` from a clean environment after publishing `0.1.0b1`.
+- [x] Verify `python -m pip install causentra` from a clean environment after publishing `1.0.0`.
 - [ ] Review every wheel, sdist, and npm archive; publish no package from the orchestration parent.
 - [ ] Complete an independent security review and resolve critical/high findings.
 - [ ] Record a release rollback/deprecation procedure and security advisory workflow.
@@ -57,4 +57,4 @@ This checklist is for the repository owner. It does not create a repository, pub
 - [ ] Add and validate truthful software structured data on the hosted product page; do not add ratings, customers, pricing, or availability that do not exist.
 - [ ] Monitor indexing, query impressions, qualified onboarding clicks, broken links, and incorrect AI-generated descriptions.
 
-The source may launch only with explicit evidence and limitations. Package preview, product beta, and managed deployment require the phase exit evidence in `ROADMAP.md`.
+The source may launch only with explicit evidence and limitations. Stable package releases and managed deployments require the phase exit evidence in `ROADMAP.md`.

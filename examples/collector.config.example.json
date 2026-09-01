@@ -24,7 +24,12 @@
     "maxProjectEvents": 2000000,
     "maxProjectBytes": 4294967296,
     "maxConcurrentRequests": 128,
-    "requestTimeoutSeconds": 15
+    "requestTimeoutSeconds": 15,
+    "maxAuditRecords": 1000000
   },
-  "tls": {}
+  "tls": {},
+  "signatures": {
+    "requireVerification": false,
+    "keys": []
+  }
 }

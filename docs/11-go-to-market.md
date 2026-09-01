@@ -15,13 +15,13 @@ Earn developer trust and prove recurring operational use before optimizing paid 
 
 ## Launch phases
 
-### Public source release candidate
+### Public stable release
 
-Open the Apache-2.0 repository with explicit release-candidate evidence and limitations. Recruit 10 design partners from teams actively debugging multi-framework Python agents. Conduct observed onboarding, weekly interviews, and issue triage. Do not paywall. Publish compatibility, privacy, benchmark, and schema evidence.
+Operate the Apache-2.0 stable release with explicit evidence and limitations. Recruit 10 design partners from teams actively debugging multi-framework Python agents. Conduct observed onboarding, weekly interviews, and issue triage. Do not paywall. Publish compatibility, privacy, benchmark, and schema evidence.
 
 Exit: 4/5 users get a first trace in five minutes; five projects return weekly; two adapter needs repeat across accounts.
 
-### Product beta
+### Product adoption
 
 Ship signed npm packages, quick-start video, framework recipes, architecture explainer, public roadmap, contribution guide, and benchmark methodology. Launch through developer communities only after opt-in activation measurement and support coverage exist.
 

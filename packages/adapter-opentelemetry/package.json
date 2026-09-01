@@ -1,6 +1,6 @@
 {
   "name": "@causentra/opentelemetry",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "OpenTelemetry and OTLP bridge for portable multi-agent Causentra traces",
   "keywords": ["opentelemetry", "otlp", "ai-agents", "agent-observability", "distributed-tracing", "multi-agent"],
   "homepage": "https://github.com/YuvanoLabs/causentra/tree/main/packages/adapter-opentelemetry#readme",
@@ -28,7 +28,7 @@
     "test": "node --test dist/test/*.test.js"
   },
   "dependencies": {
-    "@causentra/sdk": "0.0.1",
+    "@causentra/sdk": "1.0.0",
     "@opentelemetry/api": "1.9.1",
     "@opentelemetry/exporter-trace-otlp-proto": "0.221.0",
     "@opentelemetry/resources": "2.9.0",

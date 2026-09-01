@@ -13,7 +13,7 @@ This path produces an authenticated, queryable multi-agent trace without an exte
 Install the published package from [PyPI](https://pypi.org/project/causentra/):
 
 ```bash
-python -m pip install --pre causentra
+python -m pip install causentra
 ```
 
 The following walkthrough works in any project directory. A repository checkout is only needed to run the supplied `examples/python/authenticated_quickstart.py` example.
@@ -98,12 +98,12 @@ The durable exporter commits events to SQLite before transmission. A process or 
 Install only the framework integration in use:
 
 ```bash
-python -m pip install --pre "causentra[openai-agents]"
-python -m pip install --pre "causentra[langgraph]"
-python -m pip install --pre "causentra[crewai]"
-python -m pip install --pre "causentra[google-adk]"
-python -m pip install --pre "causentra[semantic-kernel]"
-python -m pip install --pre "causentra[autogen]"
+python -m pip install "causentra[openai-agents]"
+python -m pip install "causentra[langgraph]"
+python -m pip install "causentra[crewai]"
+python -m pip install "causentra[google-adk]"
+python -m pip install "causentra[semantic-kernel]"
+python -m pip install "causentra[autogen]"
 ```
 
 | Framework | Registration surface | Complete example |
@@ -150,5 +150,6 @@ Use `causentra --key-file .causentra/collector.key trace <trace-id>` to inspect 
 - [Production Python runtime](24-production-python-runtime.md)
 - [Adapter template](../templates/community-adapter/README.md)
 - [Verification evidence](26-verification-evidence.md)
+- [Package catalog](38-package-catalog.md)
 
 The TypeScript SDK implements the same event contract and remains a maintained protocol peer. Python is the primary onboarding and runtime path.

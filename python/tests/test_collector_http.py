@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 
 from causentra import (
     CausentraRuntime,
@@ -22,14 +24,19 @@ from causentra.collector import (
     ApiPrincipal,
     CollectorConfig,
     CollectorLimits,
+    SignatureVerificationConfig,
+    SignatureVerificationKey,
     load_collector_config,
     start_collector,
 )
 from causentra.collector_store import SqliteCollectorStore
+from causentra.signatures import batch_signature_artifact, sign_detached_artifact
+from causentra.types import JsonValue
 
 PROJECT_KEY = "project-key-000000000000000000000000000000000000000000000000"
 OTHER_KEY = "other-key-00000000000000000000000000000000000000000000000000"
 OPERATOR_KEY = "operator-key-0000000000000000000000000000000000000000000000"
+READER_KEY = "reader-key-00000000000000000000000000000000000000000000000000000000"
 
 
 def _batch() -> tuple[bytes, str, str]:
@@ -81,6 +88,12 @@ def _config(tmp_path: Path, *, limits: CollectorLimits | None = None) -> Collect
             ApiPrincipal.from_api_key(
                 "operator", "operations", OPERATOR_KEY, operator=True
             ),
+            ApiPrincipal.from_api_key(
+                "reader",
+                "project-a",
+                READER_KEY,
+                scopes=frozenset({"traces:read"}),
+            ),
         ),
         port=0,
         limits=limits or CollectorLimits(),
@@ -122,6 +135,7 @@ def test_collector_http_auth_ingestion_idempotency_queries_and_metrics(
             "accepted": 4,
             "duplicates": 0,
             "replayedBatch": False,
+            "verification": "unsigned",
         }
         replay = _request(
             f"{running.url}/v1/events",
@@ -152,6 +166,162 @@ def test_collector_http_auth_ingestion_idempotency_queries_and_metrics(
         assert json.loads(deleted[2])["deletedEvents"] == 4
     finally:
         running.close()
+
+
+def test_collector_scopes_strip_attributes_and_record_authorization_decisions(
+    tmp_path: Path,
+) -> None:
+    running = start_collector(_config(tmp_path))
+    payload, batch_id, trace_id = _batch()
+    try:
+        assert _request(
+            f"{running.url}/v1/events",
+            method="POST",
+            key=PROJECT_KEY,
+            body=payload,
+            headers={"Content-Type": "application/json", "Idempotency-Key": batch_id},
+        )[0] == 202
+        detail = _request(f"{running.url}/v1/traces/{trace_id}", key=READER_KEY)
+        assert detail[0] == 200
+        rendered = json.loads(detail[2])
+        assert rendered["projection"] == "summary"
+        assert all(event["attributes"] == {} for event in rendered["events"])
+        assert _request(
+            f"{running.url}/v1/traces/{trace_id}", method="DELETE", key=READER_KEY
+        )[0] == 403
+        audit = _request(f"{running.url}/v1/audit", key=OPERATOR_KEY)
+        assert audit[0] == 200
+        decisions = json.loads(audit[2])["decisions"]
+        assert any(
+            decision["keyId"] == "reader"
+            and decision["action"] == "traces.read"
+            and decision["outcome"] == "allowed"
+            for decision in decisions
+        )
+        assert any(
+            decision["keyId"] == "reader"
+            and decision["action"] == "traces.delete"
+            and decision["outcome"] == "denied"
+            for decision in decisions
+        )
+    finally:
+        running.close()
+
+
+def test_collector_enforces_and_labels_detached_batch_signatures(tmp_path: Path) -> None:
+    private = ec.generate_private_key(ec.SECP256R1())
+    public_pem = private.public_key().public_bytes(
+        serialization.Encoding.PEM,
+        serialization.PublicFormat.SubjectPublicKeyInfo,
+    ).decode("ascii")
+    config = _config(tmp_path)
+    running = start_collector(
+        CollectorConfig(
+            database_path=config.database_path,
+            principals=config.principals,
+            port=0,
+            limits=config.limits,
+            signatures=SignatureVerificationConfig(
+                require_verification=True,
+                keys=(SignatureVerificationKey("test-key", "1", public_pem),),
+            ),
+        )
+    )
+    payload, batch_id, trace_id = _batch()
+    try:
+        unsigned = _request(
+            f"{running.url}/v1/events",
+            method="POST",
+            key=PROJECT_KEY,
+            body=payload,
+            headers={"Content-Type": "application/json", "Idempotency-Key": batch_id},
+        )
+        assert unsigned[0] == 422
+        assert json.loads(unsigned[2])["error"]["code"] == "signature_required"
+        body = json.loads(payload)
+        body["signature"] = sign_detached_artifact(
+            batch_signature_artifact(batch_id, body["events"]),
+            key_id="test-key",
+            key_version="1",
+            private_key=private,
+        )
+        signed = _request(
+            f"{running.url}/v1/events",
+            method="POST",
+            key=PROJECT_KEY,
+            body=json.dumps(body, separators=(",", ":")).encode("utf-8"),
+            headers={"Content-Type": "application/json", "Idempotency-Key": batch_id},
+        )
+        assert signed[0] == 202
+        assert json.loads(signed[2])["verification"] == "verified"
+        tampered = json.loads(json.dumps(body))
+        tampered["batchId"] = "signed-tamper"
+        tampered["events"][0]["name"] = "tampered"
+        invalid = _request(
+            f"{running.url}/v1/events",
+            method="POST",
+            key=PROJECT_KEY,
+            body=json.dumps(tampered, separators=(",", ":")).encode("utf-8"),
+            headers={"Content-Type": "application/json", "Idempotency-Key": "signed-tamper"},
+        )
+        assert invalid[0] == 422
+        assert json.loads(invalid[2])["error"]["code"] == "signature_invalid"
+        assert _request(f"{running.url}/v1/traces/{trace_id}", key=PROJECT_KEY)[0] == 200
+    finally:
+        running.close()
+
+
+def test_durable_http_transport_can_sign_required_collector_batches(tmp_path: Path) -> None:
+    private = ec.generate_private_key(ec.SECP256R1())
+    public_pem = private.public_key().public_bytes(
+        serialization.Encoding.PEM,
+        serialization.PublicFormat.SubjectPublicKeyInfo,
+    ).decode("ascii")
+    config = _config(tmp_path)
+    running = start_collector(
+        CollectorConfig(
+            database_path=config.database_path,
+            principals=config.principals,
+            port=0,
+            limits=config.limits,
+            signatures=SignatureVerificationConfig(
+                require_verification=True,
+                keys=(SignatureVerificationKey("producer-key", "1", public_pem),),
+            ),
+        )
+    )
+
+    def sign_batch(batch_id: str, events: list[JsonValue]) -> dict[str, Any]:
+        return sign_detached_artifact(
+            batch_signature_artifact(batch_id, events),
+            key_id="producer-key",
+            key_version="1",
+            private_key=private,
+        )
+
+    exporter = DurableTransportExporter(
+        SqliteEventSpool(tmp_path / "signed-producer-spool.db"),
+        HttpTransport(
+            f"{running.url}/v1/events",
+            headers={"Authorization": f"Bearer {PROJECT_KEY}"},
+            batch_signature_factory=sign_batch,
+        ),
+        poll_interval=0.01,
+        delivery_timeout=2,
+        lease_seconds=3,
+    )
+    runtime = CausentraRuntime("signed-transport", exporter)
+    try:
+        with runtime.trace("workflow") as context, runtime.tool("lookup"):
+            pass
+        assert runtime.flush(5)
+        detail = _request(f"{running.url}/v1/traces/{context.trace_id}", key=PROJECT_KEY)
+        assert detail[0] == 200
+        assert len(json.loads(detail[2])["events"]) == 4
+    finally:
+        runtime.shutdown(5)
+        running.close()
+
 
 def test_collector_rejects_invalid_batches_conflicts_limits_and_insecure_bind(
     tmp_path: Path,
@@ -291,6 +461,20 @@ def test_collector_config_accepts_hashes_only_and_rejects_unknown_fields(
     assert config.principals[0].key_sha256 != PROJECT_KEY
 
     value: dict[str, Any] = json.loads(config_path.read_text(encoding="utf-8"))
+    value["apiKeys"][0]["role"] = "reader"
+    value["apiKeys"][0]["scopes"] = ["traces:read"]
+    value["signatures"] = {"requireVerification": False, "keys": []}
+    config_path.write_text(json.dumps(value), encoding="utf-8")
+    scoped = load_collector_config(config_path)
+    assert scoped.principals[0].scopes == frozenset({"traces:read"})
+    assert scoped.signatures.require_verification is False
+
+    value["signatures"]["requireVerification"] = True
+    config_path.write_text(json.dumps(value), encoding="utf-8")
+    with pytest.raises(ValueError, match="requires at least one public key"):
+        load_collector_config(config_path)
+
+    value["signatures"]["requireVerification"] = False
     value["listen"]["unknown"] = True
     config_path.write_text(json.dumps(value), encoding="utf-8")
     with pytest.raises(ValueError, match="unsupported listen field"):

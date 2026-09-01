@@ -19,6 +19,7 @@ Requirements: Python 3.10–3.13, Node.js 22 or 24, and npm.
 
 ```bash
 npm install
+python -m pip install -e "python[dev]"
 npm run verify
 npm run benchmark
 npm run python:benchmark

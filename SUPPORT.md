@@ -1,6 +1,6 @@
 # Support
 
-Causentra is a release-candidate public software project. There is no production SLA, guaranteed response time, or private implementation support.
+Causentra is a stable public software project. There is no production SLA, guaranteed response time, or private implementation support.
 
 ## Where to ask
 

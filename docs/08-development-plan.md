@@ -20,13 +20,13 @@ Two-week iterations, trunk-based development, short-lived branches, automated ga
 | Milestone | Scope | Exit criterion |
 |---|---|---|
 | M0 vertical slice | Python-first SDK, supported TypeScript SDK, and local runtime | Completed: cross-language acceptance scenarios pass |
-| M1 public release candidate | Six Python adapters, durable data plane, authenticated collector, plugins | Completed locally; external assurance pending |
-| M2 product beta | Packages, OTLP mapping, docs site, contribution process | 50 weekly active projects; crash-free ≥99% |
+| M1 stable 1.0 release | Six Python adapters, durable data plane, authenticated collector, plugins | Released with deterministic verification; deployment assurance remains operator-owned |
+| M2 product adoption | Packages, OTLP mapping, docs site, contribution process | 50 weekly active projects; crash-free ≥99% |
 | M3 cloud private beta | Auth ingest, tenancy, retention, sharing | 5 pilots; zero cross-tenant test failures |
 | M4 cloud GA | Billing, alerts, support, SLOs | 20 paying teams; on-call and DR proven |
 | M5 governed deployment | SSO/SCIM, audit, private deployment | 3 production customers |
 
-## Release-candidate implementation sequence
+## Stable-release implementation sequence
 
 1. Freeze v1 event vocabulary and invalid-input behavior.
 2. Implement SDK context, lifecycle, redaction, and memory exporter.
@@ -40,10 +40,10 @@ Two-week iterations, trunk-based development, short-lived branches, automated ga
 
 - Strict mypy/Ruff with `py.typed`; TypeScript strict mode and explicit public return types
 - No secrets, prompt bodies, or provider keys in tests/logs
-- Conventional commits and changesets from public beta
+- Conventional commits and changesets for the stable release line
 - Review required for schema, security, storage, and dependency changes
 - ADR required for decisions that constrain future implementations
-- Deprecation window of at least one minor release after beta
+- Deprecation window of at least one minor release after stable introduction
 
 ## Team shape through cloud beta
 

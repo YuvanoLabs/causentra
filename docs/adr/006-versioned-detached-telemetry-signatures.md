@@ -1,6 +1,6 @@
 # ADR-006: Versioned detached telemetry signatures
 
-Status: accepted (contract/fixtures and TypeScript local ECDSA implementation complete; Python/KMS/collector enforcement pending)
+Status: accepted (contract/fixtures, local TypeScript/Python ECDSA, mockable KMS/Vault digest adapters, and single-node collector enforcement complete; live operational evidence pending)
 
 ## Context
 
@@ -109,16 +109,10 @@ an explicit compatibility mode and are labeled unsigned.
 2. Add RFC 8785 JCS golden vectors, including nested objects, Unicode, numbers,
    property-order permutations, `-0` normalization and invalid JSON. Acceptance:
    Python and TypeScript produce byte-identical canonical output.
-3. **Completed for TypeScript local use:** add the opt-in ECDSA P-256 signer/verifier using caller-supplied keys. Acceptance includes valid, tampered, wrong-key, unknown-key, revoked-key, and invalid-envelope tests. Python parity, KMS/Vault adapters and collector enforcement remain follow-up work.
-4. Add detached signing to export/batch interfaces without changing
-   RuntimeEvent. Acceptance: export/import preserves the artifact identity and
-   signature; unsigned legacy mode is explicit.
-5. Add optional KMS/Vault signer/verifier adapters. Acceptance: mocked contract
-   tests cover algorithm/key-version selection, digest-vs-raw message mode,
-   transient errors and no-secret logging; live tests remain operator-supplied.
-6. Add collector `requireVerification` rejection/quarantine behavior and audit
-   metrics. Acceptance: unverifiable payloads cannot enter the verified path,
-   are not silently downgraded, and application-side failures remain fail-open.
+3. **Completed for local TypeScript and Python use:** opt-in ECDSA P-256 signer/verifiers use caller-supplied keys. Acceptance includes valid, tampered, wrong-key, unknown-key, revoked-key, and invalid-envelope tests.
+4. **Completed for event batches:** `batch_signature_artifact` fixes the signed batch identity and covered fields without changing RuntimeEvent. Unsigned legacy mode receives explicit `unsigned` status.
+5. **Completed as explicit adapters:** KMS and Vault digest signers have mocked contract tests for algorithm/key-version selection, SHA-256 digest mode, and no-secret boundaries. Live tests remain operator-supplied.
+6. **Completed for the single-node collector:** `requireVerification` rejects unverifiable payloads before storage and records metadata-only audit decisions. Application-side instrumentation remains fail-open.
 
 ## Implementation-readiness checklist
 
@@ -126,12 +120,12 @@ an explicit compatibility mode and are labeled unsigned.
 - [x] Select and test exact optional RFC 8785 implementations: TypeScript
       `canonicalize@4.0.0` and Python `rfc8785>=0.1.4,<0.2`.
 - [x] Publish cross-language golden vectors, including invalid-number policy.
-- [ ] Confirm ECDSA P-256/SHA-256 encoding and KMS/Vault digest-mode semantics.
-- [ ] Define public-key distribution, key-purpose policy, rotation and revocation
-      records without persisting private material.
-- [ ] Define fail-open application behavior and collector reject/quarantine
-      observability for every verification failure class.
-- [ ] Add legacy unsigned compatibility tests and explicit unsigned labeling.
+- [x] Confirm ECDSA P-256/SHA-256 encoding and mock KMS/Vault digest-mode semantics.
+- [x] Define configured public-key records, version/key-purpose boundaries, and
+      revocation without persisting private material.
+- [x] Define fail-open application behavior and collector reject/audit
+      observability for bounded verification failure classes.
+- [x] Add legacy unsigned compatibility tests and explicit unsigned labeling.
 - [ ] Complete threat review and target-infrastructure/interoperability tests.
 - [ ] Keep all KMS/Vault/live-broker checks operator-supplied; do not claim
       certification from algorithm selection alone.

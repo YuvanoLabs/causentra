@@ -4,16 +4,16 @@ Python-first instrumentation, durable event delivery, processing, and authentica
 
 ## Install
 
-Causentra is published on [PyPI](https://pypi.org/project/causentra/) for Python 3.10 and later. The current `0.1.0b1` beta is installed explicitly with `--pre`:
+Causentra is published on [PyPI](https://pypi.org/project/causentra/) for Python 3.10 and later. Install the stable `1.0.0` release with:
 
 ```bash
-python -m pip install --pre causentra
+python -m pip install causentra
 ```
 
 Add only the framework extras your application uses:
 
 ```bash
-python -m pip install --pre "causentra[openai-agents,langgraph]"
+python -m pip install "causentra[openai-agents,langgraph]"
 ```
 
 For contributor development from this repository, use the editable source installation instead:
@@ -29,9 +29,9 @@ python -m pip install -e ".[dev,signing]"
 ```
 
 `causentra[signing]` declares the bounded `rfc8785>=0.1.4,<0.2` range and exposes
-`canonicalize_json` for RFC 8785 UTF-8 bytes. This is canonicalization
-infrastructure only; no signer or verifier exists yet. Review the dependency,
-golden vectors and security posture before using it in a release.
+`canonicalize_json` for RFC 8785 UTF-8 bytes, detached ECDSA signing, and
+collector signature verification. Review the dependency, golden vectors, key
+management, and security posture before using it in production.
 
 ```python
 from causentra import CausentraRuntime, HttpBatchExporter
@@ -67,7 +67,7 @@ add_trace_processor(create_openai_agents_processor("support-agents", exporter))
 
 LangGraph uses `LangGraphCallbackHandler` through `config={"callbacks": [handler]}`. The other native registration recipes are in the [integration guide](../docs/17-integration-guide.md). The `otel` extra provides `OpenTelemetryEventExporter` and `start_otlp_exporter` for standards-based pipelines.
 
-Provider-aware call instrumentation supports eight deep integrations and all 15 canonical provider profiles:
+Provider-aware call instrumentation supports eight deep integrations plus seven compatible profiles across all 15 canonical provider IDs:
 
 ```python
 response = runtime.call_model(
@@ -111,4 +111,4 @@ See the [production deployment runbook](../docs/34-production-deployment-runbook
 
 Prompts, outputs, tool arguments, arbitrary framework state, and error messages are not captured by default. Instrumentation failure never replaces application behavior.
 
-Causentra `0.1.0b1` is a published PyPI beta. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Independent security review and target-infrastructure load/soak evidence remain general-availability gates.
+Causentra `1.0.0` is the stable PyPI release. Strict typing/lint, deterministic tests, exact-framework registration, clean-wheel, collector, durable transport, and package verification gates are implemented. Production deployments still require independent security review and target-infrastructure load/soak evidence appropriate to their environment.

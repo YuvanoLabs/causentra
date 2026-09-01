@@ -13,7 +13,7 @@ modify `RuntimeEvent` 1.0. The contract is available as
 fixtures under `packages/sdk/fixtures/signature/v1`. The schema fixes
 `causentra.signature/v1`, `RFC8785-JCS`, artifact kinds, lowercase SHA-256
 identity digests, and algorithm/encoding pairs (`ECDSA_P256_SHA256` with
-`base64-der`; optional `ED25519` with `base64-raw`). The schema contract and fixtures, RFC 8785 canonicalizer, and shared vectors are complete. The TypeScript local ECDSA P-256 signer/verifier is now implemented; Python parity, KMS/Vault adapters, and collector enforcement remain pending.
+`base64-der`; optional `ED25519` with `base64-raw`). The schema contract and fixtures, RFC 8785 canonicalizer, and shared vectors are complete. TypeScript and Python provide local ECDSA P-256 signer/verifiers. Python also provides explicit mockable KMS/Vault digest-mode adapters and the single-node collector can enforce batch verification before storage. Live key-service interoperability and operational key-management evidence remain release gates.
 
 The canonicalization prerequisite is now available separately: TypeScript
 `canonicalizeJson` uses exact `canonicalize@4.0.0`, while Python's optional

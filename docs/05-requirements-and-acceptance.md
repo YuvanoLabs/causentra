@@ -13,7 +13,7 @@
 | NFR-07 | Events from independent producers are returned deterministically | Timestamp + lifecycle + producer sequence + event-ID ordering test |
 | NFR-08 | Dependencies have no known critical advisories | CI audit gate before release |
 | NFR-09 | Public APIs are typed and documented | Strict mypy plus Python `py.typed`; TypeScript declaration build |
-| NFR-10 | Supported Node versions are enforced | CI version matrix at beta |
+| NFR-10 | Supported Node versions are enforced | CI version matrix for the stable release line |
 | NFR-11 | Non-loopback binding fails closed without explicit unsafe acknowledgement | Server integration test |
 | NFR-12 | Portable bundles are versioned and validated before import | Export/delete/import round-trip test |
 | NFR-13 | Trace filters are bounded, deterministic, and reject malformed session/status values | API integration test |

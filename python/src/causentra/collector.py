@@ -28,7 +28,12 @@ from .collector_store import (
     IdempotencyConflictError,
     SqliteCollectorStore,
 )
-from .types import RuntimeEvent
+from .signatures import (
+    SignatureVerificationResult,
+    batch_signature_artifact,
+    verify_detached_signature,
+)
+from .types import JsonValue, RuntimeEvent
 from .validation import EventValidationError, event_from_wire
 
 _PROJECT_ID = re.compile(r"^[a-z][a-z0-9_-]{0,63}$")
@@ -37,7 +42,23 @@ _KEY_HASH = re.compile(r"^[0-9a-f]{64}$")
 _BATCH_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 _TRACE_ID = re.compile(r"^[0-9a-f]{32}$")
 _REQUEST_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$")
+_SIGNING_KEY_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:/-]{0,255}$")
+_SIGNING_KEY_VERSION = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,63}$")
 _LOGGER = logging.getLogger("causentra.collector")
+
+_SCOPES = frozenset(
+    {
+        "events:ingest",
+        "traces:read",
+        "traces:debug",
+        "traces:delete",
+        "metrics:read",
+        "audit:read",
+    }
+)
+_PROJECT_SCOPES = frozenset(
+    {"events:ingest", "traces:read", "traces:debug", "traces:delete"}
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -48,6 +69,7 @@ class ApiPrincipal:
     project_id: str
     key_sha256: str
     operator: bool = False
+    scopes: frozenset[str] = field(default_factory=lambda: _PROJECT_SCOPES)
 
     def __post_init__(self) -> None:
         if not _KEY_ID.fullmatch(self.key_id):
@@ -58,10 +80,23 @@ class ApiPrincipal:
             raise ValueError("key_sha256 must be a lowercase SHA-256 digest")
         if not isinstance(self.operator, bool):
             raise ValueError("operator must be a boolean")
+        if not isinstance(self.scopes, frozenset) or not self.scopes <= _SCOPES:
+            raise ValueError("scopes must be a known immutable scope set")
+
+    def has_scope(self, scope: str) -> bool:
+        """Return whether this principal is authorized for one API capability."""
+
+        return self.operator or scope in self.scopes
 
     @classmethod
     def from_api_key(
-        cls, key_id: str, project_id: str, api_key: str, *, operator: bool = False
+        cls,
+        key_id: str,
+        project_id: str,
+        api_key: str,
+        *,
+        operator: bool = False,
+        scopes: frozenset[str] | None = None,
     ) -> ApiPrincipal:
         """Build a principal for tests/bootstrap without retaining the raw key."""
 
@@ -72,7 +107,53 @@ class ApiPrincipal:
             project_id,
             hashlib.sha256(api_key.encode("utf-8")).hexdigest(),
             operator,
+            _PROJECT_SCOPES if scopes is None else scopes,
         )
+
+
+@dataclass(frozen=True, slots=True)
+class SignatureVerificationKey:
+    """Public verification material retained by the collector configuration."""
+
+    key_id: str
+    key_version: str
+    public_key: str
+    revoked: bool = False
+
+    def __post_init__(self) -> None:
+        if not _SIGNING_KEY_ID.fullmatch(self.key_id):
+            raise ValueError("signature key ID has an invalid format")
+        if not _SIGNING_KEY_VERSION.fullmatch(self.key_version):
+            raise ValueError("signature key version has an invalid format")
+        if not isinstance(self.public_key, str) or not self.public_key.strip():
+            raise ValueError("signature public key must be a non-empty PEM string")
+        if len(self.public_key.encode("utf-8")) > 16 * 1024:
+            raise ValueError("signature public key exceeds 16 KiB")
+        if not isinstance(self.revoked, bool):
+            raise ValueError("signature revoked must be a boolean")
+
+
+@dataclass(frozen=True, slots=True)
+class SignatureVerificationConfig:
+    """Fail-closed detached signature policy for event-batch ingestion."""
+
+    require_verification: bool = False
+    keys: tuple[SignatureVerificationKey, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.require_verification, bool):
+            raise ValueError("require_verification must be a boolean")
+        pairs = {(key.key_id, key.key_version) for key in self.keys}
+        if len(pairs) != len(self.keys):
+            raise ValueError("signature key ID/version pairs must be unique")
+        if self.require_verification and not self.keys:
+            raise ValueError("require_verification requires at least one public key")
+
+    def resolve_key(self, key_id: str, key_version: str) -> dict[str, Any] | None:
+        for key in self.keys:
+            if key.key_id == key_id and key.key_version == key_version:
+                return {"publicKey": key.public_key, "revoked": key.revoked}
+        return None
 
 
 @dataclass(frozen=True, slots=True)
@@ -88,6 +169,7 @@ class CollectorLimits:
     max_project_bytes: int = 4 * 1024 * 1024 * 1024
     max_concurrent_requests: int = 128
     request_timeout_seconds: int = 15
+    max_audit_records: int = 1_000_000
 
     def __post_init__(self) -> None:
         for name in (
@@ -102,6 +184,7 @@ class CollectorLimits:
             "max_project_bytes",
             "max_concurrent_requests",
             "request_timeout_seconds",
+            "max_audit_records",
         ):
             value = getattr(self, name)
             if isinstance(value, bool) or not isinstance(value, int) or value <= 0:
@@ -122,6 +205,9 @@ class CollectorConfig:
     tls_certificate: Path | None = None
     tls_private_key: Path | None = None
     allow_insecure_remote: bool = False
+    signatures: SignatureVerificationConfig = field(
+        default_factory=SignatureVerificationConfig
+    )
 
     def __post_init__(self) -> None:
         if not isinstance(self.database_path, Path):
@@ -362,17 +448,30 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
         if principal is None:
             return
         if path.path == "/metrics":
-            if not principal.operator:
-                self._error(
-                    HTTPStatus.FORBIDDEN,
-                    "forbidden",
-                    "operator credentials are required for metrics",
-                    request_id,
-                )
+            if not self._require_scope(principal, "metrics:read", "metrics.read", request_id):
                 return
             self._metrics(principal, request_id)
             return
+        if path.path == "/v1/audit":
+            if not self._require_scope(principal, "audit:read", "audit.read", request_id):
+                return
+            query = parse_qs(path.query, keep_blank_values=True)
+            try:
+                limit = int(query.get("limit", ["100"])[0])
+                decisions = self.server.store.list_audit(limit)
+            except (ValueError, TypeError):
+                self._error(
+                    HTTPStatus.BAD_REQUEST,
+                    "invalid_limit",
+                    "limit must be an integer between 1 and 500",
+                    request_id,
+                )
+                return
+            self._json(HTTPStatus.OK, {"decisions": decisions}, request_id)
+            return
         if path.path == "/v1/traces":
+            if not self._require_scope(principal, "traces:read", "traces.list", request_id):
+                return
             query = parse_qs(path.query, keep_blank_values=True)
             try:
                 limit = int(query.get("limit", ["50"])[0])
@@ -389,6 +488,8 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
             return
         prefix = "/v1/traces/"
         if path.path.startswith(prefix):
+            if not self._require_scope(principal, "traces:read", "traces.read", request_id):
+                return
             trace_id = path.path[len(prefix) :]
             if not _TRACE_ID.fullmatch(trace_id):
                 self._error(
@@ -409,7 +510,18 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 return
             self._json(
                 HTTPStatus.OK,
-                {"traceId": trace_id, "events": [event.to_wire() for event in events]},
+                {
+                    "traceId": trace_id,
+                    "projection": (
+                        "debug" if principal.has_scope("traces:debug") else "summary"
+                    ),
+                    "events": [
+                        _event_projection(
+                            event, include_attributes=principal.has_scope("traces:debug")
+                        )
+                        for event in events
+                    ],
+                },
                 request_id,
             )
             return
@@ -423,6 +535,8 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
         principal = self._authorize(request_id)
         if principal is None:
             return
+        if not self._require_scope(principal, "events:ingest", "events.ingest", request_id):
+            return
         body = self._read_json(request_id)
         if body is None:
             return
@@ -434,7 +548,7 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
             )
             return
-        unknown = set(body) - {"transportVersion", "batchId", "events"}
+        unknown = set(body) - {"transportVersion", "batchId", "events", "signature"}
         if unknown:
             self._error(
                 HTTPStatus.BAD_REQUEST,
@@ -462,19 +576,6 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
             )
             return
-        allowed, retry_after = self.server.rate_limiter.allow(
-            principal.key_id, "event", len(raw_events)
-        )
-        if not allowed:
-            self.server.metrics.increment("rate_limited")
-            self._error(
-                HTTPStatus.TOO_MANY_REQUESTS,
-                "rate_limited",
-                "event rate limit exceeded",
-                request_id,
-                {"Retry-After": str(retry_after)},
-            )
-            return
         header_batch_id = self.headers.get("Idempotency-Key")
         body_batch_id = body.get("batchId")
         if body_batch_id is not None and not isinstance(body_batch_id, str):
@@ -496,6 +597,28 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
             )
             return
+        allowed, retry_after = self.server.rate_limiter.allow(
+            principal.key_id, "event", len(raw_events)
+        )
+        if not allowed:
+            self.server.metrics.increment("rate_limited")
+            self._error(
+                HTTPStatus.TOO_MANY_REQUESTS,
+                "rate_limited",
+                "event rate limit exceeded",
+                request_id,
+                {"Retry-After": str(retry_after)},
+            )
+            return
+        verification = self._verify_batch_signature(
+            batch_id,
+            cast(list[JsonValue], raw_events),
+            body.get("signature"),
+            principal,
+            request_id,
+        )
+        if verification is None:
+            return
         try:
             events = tuple(
                 event_from_wire(cast(Mapping[str, Any], item))
@@ -503,7 +626,18 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 else _raise_invalid_event()
                 for item in raw_events
             )
-            digest = hashlib.sha256(self._raw_body).hexdigest()
+            # Signatures are randomized. Idempotency is therefore based on the
+            # covered payload rather than a detachable envelope's wire bytes.
+            digest = hashlib.sha256(
+                json.dumps(
+                    batch_signature_artifact(
+                        batch_id, cast(list[JsonValue], raw_events)
+                    )["value"],
+                    sort_keys=True,
+                    separators=(",", ":"),
+                    ensure_ascii=False,
+                ).encode("utf-8")
+            ).hexdigest()
             result = self.server.store.ingest(
                 principal.project_id, batch_id, digest, events
             )
@@ -541,6 +675,7 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 "accepted": result.accepted,
                 "duplicates": result.duplicates,
                 "replayedBatch": result.replayed_batch,
+                "verification": verification,
             },
             request_id,
         )
@@ -549,6 +684,8 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
         request_id = self._request_id()
         principal = self._authorize(request_id)
         if principal is None:
+            return
+        if not self._require_scope(principal, "traces:delete", "traces.delete", request_id):
             return
         prefix = "/v1/traces/"
         path = urlsplit(self.path).path
@@ -590,6 +727,7 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
                 {"Retry-After": str(retry_after)},
             )
+            self._audit("anonymous", "", "authenticate", "rate_limited", request_id)
             return None
         principal = self.server.authenticator.authenticate(self.headers.get("Authorization"))
         if principal is None:
@@ -601,6 +739,7 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
                 {"WWW-Authenticate": 'Bearer realm="causentra"'},
             )
+            self._audit("anonymous", "", "authenticate", "denied", request_id)
             return None
         allowed, retry_after = self.server.rate_limiter.allow(principal.key_id, "request")
         if not allowed:
@@ -612,8 +751,95 @@ class _CollectorRequestHandler(BaseHTTPRequestHandler):
                 request_id,
                 {"Retry-After": str(retry_after)},
             )
+            self._audit(
+                principal.key_id,
+                principal.project_id,
+                "authenticate",
+                "rate_limited",
+                request_id,
+            )
             return None
         return principal
+
+    def _require_scope(
+        self, principal: ApiPrincipal, scope: str, action: str, request_id: str
+    ) -> bool:
+        if principal.has_scope(scope):
+            self._audit(principal.key_id, principal.project_id, action, "allowed", request_id)
+            return True
+        self._audit(principal.key_id, principal.project_id, action, "denied", request_id)
+        self._error(
+            HTTPStatus.FORBIDDEN,
+            "forbidden",
+            f"the authenticated key lacks {scope} scope",
+            request_id,
+        )
+        return False
+
+    def _verify_batch_signature(
+        self,
+        batch_id: str,
+        events: list[JsonValue],
+        envelope: Any,
+        principal: ApiPrincipal,
+        request_id: str,
+    ) -> str | None:
+        if envelope is None:
+            if not self.server.config.signatures.require_verification:
+                return "unsigned"
+            self._audit(
+                principal.key_id,
+                principal.project_id,
+                "events.ingest",
+                "signature_required",
+                request_id,
+            )
+            self._error(
+                HTTPStatus.UNPROCESSABLE_ENTITY,
+                "signature_required",
+                "collector policy requires a detached batch signature",
+                request_id,
+            )
+            return None
+        try:
+            result: SignatureVerificationResult = verify_detached_signature(
+                batch_signature_artifact(batch_id, events),
+                envelope,
+                resolve_key=self.server.config.signatures.resolve_key,
+            )
+        except (TypeError, ValueError, RuntimeError):
+            result = {"verified": False, "reason": "verification-unavailable"}
+        if result.get("verified") is True:
+            return "verified"
+        self._audit(
+            principal.key_id,
+            principal.project_id,
+            "events.ingest",
+            f"signature_{result.get('reason', 'invalid')}",
+            request_id,
+        )
+        self._error(
+            HTTPStatus.UNPROCESSABLE_ENTITY,
+            "signature_invalid",
+            "detached batch signature could not be verified",
+            request_id,
+        )
+        return None
+
+    def _audit(
+        self, key_id: str, project_id: str, action: str, outcome: str, request_id: str
+    ) -> None:
+        try:
+            self.server.store.record_audit(
+                key_id=key_id,
+                project_id=project_id,
+                action=action,
+                outcome=outcome,
+                request_id=request_id,
+            )
+        except Exception:  # pragma: no cover
+            # Preserve the response if audit storage is unavailable.
+            _LOGGER.exception("collector_audit_write_failed request_id=%s", request_id)
 
     _raw_body: bytes = b""
 
@@ -785,6 +1011,7 @@ def start_collector(config: CollectorConfig) -> RunningCollector:
         max_payload_bytes=config.limits.max_store_bytes,
         max_project_events=config.limits.max_project_events,
         max_project_payload_bytes=config.limits.max_project_bytes,
+        max_audit_records=config.limits.max_audit_records,
     )
     try:
         server = _CollectorHttpServer(config, store)
@@ -824,7 +1051,14 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
         raise ValueError("collector configuration must be valid UTF-8 JSON") from error
     if not isinstance(value, dict):
         raise ValueError("collector configuration must be an object")
-    unknown = set(value) - {"database", "listen", "apiKeys", "limits", "tls"}
+    unknown = set(value) - {
+        "database",
+        "listen",
+        "apiKeys",
+        "limits",
+        "tls",
+        "signatures",
+    }
     if unknown:
         raise ValueError(f"unsupported collector configuration field: {sorted(unknown)[0]}")
     api_keys = value.get("apiKeys")
@@ -834,6 +1068,7 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
     listen = _mapping(value.get("listen", {}), "listen")
     limits_value = _mapping(value.get("limits", {}), "limits")
     tls_value = _mapping(value.get("tls", {}), "tls")
+    signatures_value = _mapping(value.get("signatures", {}), "signatures")
     _reject_unknown(listen, {"host", "port", "allowInsecureRemote"}, "listen")
     _reject_unknown(
         limits_value,
@@ -849,10 +1084,12 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
             "maxProjectBytes",
             "maxConcurrentRequests",
             "requestTimeoutSeconds",
+            "maxAuditRecords",
         },
         "limits",
     )
     _reject_unknown(tls_value, {"certificate", "privateKey"}, "tls")
+    _reject_unknown(signatures_value, {"requireVerification", "keys"}, "signatures")
     limits = CollectorLimits(
         max_body_bytes=_integer(limits_value, "maxBodyBytes", 2 * 1024 * 1024),
         max_batch_events=_integer(limits_value, "maxBatchEvents", 1_000),
@@ -873,6 +1110,7 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
             limits_value, "maxConcurrentRequests", 128
         ),
         request_timeout_seconds=_integer(limits_value, "requestTimeoutSeconds", 15),
+        max_audit_records=_integer(limits_value, "maxAuditRecords", 1_000_000),
     )
     database = value.get("database")
     if not isinstance(database, str) or not database.strip():
@@ -883,6 +1121,10 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
         raise ValueError("tls.certificate must be a path")
     if private_key is not None and not isinstance(private_key, str):
         raise ValueError("tls.privateKey must be a path")
+    keys_value = signatures_value.get("keys", [])
+    if not isinstance(keys_value, list):
+        raise ValueError("signatures.keys must be an array")
+    signature_keys = tuple(_signature_key_from_config(item) for item in keys_value)
     return CollectorConfig(
         database_path=_relative_path(source, database),
         principals=principals,
@@ -896,6 +1138,12 @@ def load_collector_config(path: str | Path) -> CollectorConfig:
             None if private_key is None else _relative_path(source, private_key)
         ),
         allow_insecure_remote=_boolean(listen, "allowInsecureRemote", False),
+        signatures=SignatureVerificationConfig(
+            require_verification=_boolean(
+                signatures_value, "requireVerification", False
+            ),
+            keys=signature_keys,
+        ),
     )
 
 
@@ -912,6 +1160,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         max_payload_bytes=config.limits.max_store_bytes,
         max_project_events=config.limits.max_project_events,
         max_project_payload_bytes=config.limits.max_project_bytes,
+        max_audit_records=config.limits.max_audit_records,
     )
     try:
         server = _CollectorHttpServer(config, store)
@@ -946,6 +1195,15 @@ def _raise_invalid_event() -> RuntimeEvent:
     raise EventValidationError("events", "items must be objects")
 
 
+def _event_projection(event: RuntimeEvent, *, include_attributes: bool) -> dict[str, Any]:
+    """Render the documented trace projection without mutating stored telemetry."""
+
+    value = event.to_wire()
+    if not include_attributes:
+        value["attributes"] = {}
+    return value
+
+
 def _is_loopback(host: str) -> bool:
     if host.lower() == "localhost":
         return True
@@ -962,18 +1220,53 @@ def _principal_from_config(value: Any) -> ApiPrincipal:
         "projectId",
         "sha256",
         "role",
+        "scopes",
     }:
         raise ValueError(
-            "each apiKeys item requires id, projectId, sha256, and optional role"
+            "each apiKeys item requires id, projectId, sha256, and optional role/scopes"
         )
     role = _string(item, "role", "project")
-    if role not in {"project", "operator"}:
-        raise ValueError("apiKeys role must be project or operator")
+    role_scopes = {
+        "project": _PROJECT_SCOPES,
+        "reader": frozenset({"traces:read"}),
+        "debug": frozenset({"traces:read", "traces:debug"}),
+        "writer": frozenset({"events:ingest"}),
+        "operator": frozenset(),
+    }
+    if role not in role_scopes:
+        raise ValueError("apiKeys role must be project, reader, debug, writer, or operator")
+    configured_scopes = item.get("scopes")
+    if configured_scopes is None:
+        scopes = role_scopes[role]
+    else:
+        if role == "operator":
+            raise ValueError("operator role cannot declare a limited scopes list")
+        if not isinstance(configured_scopes, list) or not all(
+            isinstance(scope, str) for scope in configured_scopes
+        ):
+            raise ValueError("apiKeys scopes must be an array of strings")
+        scopes = frozenset(cast(list[str], configured_scopes))
+        if not scopes <= _SCOPES:
+            raise ValueError("apiKeys scopes contain an unsupported value")
     return ApiPrincipal(
         _string(item, "id", ""),
         _string(item, "projectId", ""),
         _string(item, "sha256", ""),
         role == "operator",
+        scopes,
+    )
+
+
+def _signature_key_from_config(value: Any) -> SignatureVerificationKey:
+    item = _mapping(value, "signatures.keys item")
+    _reject_unknown(item, {"id", "version", "publicKey", "revoked"}, "signatures.keys item")
+    if not {"id", "version", "publicKey"}.issubset(item):
+        raise ValueError("each signatures.keys item requires id, version, and publicKey")
+    return SignatureVerificationKey(
+        key_id=_string(item, "id", ""),
+        key_version=_string(item, "version", ""),
+        public_key=_string(item, "publicKey", ""),
+        revoked=_boolean(item, "revoked", False),
     )
 
 
